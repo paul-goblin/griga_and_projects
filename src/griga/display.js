@@ -139,7 +139,13 @@ export class Display {
                   Math.ceil(gridLink.tileHeightInPx * entityInstanceDisplayData.height),
                 );
                 Object.values( entityInstanceDisplayData.texts ).forEach( text => {
-                  //work to be done here to display Text;)
+                  gridLink.ctx.font = `${text.size * gridLink.tileHeightInPx}px ${text.fontFamily}`;
+                  gridLink.ctx.fillStyle = text.color;
+                  gridLink.ctx.fillText(
+                    text.text,
+                    (entityInstanceDisplayData.pos.c + text.cOffset) * gridLink.tileWidthInPx - gridLink.xShift,
+                    (entityInstanceDisplayData.pos.r + text.rOffset + text.size*0.75) * gridLink.tileHeightInPx - gridLink.yShift
+                  );
                 } );
               }
             );

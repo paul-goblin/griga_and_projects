@@ -78,7 +78,7 @@ export class Grid {
 
   mouseDownHandler( e ){
     const targets = this.gridData[Math.floor(this.mouse.c)][Math.floor(this.mouse.r)].concat(//tiles
-      this.getDetachedEntitiesByCoordinates( this.mouse.c, this.mouse.r ) );//detached
+      this.getDetachedEntityInstancesByCoordinates( this.mouse.c, this.mouse.r ) );//detached
     targets.forEach( entityInstance => {
       if (entityInstance.mouseDownSubscriptions.includes( this.mouse.displayName )) {
         entityInstance.mouseDownHandler( this.mouse.displayName, this.mouse.c, this.mouse.r );
@@ -87,7 +87,7 @@ export class Grid {
   }
   mouseUpHandler( e ){
     const targets = this.gridData[Math.floor(this.mouse.c)][Math.floor(this.mouse.r)].concat(//tiles
-      this.getDetachedEntitiesByCoordinates( this.mouse.c, this.mouse.r ) );//detached
+      this.getDetachedEntityInstancesByCoordinates( this.mouse.c, this.mouse.r ) );//detached
     targets.forEach( entityInstance => {
       if (entityInstance.mouseUpSubscriptions.includes( this.mouse.displayName )) {
         entityInstance.mouseUpHandler( this.mouse.displayName, this.mouse.c, this.mouse.r );
@@ -186,16 +186,7 @@ export class Grid {
       allLayersEntityInstanceDisplayData
     };
   }
-
-  //detached collision
-  getDetachedEntitiesByCoordinates( c, r ){
-    const entityInstances = this.detachedData.filter( entityInstance => {
-      return (c > entityInstance.c && c < entityInstance.c+entityInstance.width
-        && r > entityInstance.r && r < entityInstance.r+entityInstance.height);
-    } );
-    return entityInstances;
-  }
-
+  
   //allEntityInstances
   addEntityInstanceToAllEntityInstances( entityInstance ){
     this.allEntityInstances.push( entityInstance );
@@ -261,6 +252,18 @@ export class Grid {
     } else {
       this.layerData.delete( entityInstance.layer );
     }
+  }
+
+  //only used by EntityMethods
+
+  attachEntityInstance( entityInstance ){
+    this.removeEntityInstanceFromDetachedData( entityInstance );
+    this.addEntityInstanceToGridData( entityInstance );
+  }
+
+  detachEntityInstance( entityInstance ){
+    this.removeEntityInstanceFromGridData( entityInstance );
+    this.addEntityInstanceToDetachedData( entityInstance );
   }
 
 //PUBLIC xD
@@ -357,16 +360,6 @@ export class Grid {
     }
   }
 
-  attachEntityInstance( entityInstance ){
-    this.removeEntityInstanceFromDetachedData( entityInstance );
-    this.addEntityInstanceToGridData( entityInstance );
-  }
-
-  detachEntityInstance( entityInstance ){
-    this.removeEntityInstanceFromGridData( entityInstance );
-    this.addEntityInstanceToDetachedData( entityInstance );
-  }
-
   getEntityInstances( selectorObject = {} ){
     let entityInstances = this.allEntityInstances;
     if (selectorObject.hasOwnProperty('tile')) {
@@ -392,12 +385,38 @@ export class Grid {
     return entityInstances;
   }
 
+  //detached collision
+  getDetachedEntityInstancesByCoordinates( c, r ){
+    const entityInstances = this.detachedData.filter( entityInstance => {
+      return (c > entityInstance.c && c < entityInstance.c+entityInstance.width
+        && r > entityInstance.r && r < entityInstance.r+entityInstance.height);
+    } );
+    return entityInstances;
+  }
+
+  getEntityInstancesBeneathDetachedEntityInstance( detachedEntityInstance ){
+    const startC = Math.floor( detachedEntityInstance.c );
+    const endC = detachedEntityInstance.c + detachedEntityInstance.width;
+    const startR = Math.floor( detachedEntityInstance.r );
+    const endR = detachedEntityInstance.r + detachedEntityInstance.height;
+    let entityInstances = [];
+    for (let c = startC; c < endC; c++) {
+      for (let r = startR; r < endR; r++) {
+        if (c >= 0 && c < this.columns
+         && r >= 0 && r < this.rows) {
+          entityInstances = entityInstances.concat( this.gridData[c][r] );
+        }
+      }
+    }
+    return entityInstances;
+  }
+
   //sceneStuff
   loadScene( sceneData ){
-    //detached
+    //TODO detached
 
     //tiles
-    sceneData.tiles.forEach( (cData, c) => {//using cInv loads the tiles right to left ;)
+    sceneData.tiles.forEach( (cData, c) => {
       cData.forEach( (tileData, r) => {
         tileData.forEach( entityDeclaration => {
           const entityName = entityDeclaration[0];

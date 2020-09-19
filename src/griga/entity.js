@@ -1,10 +1,12 @@
 const Joi = require('@hapi/joi');
 
 class Text {
-  constructor( id, text, size, cOffset, rOffset ){
+  constructor( id, text, size, color, fontFamily, cOffset, rOffset ){
     this.id = id;
     this.text = text || "Text";
     this.size = size || 1;
+    this.color = color || "black";
+    this.fontFamily = fontFamily || "arial";
     this.cOffset = cOffset || 0;
     this.rOffset = rOffset || 0;
   }
@@ -190,12 +192,16 @@ export class Entity {
     this.grid.moveEntityInstance( this, to );
   }
 
-  addText( id, text, size, rOffset, cOffset ){
-    this.texts[ id ] = new Text( id, text, size, rOffset, cOffset );
+  addText( id, text, size, color, fontFamily, cOffset, rOffset ){
+    this.texts[ id ] = new Text( id, text, size, color, fontFamily, cOffset, rOffset );
   }
 
   removeText( id ){
     delete this.texts[ id ];
+  }
+
+  getEntityInstancesBeneath(){
+    return this.grid.getEntityInstancesBeneathDetachedEntityInstance( this );
   }
 
   subscribeToKeyUp( key ){

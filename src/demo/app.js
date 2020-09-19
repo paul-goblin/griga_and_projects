@@ -20,6 +20,7 @@ class Tick extends Entity {
 
   mouseDownHandler( display, c, r ){
     this.currentImage = 'nichts';
+    this.addText( 'testText', 'LOL!', 0.5, '#00AA00', 'Comic Sans MS', 0, 0 );
   }
 }
 
@@ -31,7 +32,6 @@ class Ghosty extends Entity {
       keyDownSubscriptions: ['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'],
       mouseDownSubscriptions: ['main-display']}, args );
     this.keysDown = {};
-    this.addText( 'testText', 'I\'m Ghosty!' );
   }
 
   static get imgSources(){
@@ -76,6 +76,13 @@ class Ghosty extends Entity {
     if (this.keysDown[ 'ArrowDown' ]) {this.r += timePassed/1000};
     if (this.keysDown[ 'ArrowLeft' ]) {this.c -= timePassed/1000};
     if (this.keysDown[ 'ArrowRight' ]) {this.c += timePassed/1000};
+
+    if (this.getEntityInstancesBeneath().map( tick => tick.constructor.name === 'Tick' ).includes(true)) {
+      if (this.keysDown[ 'ArrowUp' ]) {this.r += timePassed/1000};
+      if (this.keysDown[ 'ArrowDown' ]) {this.r -= timePassed/1000};
+      if (this.keysDown[ 'ArrowLeft' ]) {this.c += timePassed/1000};
+      if (this.keysDown[ 'ArrowRight' ]) {this.c -= timePassed/1000};
+    }
 
     if (!Object.values(this.keysDown).includes(true)){ return this.unsubscribeFromRenderStart() };
 
