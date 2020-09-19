@@ -1,0 +1,204 @@
+class GridLink {
+  constructor( gridInstance, displaySettings, display ){
+    this.gridInstance = gridInstance;
+    this.displaySettings = displaySettings;
+    this.display = display;
+
+    this.processDisplaySettings();
+
+    this.canvas = null;
+    this.offCanvas = null;
+    this.ctx = null;
+  }
+
+  processDisplaySettings(){
+    this.leftInPx = this.displaySettings.left * this.display.width;
+    this.topInPx = this.displaySettings.top * this.display.height;
+    this.widthInPx = this.displaySettings.width * this.display.width;
+    this.heightInPx = this.displaySettings.height * this.display.height;
+    this.tileWidthInPx = this.widthInPx / this.displaySettings.columnsOnScreen;
+    this.tileHeightInPx = this.heightInPx / this.displaySettings.rowsOnScreen;
+    this.xShift = this.displaySettings.columnShift * this.tileWidthInPx;
+    this.yShift = this.displaySettings.rowShift * this.tileHeightInPx;
+  }
+
+  updateDisplaySettings( newDisplaySettings ){
+    for (let [property, value] of Object.entries( newDisplaySettings )) {
+      this.displaySettings[ property ] = value;
+    }
+  }
+
+  newCanvas(){
+    this.canvas = document.createElement('canvas');
+    this.canvas.width = this.widthInPx;
+    this.canvas.height = this.heightInPx;
+    this.canvas.setAttribute('style', `
+      position: absolute;
+      top: ${this.topInPx}px;
+      left: ${this.leftInPx}px;
+      pointer-events: none;
+    `);
+    this.canvas.setAttribute( 'data--grid-name', this.gridInstance.name );
+    this.display.wrapper.appendChild( this.canvas );
+    this.offCanvas = this.canvas.transferControlToOffscreen();
+    this.ctx = this.offCanvas.getContext('2d');
+  }
+
+  resizeCanvas(){
+    this.canvas.remove();
+    this.processDisplaySettings();
+    this.newCanvas();
+  }
+}
+
+export class Display {
+  constructor( config ){
+    this.name = config.name;
+    this.wrapper = document.getElementById(config.wrapperId);
+    this.widthHeightRatio = config.widthHeightRatio;
+
+    this.resizeWrapper();
+    this.setupWrapperEventListeners();
+    
+    this.linkedGrids = {};//see linkGrid and GridLink for structure
+    this.displayData = [];
+
+    this.mouseX = 0;
+    this.mouseY = 0;
+    this.gridsInHover = [];
+  }
+
+  //resize
+  resizeWrapper(){
+    this.width = parseFloat( getComputedStyle( this.wrapper )
+                 .width.slice( 0,-2 ) );
+    this.height = this.width/this.widthHeightRatio;
+    this.wrapper.setAttribute('style', `
+      height:${this.height}px;
+      position: relative;
+      overflow: hidden;
+    `);//hidden overflow
+  }
+
+  setupWrapperEventListeners(){
+    this.wrapper.addEventListener( 'mousemove', (e) => this.mouseMoveHandler(e) );
+    this.wrapper.addEventListener( 'mouseleave', (e) => this.mouseLeaveHandler(e) );
+    this.wrapper.addEventListener('mousedown', (e) => this.mouseDownHandler(e) );
+    this.wrapper.addEventListener('mouseup', (e) => this.mouseUpHandler(e) );
+  }
+
+  linkGrid( grid, displaySettings ){
+    const gridLink = new GridLink( grid, displaySettings, this );
+    gridLink.newCanvas();
+    this.linkedGrids[ grid.name ] = gridLink;
+  }
+  unlinkGrid( gridName ){
+    this.linkedGrids[ gridName ].canvas.remove();
+    delete this.linkedGrids[ gridName ];
+  }
+
+  changeGridDisplaySettings( gridName, displaySettings ){
+    this.linkedGrids[ gridName ].updateDisplaySettings( displaySettings );
+    this.linkedGrids[ gridName ].processDisplaySettings();
+  }
+
+  updateDisplayData(){
+    this.displayData = Object.values(this.linkedGrids).map(
+      gridLink => gridLink.gridInstance.displayData
+    );
+  }
+
+  //drawing
+  clearCanvas( offCanvas, ctx ){
+    ctx.clearRect( 0,0, offCanvas.width, offCanvas.height);
+  }
+
+  render( windowResized ){
+    if (windowResized) {
+      this.resizeWrapper();
+      for (let gridLink of Object.values( this.linkedGrids )) {
+        gridLink.resizeCanvas();
+      };
+    }
+
+    this.updateDisplayData();
+
+    this.displayData.forEach( //Array of Grid Display Data
+      gridDisplayData => {
+        const gridLink = this.linkedGrids[ gridDisplayData.gridName ];
+        this.clearCanvas( gridLink.offCanvas, gridLink.ctx );
+        gridDisplayData.allLayersEntityInstanceDisplayData.forEach( //Array of allLayersEntityInstanceDisplayData
+          ( layerEntityInstanceDisplayData, layer ) => {
+            layerEntityInstanceDisplayData.forEach( //array of entityInstanceDisplayData
+              entityInstanceDisplayData => {
+                gridLink.ctx.drawImage(
+                  entityInstanceDisplayData.img,
+                  entityInstanceDisplayData.pos.c * gridLink.tileWidthInPx - gridLink.xShift,
+                  entityInstanceDisplayData.pos.r * gridLink.tileHeightInPx - gridLink.yShift,
+                  Math.ceil(gridLink.tileWidthInPx * entityInstanceDisplayData.width),
+                  Math.ceil(gridLink.tileHeightInPx * entityInstanceDisplayData.height),
+                );
+                Object.values( entityInstanceDisplayData.texts ).forEach( text => {
+                  //work to be done here to display Text;)
+                } );
+              }
+            );
+          }
+        );
+      }
+    );
+  }
+
+  //handler
+  mouseLeaveHandler( e ){
+    this.gridsInHover.forEach( gridName => {
+      this.linkedGrids[ gridName ].gridInstance.mouseLeaveHandler( this.name );
+    } );
+    this.gridsInHover = [];
+  }
+
+  mouseMoveHandler( e ){
+    //update mouse pos
+    this.mouseX = e.offsetX;
+    this.mouseY = e.offsetY;
+    //update Grids
+    Object.values(this.linkedGrids).forEach( grid => {
+      const gridMouseX = this.mouseX - grid.leftInPx + grid.xShift;
+      const gridMouseY = this.mouseY - grid.topInPx + grid.yShift;
+      if (gridMouseX >= grid.xShift && gridMouseX < grid.xShift + grid.widthInPx
+       && gridMouseY >= grid.yShift && gridMouseY < grid.yShift + grid.heightInPx) {
+        if (grid.gridInstance.mouse.displayName !== this.name) {
+          this.gridsInHover.push( grid.gridInstance.name );
+        }
+        const gridMouseC = gridMouseX/grid.tileWidthInPx;
+        const gridMouseR = gridMouseY/grid.tileHeightInPx;
+        grid.gridInstance.mouseMoveHandler( this.name, gridMouseC,gridMouseR );
+      }
+      else if (grid.gridInstance.mouse.displayName === this.name) {
+        grid.gridInstance.mouseLeaveHandler( this.name );
+        this.gridsInHover.splice( this.gridsInHover.indexOf( grid.gridInstance.name ), 1 );
+      }
+    } );
+  }
+
+  mouseDownHandler( e ){
+    Object.values(this.linkedGrids).forEach( grid => {
+      const gridMouseX = this.mouseX - grid.leftInPx;
+      const gridMouseY = this.mouseY - grid.topInPx;
+      if (gridMouseX >= 0 && gridMouseX < grid.widthInPx
+       && gridMouseY >= 0 && gridMouseY < grid.heightInPx) {
+        grid.gridInstance.mouseDownHandler( this.name );
+      }
+    } );
+  }
+  mouseUpHandler( e ){
+    Object.values(this.linkedGrids).forEach( grid => {
+      const gridMouseX = this.mouseX - grid.leftInPx;
+      const gridMouseY = this.mouseY - grid.topInPx;
+      if (gridMouseX >= 0 && gridMouseX < grid.widthInPx
+       && gridMouseY >= 0 && gridMouseY < grid.heightInPx) {
+        grid.gridInstance.mouseUpHandler( this.name );
+      }
+    } );
+  }
+}
