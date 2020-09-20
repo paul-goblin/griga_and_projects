@@ -1,1 +1,1 @@
-module.exports = "snake"; 
+module.exports = "labyrinth"; 
