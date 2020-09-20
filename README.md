@@ -17,7 +17,7 @@ $ npm install
 
 ### Select a Game
 
-Set **currentGameName** in webpack.config.js to the game you want to serve or compile
+Set **currentGameName** in currentGame.js to the game you want to serve or compile
 
 ### Serve
 To serve in the browser  - Runs webpack-dev-server
@@ -32,6 +32,9 @@ Compile and build
 ```sh
 $ npm run build
 ```
+
+### Make your live easier
+Once you installed all dependencies, you can just run **run_grid.bat** to pull from Github, select a game and start the dev-server
 
 ## More Info
 
