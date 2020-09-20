@@ -4,6 +4,7 @@ import levels from "./levels.json";
 
 var mode = "play";
 var selectedBlock;
+var currentlvl = 0
 
 document.getElementById("levelCreate").addEventListener("click", function(){
   document.getElementById("levelCreate").innerHTML = mode
@@ -24,11 +25,19 @@ document.getElementById("selectDestination").addEventListener("click", function(
 })
 document.getElementById("selectStart").addEventListener("click", function(){
   selectedBlock = "start";
-  console.log("asjkbaidoas")
 })
 document.getElementById("save").addEventListener("click", function(){
   console.log(JSON.stringify(griga.grids["dungeon"].getCurrentSceneData()))
 })
+document.getElementById("restart").addEventListener("click", function(){
+  document.getElementById("main-display").innerHTML = "..."
+  const griga = new Griga(config, start);
+})
+document.getElementById("nextLevel").addEventListener("click", function(){
+  currentlvl += 1
+  griga.grids['dungeon'].loadScene( levels[currentlvl] );
+})
+
 
 class Warrior extends Entity{
   constructor(params, args){
@@ -50,6 +59,7 @@ class Warrior extends Entity{
         this.move(key.slice(5));
         if(x.includes("destination")){
           console.log("Finished, you won!!!")
+          document.getElementById("main-display").innerHTML = "You won!!!"
         }
       }
     }
@@ -75,7 +85,7 @@ class Field extends Entity{
   mouseDownHandler(){
     console.log( this.c, this.r );
     if(mode=="levelCreate"){
-      this.grid.newEntityInstance("Walls", {}, {c:this.c, r:this.r})
+      this.grid.newEntityInstance(selectedBlock, {}, {c:this.c, r:this.r})
     }
   }
 }
@@ -86,6 +96,15 @@ class Walls extends Entity{
   }
   static get imgSources(){
     return { default: './tile_img/castle_wall.png' }
+  }
+}
+
+class FakeWalls extends Entity{
+  constructor(params, args){
+    super({}, args)
+  }
+  static get imgSources(){
+    return { default: '/tile_img/castle_wall.png '}
   }
 }
 
@@ -104,6 +123,7 @@ const config={
 };
 
 const griga = new Griga(config, start);
+
 
 function start(){
   const displaySettings = {

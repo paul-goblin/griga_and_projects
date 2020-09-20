@@ -19,19 +19,34 @@
       max-width: 1000px;
       margin: auto;
       background-color:aliceblue;
+      text-align: center;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: xx-large;
     }
 
+    .something {
+      width: 100%;
+      max-width: 1000px;
+      margin: auto;
+      text-align: center;
+    }
+
+    .buttons{
+      margin: auto;
+    }
     .hidden {
       display: none;
     }
   </style>
-  <title>Snake</title>
+  <title>Labyrinth</title>
 </head>
 
 <!-- body -->
 <body>
   <div class="wrapper">
     <div id="main-display"></div>
+  </div>
+  <div class = "something">
     <button id="levelCreate">Create Level</button>
     <button id="selectWall">Wall</button>
     <button id="selectFakeWall">Fake Wall</button>
@@ -40,7 +55,9 @@
     <button id="selectStart">Start</button>
     <button id="save">Save</button>
     <button id="delete">Delete</button>
-  </div>
+    <button id = "restart">Restart</button>
+    <button id = "nextLevel">Next Level</button>
+    </div>
 
   <script src="main.js"></script>
 </body>
