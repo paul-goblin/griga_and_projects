@@ -2,10 +2,10 @@ const path = require('path');
 const CopyPlugin = require('copy-webpack-plugin');
 
 //IMPORTANTE!!
-//Change currentGameName to switch between Games
+//Change currentGameName in ./currentGame to switch between Games
 //Used to:
 // - figure out which project/game folder to use
-const currentGameName = 'demo';
+const currentGameName = require('./currentGame');
 
 module.exports = {
   entry: `./src/${currentGameName}/app.js`,
