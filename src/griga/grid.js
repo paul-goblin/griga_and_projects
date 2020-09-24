@@ -1,5 +1,8 @@
 import Joi from "@hapi/joi";
 
+/**
+ * Class representing a logical grid. Saves References to EntityInstances
+ */
 export class Grid {
   constructor( config, griga ){
     this.griga = griga;

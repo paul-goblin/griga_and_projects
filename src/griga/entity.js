@@ -11,7 +11,9 @@ class Text {
     this.rOffset = rOffset || 0;
   }
 }
-
+/**
+ * Base class for all Entities. Custom Child classes of Entity can be passed in with the grigaConfig when initializing Griga
+ */
 export class Entity {
   //images
   static get imgSources(){
@@ -47,7 +49,23 @@ export class Entity {
     } );
   }
 
-  //constructor
+  /**
+   * Inits Entity. Should only be called with super() from a child class
+   * @param {Object} params - entityParams.
+   * @param {number} [params.width = 1] - displayed Width of the entity in columns
+   * @param {number} [params.height = 1] - displayed Height of the entity in rows.
+   * @param {number} [params.cOffset = 0] - displayed cOffset of the entity in columns.
+   * @param {number} [params.rOffset = 0] - displayed rOffset of the entity in rows.
+   * @param {number} [params.layer = 0] - layer at which the the entity is displayed.
+   * @param {boolean} [params.renderStartSubscription = false] - true to subscribe the entity to the renderStart Event
+   * @param {boolean} [params.sceneLoadedSubscription = false] - true to subscribe the entity to the sceneLoaded Event
+   * @param {string[]} [params.keyDownSubscriptions = []] - Array of keys for which the entity subscribes to the keyDown Event
+   * @param {string[]} [params.keyUpSubscriptions = []] - Array of keys for which the entity subscribes to the keyUp Event
+   * @param {string[]} [params.mouseDownSubscriptions = []] - Array of displayNames for which display the entity subscribes to the mouseDown Event
+   * @param {string[]} [params.mouseUpSubscriptions = []] - Array of displayNames for which display the entity subscribes to the mouseUp Event
+   * @param {string[]} [params.mouseMoveSubscriptions = []] - Array of displayNames for which display the entity subscribes to the mouseMove Event
+   * @param {Object} args - The Object passed in to all childs of Entity as second argument when constructed by the Griga Famework
+   */
   constructor( params, args ){
     //validate Params
     let validParams;
@@ -188,6 +206,10 @@ export class Entity {
     this.grid.detachEntityInstance( this );
   }
 
+  /**
+   * Moves attached entityInstance on this.grid
+   * @param {string} to - Direction-string, relative-position [dc, dr], or absolute-position Object {c, r}
+   */
   move( to ){
     this.grid.moveEntityInstance( this, to );
   }
