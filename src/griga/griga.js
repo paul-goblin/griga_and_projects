@@ -8,7 +8,9 @@ const wrapperIdExists = (wrapperId) => {
   if (wrapper) {return wrapperId};
   throw new Error(`there's no HTML-Element with wrapperId ${wrapperId}`);
 }
-
+/**
+ * Class representing a Complete Game, including Logic and Graphics
+ */
 export class Griga {
 
   //configSchema
@@ -44,7 +46,13 @@ export class Griga {
     } );
   }
 
-  //constructor
+  /**
+   * 
+   * @param {Object} config
+   * @param {Object[]} config.displays
+   * @param {string} config.displays[].name - name of the display
+   * @param {GriGa~imagesLoadedCallback} cb - The callback triggers when all the Images are Loaded
+   */
   constructor( config, imagesLoadedCallback ){
     //validate Config
     let validConfig;
@@ -70,6 +78,11 @@ export class Griga {
     this.loadImages();
     requestAnimationFrame( () => this.render() );
   }
+
+  /**
+   * @callback GriGa~imagesLoadedCallback
+   * @param {GriGa} griGa - the GriGa instance 
+   */
 
   //setup
   setupDisplays( displaysConfig ){
@@ -150,7 +163,20 @@ export class Griga {
 
 //PUBLIC xD
 
-  //displayGrid
+  /**
+   * displays a grid on a display
+   * @param {string} displayName - name of the Display
+   * @param {string} gridName - name of the Grid
+   * @param {Object} displaySettings - object containing all your displaysettings
+   * @param {number} [displaySettings.left = 0] - left offset of the grid in % of display width 
+   * @param {number} [displaySettings.top = 0] - top offset of the grid in % of display height
+     @param {number} [displaySettings.width = 1] - width of the grid in % of display width 
+     @param {number} [displaySettings.height = 1] - height of the grid in % of display height 
+     @param {number} [displaySettings.columnsOnScreen = 1] - the number of columns which fit into the grids width
+     @param {number} [displaySettings.rowsOnScreen = 1] - the number of rows which fit into the grids height
+     @param {number} [displaySettings.columnShift = 0] - the number of columns the Grid should be shifted in c direction
+     @param {number} [displaySettings.rowShift = 1] - the number of rows the Grid should be shifted in r direction
+   */
   displayGrid( displayName, gridName, displaySettings ){
     //validate displaySettings
     let validDisplaySettings;
