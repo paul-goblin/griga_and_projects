@@ -27,7 +27,7 @@
 
 <nav >
     
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Entity.html">Entity</a><ul class='methods'><li data-type='method'><a href="Entity.html#changeGridDisplaySettings">changeGridDisplaySettings</a></li><li data-type='method'><a href="Entity.html#changeLayer">changeLayer</a></li><li data-type='method'><a href="Entity.html#getCurrentParams">getCurrentParams</a></li><li data-type='method'><a href="Entity.html#move">move</a></li></ul></li><li><a href="Grid.html">Grid</a></li><li><a href="Griga.html">Griga</a><ul class='methods'><li data-type='method'><a href="Griga.html#displayGrid">displayGrid</a></li><li data-type='method'><a href="Griga.html#removeGridFromDisplay">removeGridFromDisplay</a></li></ul></li></ul><h3>Events</h3><ul><li><a href="Entity.html#event:keyDownHandler">keyDownHandler</a></li><li><a href="Entity.html#event:keyUpHandler">keyUpHandler</a></li><li><a href="Entity.html#event:mouseDownHandler">mouseDownHandler</a></li><li><a href="Entity.html#event:mouseMoveHandler">mouseMoveHandler</a></li><li><a href="Entity.html#event:mouseUpHandler">mouseUpHandler</a></li><li><a href="Entity.html#event:renderStartHandler">renderStartHandler</a></li><li><a href="Entity.html#event:sceneLoadedHandler">sceneLoadedHandler</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Entity.html">Entity</a><ul class='methods'><li data-type='method'><a href="Entity.html#attach">attach</a></li><li data-type='method'><a href="Entity.html#changeGridDisplaySettings">changeGridDisplaySettings</a></li><li data-type='method'><a href="Entity.html#changeLayer">changeLayer</a></li><li data-type='method'><a href="Entity.html#delete">delete</a></li><li data-type='method'><a href="Entity.html#detach">detach</a></li><li data-type='method'><a href="Entity.html#getEntityInstancesBeneath">getEntityInstancesBeneath</a></li><li data-type='method'><a href="Entity.html#move">move</a></li><li data-type='method'><a href="Entity.html#subscribeToKeyUp">subscribeToKeyUp</a></li><li data-type='method'><a href="Entity.html#subscribeToMouseMove">subscribeToMouseMove</a></li><li data-type='method'><a href="Entity.html#subscribeToMouseUp">subscribeToMouseUp</a></li><li data-type='method'><a href="Entity.html#subscribeToRenderStart">subscribeToRenderStart</a></li><li data-type='method'><a href="Entity.html#unsubscribeFromKeyUp">unsubscribeFromKeyUp</a></li><li data-type='method'><a href="Entity.html#unsubscribeFromMouseMove">unsubscribeFromMouseMove</a></li><li data-type='method'><a href="Entity.html#unsubscribeFromMouseUp">unsubscribeFromMouseUp</a></li><li data-type='method'><a href="Entity.html#unsubscribeFromRenderStart">unsubscribeFromRenderStart</a></li></ul></li><li><a href="Grid.html">Grid</a><ul class='methods'><li data-type='method'><a href="Grid.html#getEntityInstances">getEntityInstances</a></li><li data-type='method'><a href="Grid.html#newEntityInstance">newEntityInstance</a></li></ul></li><li><a href="Griga.html">Griga</a><ul class='methods'><li data-type='method'><a href="Griga.html#displayGrid">displayGrid</a></li><li data-type='method'><a href="Griga.html#removeGridFromDisplay">removeGridFromDisplay</a></li></ul></li></ul><h3>Events</h3><ul><li><a href="Entity.html#event:getCurrentParams">getCurrentParams</a></li><li><a href="Entity.html#event:keyDownHandler">keyDownHandler</a></li><li><a href="Entity.html#event:keyUpHandler">keyUpHandler</a></li><li><a href="Entity.html#event:mouseDownHandler">mouseDownHandler</a></li><li><a href="Entity.html#event:mouseMoveHandler">mouseMoveHandler</a></li><li><a href="Entity.html#event:mouseUpHandler">mouseUpHandler</a></li><li><a href="Entity.html#event:renderStartHandler">renderStartHandler</a></li><li><a href="Entity.html#event:sceneLoadedHandler">sceneLoadedHandler</a></li></ul><h3><a href="global.html">Global</a></h3>
 </nav>
 
 <div id="main">
@@ -858,7 +858,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="griga.js.html">griga.js</a>, <a href="griga.js.html#line213">line 213</a>
+        <a href="griga.js.html">griga.js</a>, <a href="griga.js.html#line217">line 217</a>
     </li></ul></dd>
     
 
@@ -988,7 +988,7 @@
             <td class="type">
             
                 
-<span class="param-type">Object</span>
+<span class="param-type"><a href="global.html#displaySettings">displaySettings</a></span>
 
 
             
@@ -998,349 +998,7 @@
 
             
 
-            <td class="description last"><p>Object containing all your displaysettings</p>
-                <h6>Properties</h6>
-                
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-        <th>Default</th>
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>left</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    <code>0</code>
-                
-                </td>
-            
-
-            <td class="description last"><p>Left offset of the grid in % of display width</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>top</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    <code>0</code>
-                
-                </td>
-            
-
-            <td class="description last"><p>Top offset of the grid in % of display height</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>width</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    <code>1</code>
-                
-                </td>
-            
-
-            <td class="description last"><p>Width of the grid in % of display width</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>height</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    <code>1</code>
-                
-                </td>
-            
-
-            <td class="description last"><p>Height of the grid in % of display height</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>columnsOnScreen</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    <code>1</code>
-                
-                </td>
-            
-
-            <td class="description last"><p>The number of columns which fit into the grids width</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>rowsOnScreen</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    <code>1</code>
-                
-                </td>
-            
-
-            <td class="description last"><p>The number of rows which fit into the grids height</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>columnShift</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    <code>0</code>
-                
-                </td>
-            
-
-            <td class="description last"><p>The number of columns the Grid should be shifted in c direction</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>rowShift</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    <code>1</code>
-                
-                </td>
-            
-
-            <td class="description last"><p>The number of rows the Grid should be shifted in r direction</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-            </td>
+            <td class="description last"><p>Object containing all your displaySettings</p></td>
         </tr>
 
     
@@ -1382,7 +1040,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="griga.js.html">griga.js</a>, <a href="griga.js.html#line232">line 232</a>
+        <a href="griga.js.html">griga.js</a>, <a href="griga.js.html#line236">line 236</a>
     </li></ul></dd>
     
 
@@ -1680,7 +1338,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.6</a> on Sat Oct 24 2020 11:56:09 GMT+0200 (GMT+02:00) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.6</a> on Sun Oct 25 2020 17:44:06 GMT+0100 (GMT+01:00) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
 </footer>
 
 <script>prettyPrint();</script>

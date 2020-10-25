@@ -1,7 +1,7 @@
 import Joi from "@hapi/joi";
 
 /**
- * Class representing a logical grid. Saves References to EntityInstances
+ * Class representing a logical grid. Saves references to entities
  */
 export class Grid {
   /**
@@ -263,34 +263,18 @@ export class Grid {
   }
 
   //only used by EntityMethods
-
   attachEntityInstance( entityInstance ){
     this.removeEntityInstanceFromDetachedData( entityInstance );
     this.addEntityInstanceToGridData( entityInstance );
   }
 
+  //only used by EntityMethods
   detachEntityInstance( entityInstance ){
     this.removeEntityInstanceFromGridData( entityInstance );
     this.addEntityInstanceToDetachedData( entityInstance );
   }
 
 //PUBLIC xD
-
-  getAbsPos( startC, startR, direction ){
-    const absPos = {c: startC, r: startR};
-    if (['top','up'].includes( direction.toLowerCase() )) {
-      absPos.r--;
-    } else if (['right'].includes( direction.toLowerCase() )) {
-      absPos.c++;
-    } else if (['bottom','down'].includes( direction.toLowerCase() )) {
-      absPos.r++;
-    } else if (['left'].includes( direction.toLowerCase() )) {
-      absPos.c--;
-    } else if (['here','stay'].includes( direction.toLowerCase() )) {
-      //nothing
-    }
-    return absPos;
-  }
 
   static get argsSchema(){
     return Joi.object( {
@@ -300,6 +284,15 @@ export class Grid {
     } );
   }
 
+  /**
+   * Constructs a new entity
+   * @param {string} entityName - Name of the CustomEntityClass
+   * @param {*} [params={}] - Params that will be passed in as first argument to the constructor of the CustomEntityClass
+   * @param {Object} [args] - Arguments for the entities intial state. Can still be overwritten in the constructor of the CustomEntityClass before calling super()
+   * @param {boolean} [args.detached=false] - True if the entity should be detached
+   * @param {number} [args.c=0] - C position
+   * @param {number} [args.r=0] - R position
+   */
   newEntityInstance( entityName, params = {}, args = {} ){
     //validate Args
     let validArgs;
@@ -329,13 +322,14 @@ export class Grid {
     return entityInstance;
   }
 
+  //only used by EntityMethods
   deleteEntityInstance( entityInstance ){
     //remove all references to entityInstance
     this.removeEntityInstanceFromAllEntityInstances( entityInstance )
     this.removeEntityInstanceFromEntityData( entityInstance );
-    if (entityInstance.type === 'detached') {
+    if (entityInstance.detached) {
       this.removeEntityInstanceFromDetachedData( entityInstance );
-    } else if (entityInstance.type === 'tile'){
+    } else{
       this.removeEntityInstanceFromGridData( entityInstance );
     }
     this.removeEntityInstanceFromLayerData( entityInstance );
@@ -344,19 +338,8 @@ export class Grid {
     } );
   }
 
-  moveEntityInstance( entityInstance, to ){
-    //get newPos from to argument
-    let newPos = null;
-    if (typeof to === 'object') {//abs. coords {c, r}
-      newPos = to;
-    } else if (typeof to === 'array') {//rel. pos [c, r]
-      newPos = {
-        c: entityInstance.c + to[0],
-        r: entityInstance.r + to[1],
-      }
-    } else if (typeof to === 'string') {//direction string
-      newPos = this.getAbsPos( entityInstance.c, entityInstance.r, to );
-    }
+  //only used by EntityMethods
+  moveEntityInstance( entityInstance, newPos ){
     //validate newPos
     if (newPos.c >= 0 && newPos.c < this.columns
       && newPos.r >= 0 && newPos.r < this.rows) {
@@ -368,6 +351,13 @@ export class Grid {
     }
   }
 
+  /**
+   * Filters and returns all Entities matching the selectorObject
+   * @param {Object} selectorObject - Object containing filter options
+   * @param {absolutePosition} [selectorObject.tile] - Tile the entities need to be on
+   * @param {string} [selectorObject.type] - The Name of the CustomEntityClass the entities should be an instance of
+   * @param {string} [selectorObject.notType] - The Name of the CustomEntityClass the entities should not be an instance of
+   */
   getEntityInstances( selectorObject = {} ){
     let entityInstances = this.allEntityInstances;
     if (selectorObject.hasOwnProperty('tile')) {

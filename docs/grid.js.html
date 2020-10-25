@@ -27,7 +27,7 @@
 
 <nav >
     
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Entity.html">Entity</a><ul class='methods'><li data-type='method'><a href="Entity.html#changeGridDisplaySettings">changeGridDisplaySettings</a></li><li data-type='method'><a href="Entity.html#changeLayer">changeLayer</a></li><li data-type='method'><a href="Entity.html#getCurrentParams">getCurrentParams</a></li><li data-type='method'><a href="Entity.html#move">move</a></li></ul></li><li><a href="Grid.html">Grid</a></li><li><a href="Griga.html">Griga</a><ul class='methods'><li data-type='method'><a href="Griga.html#displayGrid">displayGrid</a></li><li data-type='method'><a href="Griga.html#removeGridFromDisplay">removeGridFromDisplay</a></li></ul></li></ul><h3>Events</h3><ul><li><a href="Entity.html#event:keyDownHandler">keyDownHandler</a></li><li><a href="Entity.html#event:keyUpHandler">keyUpHandler</a></li><li><a href="Entity.html#event:mouseDownHandler">mouseDownHandler</a></li><li><a href="Entity.html#event:mouseMoveHandler">mouseMoveHandler</a></li><li><a href="Entity.html#event:mouseUpHandler">mouseUpHandler</a></li><li><a href="Entity.html#event:renderStartHandler">renderStartHandler</a></li><li><a href="Entity.html#event:sceneLoadedHandler">sceneLoadedHandler</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Entity.html">Entity</a><ul class='methods'><li data-type='method'><a href="Entity.html#attach">attach</a></li><li data-type='method'><a href="Entity.html#changeGridDisplaySettings">changeGridDisplaySettings</a></li><li data-type='method'><a href="Entity.html#changeLayer">changeLayer</a></li><li data-type='method'><a href="Entity.html#delete">delete</a></li><li data-type='method'><a href="Entity.html#detach">detach</a></li><li data-type='method'><a href="Entity.html#getEntityInstancesBeneath">getEntityInstancesBeneath</a></li><li data-type='method'><a href="Entity.html#move">move</a></li><li data-type='method'><a href="Entity.html#subscribeToKeyUp">subscribeToKeyUp</a></li><li data-type='method'><a href="Entity.html#subscribeToMouseMove">subscribeToMouseMove</a></li><li data-type='method'><a href="Entity.html#subscribeToMouseUp">subscribeToMouseUp</a></li><li data-type='method'><a href="Entity.html#subscribeToRenderStart">subscribeToRenderStart</a></li><li data-type='method'><a href="Entity.html#unsubscribeFromKeyUp">unsubscribeFromKeyUp</a></li><li data-type='method'><a href="Entity.html#unsubscribeFromMouseMove">unsubscribeFromMouseMove</a></li><li data-type='method'><a href="Entity.html#unsubscribeFromMouseUp">unsubscribeFromMouseUp</a></li><li data-type='method'><a href="Entity.html#unsubscribeFromRenderStart">unsubscribeFromRenderStart</a></li></ul></li><li><a href="Grid.html">Grid</a><ul class='methods'><li data-type='method'><a href="Grid.html#getEntityInstances">getEntityInstances</a></li><li data-type='method'><a href="Grid.html#newEntityInstance">newEntityInstance</a></li></ul></li><li><a href="Griga.html">Griga</a><ul class='methods'><li data-type='method'><a href="Griga.html#displayGrid">displayGrid</a></li><li data-type='method'><a href="Griga.html#removeGridFromDisplay">removeGridFromDisplay</a></li></ul></li></ul><h3>Events</h3><ul><li><a href="Entity.html#event:getCurrentParams">getCurrentParams</a></li><li><a href="Entity.html#event:keyDownHandler">keyDownHandler</a></li><li><a href="Entity.html#event:keyUpHandler">keyUpHandler</a></li><li><a href="Entity.html#event:mouseDownHandler">mouseDownHandler</a></li><li><a href="Entity.html#event:mouseMoveHandler">mouseMoveHandler</a></li><li><a href="Entity.html#event:mouseUpHandler">mouseUpHandler</a></li><li><a href="Entity.html#event:renderStartHandler">renderStartHandler</a></li><li><a href="Entity.html#event:sceneLoadedHandler">sceneLoadedHandler</a></li></ul><h3><a href="global.html">Global</a></h3>
 </nav>
 
 <div id="main">
@@ -45,7 +45,7 @@
             <pre class="prettyprint source linenums"><code>import Joi from "@hapi/joi";
 
 /**
- * Class representing a logical grid. Saves References to EntityInstances
+ * Class representing a logical grid. Saves references to entities
  */
 export class Grid {
   /**
@@ -307,34 +307,18 @@ export class Grid {
   }
 
   //only used by EntityMethods
-
   attachEntityInstance( entityInstance ){
     this.removeEntityInstanceFromDetachedData( entityInstance );
     this.addEntityInstanceToGridData( entityInstance );
   }
 
+  //only used by EntityMethods
   detachEntityInstance( entityInstance ){
     this.removeEntityInstanceFromGridData( entityInstance );
     this.addEntityInstanceToDetachedData( entityInstance );
   }
 
 //PUBLIC xD
-
-  getAbsPos( startC, startR, direction ){
-    const absPos = {c: startC, r: startR};
-    if (['top','up'].includes( direction.toLowerCase() )) {
-      absPos.r--;
-    } else if (['right'].includes( direction.toLowerCase() )) {
-      absPos.c++;
-    } else if (['bottom','down'].includes( direction.toLowerCase() )) {
-      absPos.r++;
-    } else if (['left'].includes( direction.toLowerCase() )) {
-      absPos.c--;
-    } else if (['here','stay'].includes( direction.toLowerCase() )) {
-      //nothing
-    }
-    return absPos;
-  }
 
   static get argsSchema(){
     return Joi.object( {
@@ -344,6 +328,15 @@ export class Grid {
     } );
   }
 
+  /**
+   * Constructs a new entity
+   * @param {string} entityName - Name of the CustomEntityClass
+   * @param {*} [params={}] - Params that will be passed in as first argument to the constructor of the CustomEntityClass
+   * @param {Object} [args] - Arguments for the entities intial state. Can still be overwritten in the constructor of the CustomEntityClass before calling super()
+   * @param {boolean} [args.detached=false] - True if the entity should be detached
+   * @param {number} [args.c=0] - C position
+   * @param {number} [args.r=0] - R position
+   */
   newEntityInstance( entityName, params = {}, args = {} ){
     //validate Args
     let validArgs;
@@ -373,13 +366,14 @@ export class Grid {
     return entityInstance;
   }
 
+  //only used by EntityMethods
   deleteEntityInstance( entityInstance ){
     //remove all references to entityInstance
     this.removeEntityInstanceFromAllEntityInstances( entityInstance )
     this.removeEntityInstanceFromEntityData( entityInstance );
-    if (entityInstance.type === 'detached') {
+    if (entityInstance.detached) {
       this.removeEntityInstanceFromDetachedData( entityInstance );
-    } else if (entityInstance.type === 'tile'){
+    } else{
       this.removeEntityInstanceFromGridData( entityInstance );
     }
     this.removeEntityInstanceFromLayerData( entityInstance );
@@ -388,19 +382,8 @@ export class Grid {
     } );
   }
 
-  moveEntityInstance( entityInstance, to ){
-    //get newPos from to argument
-    let newPos = null;
-    if (typeof to === 'object') {//abs. coords {c, r}
-      newPos = to;
-    } else if (typeof to === 'array') {//rel. pos [c, r]
-      newPos = {
-        c: entityInstance.c + to[0],
-        r: entityInstance.r + to[1],
-      }
-    } else if (typeof to === 'string') {//direction string
-      newPos = this.getAbsPos( entityInstance.c, entityInstance.r, to );
-    }
+  //only used by EntityMethods
+  moveEntityInstance( entityInstance, newPos ){
     //validate newPos
     if (newPos.c >= 0 &amp;&amp; newPos.c &lt; this.columns
       &amp;&amp; newPos.r >= 0 &amp;&amp; newPos.r &lt; this.rows) {
@@ -412,6 +395,13 @@ export class Grid {
     }
   }
 
+  /**
+   * Filters and returns all Entities matching the selectorObject
+   * @param {Object} selectorObject - Object containing filter options
+   * @param {absolutePosition} [selectorObject.tile] - Tile the entities need to be on
+   * @param {string} [selectorObject.type] - The Name of the CustomEntityClass the entities should be an instance of
+   * @param {string} [selectorObject.notType] - The Name of the CustomEntityClass the entities should not be an instance of
+   */
   getEntityInstances( selectorObject = {} ){
     let entityInstances = this.allEntityInstances;
     if (selectorObject.hasOwnProperty('tile')) {
@@ -538,7 +528,7 @@ export class Grid {
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.6</a> on Sat Oct 24 2020 11:56:09 GMT+0200 (GMT+02:00) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.6</a> on Sun Oct 25 2020 17:44:06 GMT+0100 (GMT+01:00) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
 </footer>
 
 <script>prettyPrint();</script>

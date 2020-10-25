@@ -3,7 +3,7 @@
 <head>
     
     <meta charset="utf-8">
-    <title>Grid - Documentation</title>
+    <title>Global - Documentation</title>
     
     
     <script src="scripts/prettify/prettify.js"></script>
@@ -32,7 +32,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">Grid</h1>
+    <h1 class="page-title">Global</h1>
     
 
     
@@ -45,28 +45,67 @@
 <header>
     
         <h2>
-        Grid
-        </h2>
         
-            <div class="class-description usertext"><p>Class representing a logical grid. Saves references to entities</p></div>
+        </h2>
         
     
 </header>
 
 <article>
     
+        <div class="container-overview">
+        
+            
+
+<dl class="details">
 
     
 
     
 
     
-        <h3 class="subsection-title">Classes</h3>
 
-        <dl>
-            <dt><a href="Grid.html">Grid</a></dt>
-            <dd></dd>
-        </dl>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+            
+
+            
+        
+        </div>
+    
+
+    
+
+    
+
     
     
     
@@ -78,16 +117,14 @@
     
 
     
-        <h3 class="subsection-title">Methods</h3>
+
+    
+        <h3 class="subsection-title">Type Definitions</h3>
 
         
-            
+                
+<h4 class="name" id="absolutePosition">absolutePosition</h4>
 
-    
-
-    <h4 class="name" id="getEntityInstances"><span class="type-signature"></span>getEntityInstances<span class="signature">(selectorObject)</span><span class="type-signature"></span></h4>
-
-    
 
 
 
@@ -97,7 +134,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="grid.js.html">grid.js</a>, <a href="grid.js.html#line361">line 361</a>
+        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#line375">line 375</a>
     </li></ul></dd>
     
 
@@ -137,220 +174,30 @@
 
 
 <div class="description usertext">
-    <p>Filters and returns all Entities matching the selectorObject</p>
+    <p>Object of the form {c, r} representing an absolute position.</p>
 </div>
 
 
 
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
+    <h5>Type:</h5>
+    <ul>
+        <li>
             
-                <td class="name"><code>selectorObject</code></td>
-            
-
-            <td class="type">
-            
-                
 <span class="param-type">Object</span>
 
 
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Object containing filter options</p>
-                <h6>Properties</h6>
-                
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>tile</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="global.html#absolutePosition">absolutePosition</a></span>
+        </li>
+    </ul>
 
 
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"><p>Tile the entities need to be on</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>type</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
 
 
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"><p>The Name of the CustomEntityClass the entities should be an instance of</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>notType</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
 
 
             
-            </td>
-
-            
-                <td class="attributes">
                 
-                    &lt;optional><br>
-                
+<h4 class="name" id="directionString">directionString</h4>
 
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"><p>The Name of the CustomEntityClass the entities should not be an instance of</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-            </td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="newEntityInstance"><span class="type-signature"></span>newEntityInstance<span class="signature">(entityName, params<span class="signature-attributes">opt</span>, args<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
-
-    
 
 
 
@@ -360,7 +207,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="grid.js.html">grid.js</a>, <a href="grid.js.html#line296">line 296</a>
+        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#line365">line 365</a>
     </li></ul></dd>
     
 
@@ -400,157 +247,81 @@
 
 
 <div class="description usertext">
-    <p>Constructs a new entity</p>
+    <p>String containing a direction. Possible are: 'top','up','north'; 'right','east'; 'bottom','down','south'; 'left','west'; 'here','stay'. The directionString isn't case sensitive</p>
 </div>
 
 
 
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-        <th>Default</th>
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
+    <h5>Type:</h5>
+    <ul>
+        <li>
             
-                <td class="name"><code>entityName</code></td>
-            
-
-            <td class="type">
-            
-                
 <span class="param-type">string</span>
 
 
-            
-            </td>
+        </li>
+    </ul>
+
+
+
+
+
 
             
-                <td class="attributes">
                 
+<h4 class="name" id="displaySettings">displaySettings</h4>
 
-                
 
-                
-                </td>
-            
 
-            
-                <td class="default">
-                
-                </td>
-            
 
-            <td class="description last"><p>Name of the CustomEntityClass</p></td>
-        </tr>
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="griga.js.html">griga.js</a>, <a href="griga.js.html#line199">line 199</a>
+    </li></ul></dd>
+    
 
     
 
-        <tr>
-            
-                <td class="name"><code>params</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">*</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    <code>{}</code>
-                
-                </td>
-            
-
-            <td class="description last"><p>Params that will be passed in as first argument to the constructor of the CustomEntityClass</p></td>
-        </tr>
+    
 
     
 
-        <tr>
-            
-                <td class="name"><code>args</code></td>
-            
+    
 
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
 
 
-            
-            </td>
 
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
+    <h5 class="subsection-title">Properties:</h5>
 
-                
+    
 
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last"><p>Arguments for the entities intial state. Can still be overwritten in the constructor of the CustomEntityClass before calling super()</p>
-                <h6>Properties</h6>
-                
-
-<table class="params">
+<table class="props">
     <thead>
     <tr>
         
@@ -576,46 +347,7 @@
 
         <tr>
             
-                <td class="name"><code>detached</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    <code>false</code>
-                
-                </td>
-            
-
-            <td class="description last"><p>True if the entity should be detached</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>c</code></td>
+                <td class="name"><code>left</code></td>
             
 
             <td class="type">
@@ -634,8 +366,6 @@
                 
 
                 
-
-                
                 </td>
             
 
@@ -647,14 +377,14 @@
                 </td>
             
 
-            <td class="description last"><p>C position</p></td>
+            <td class="description last"><p>Left offset of the grid in % of display width</p></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>r</code></td>
+                <td class="name"><code>top</code></td>
             
 
             <td class="type">
@@ -673,6 +403,189 @@
                 
 
                 
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    <code>0</code>
+                
+                </td>
+            
+
+            <td class="description last"><p>Top offset of the grid in % of display height</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>width</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    <code>1</code>
+                
+                </td>
+            
+
+            <td class="description last"><p>Width of the grid in % of display width</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>height</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    <code>1</code>
+                
+                </td>
+            
+
+            <td class="description last"><p>Height of the grid in % of display height</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>columnsOnScreen</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    <code>1</code>
+                
+                </td>
+            
+
+            <td class="description last"><p>The number of columns which fit into the grids width</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>rowsOnScreen</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    <code>1</code>
+                
+                </td>
+            
+
+            <td class="description last"><p>The number of rows which fit into the grids height</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>columnShift</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
 
                 
                 </td>
@@ -686,14 +599,44 @@
                 </td>
             
 
-            <td class="description last"><p>R position</p></td>
+            <td class="description last"><p>The number of columns the Grid should be shifted in c direction</p></td>
         </tr>
 
     
-    </tbody>
-</table>
 
+        <tr>
+            
+                <td class="name"><code>rowShift</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
             </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    <code>1</code>
+                
+                </td>
+            
+
+            <td class="description last"><p>The number of rows the Grid should be shifted in r direction</p></td>
         </tr>
 
     
@@ -707,20 +650,95 @@
 
 
 
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Object</span>
+
+
+        </li>
+    </ul>
 
 
 
 
 
 
+            
+                
+<h4 class="name" id="relativePosition">relativePosition</h4>
 
 
 
 
 
-        
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#line370">line 370</a>
+    </li></ul></dd>
     
 
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>Array of the form [dc, dr] representing a position relative to the entities current position.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Array.&lt;number></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+
+            
     
 
     

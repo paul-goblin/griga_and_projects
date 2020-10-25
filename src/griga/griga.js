@@ -197,18 +197,22 @@ export class Griga {
 //PUBLIC xD
 
   /**
+   * @typedef {Object} displaySettings
+   * @property {number} [left = 0] - Left offset of the grid in % of display width 
+   * @property {number} [top = 0] - Top offset of the grid in % of display height
+     @property {number} [width = 1] - Width of the grid in % of display width 
+     @property {number} [height = 1] - Height of the grid in % of display height 
+     @property {number} [columnsOnScreen = 1] - The number of columns which fit into the grids width
+     @property {number} [rowsOnScreen = 1] - The number of rows which fit into the grids height
+     @property {number} [columnShift = 0] - The number of columns the Grid should be shifted in c direction
+     @property {number} [rowShift = 1] - The number of rows the Grid should be shifted in r direction
+   */
+
+  /**
    * Displays a grid on a display
    * @param {string} displayName - Name of the Display
    * @param {string} gridName - Name of the Grid
-   * @param {Object} displaySettings - Object containing all your displaysettings
-   * @param {number} [displaySettings.left = 0] - Left offset of the grid in % of display width 
-   * @param {number} [displaySettings.top = 0] - Top offset of the grid in % of display height
-     @param {number} [displaySettings.width = 1] - Width of the grid in % of display width 
-     @param {number} [displaySettings.height = 1] - Height of the grid in % of display height 
-     @param {number} [displaySettings.columnsOnScreen = 1] - The number of columns which fit into the grids width
-     @param {number} [displaySettings.rowsOnScreen = 1] - The number of rows which fit into the grids height
-     @param {number} [displaySettings.columnShift = 0] - The number of columns the Grid should be shifted in c direction
-     @param {number} [displaySettings.rowShift = 1] - The number of rows the Grid should be shifted in r direction
+   * @param {displaySettings} displaySettings - Object containing all your displaySettings
    */
   displayGrid( displayName, gridName, displaySettings ){
     //validate displaySettings

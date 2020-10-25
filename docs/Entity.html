@@ -27,7 +27,7 @@
 
 <nav >
     
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Entity.html">Entity</a><ul class='methods'><li data-type='method'><a href="Entity.html#changeGridDisplaySettings">changeGridDisplaySettings</a></li><li data-type='method'><a href="Entity.html#changeLayer">changeLayer</a></li><li data-type='method'><a href="Entity.html#getCurrentParams">getCurrentParams</a></li><li data-type='method'><a href="Entity.html#move">move</a></li></ul></li><li><a href="Grid.html">Grid</a></li><li><a href="Griga.html">Griga</a><ul class='methods'><li data-type='method'><a href="Griga.html#displayGrid">displayGrid</a></li><li data-type='method'><a href="Griga.html#removeGridFromDisplay">removeGridFromDisplay</a></li></ul></li></ul><h3>Events</h3><ul><li><a href="Entity.html#event:keyDownHandler">keyDownHandler</a></li><li><a href="Entity.html#event:keyUpHandler">keyUpHandler</a></li><li><a href="Entity.html#event:mouseDownHandler">mouseDownHandler</a></li><li><a href="Entity.html#event:mouseMoveHandler">mouseMoveHandler</a></li><li><a href="Entity.html#event:mouseUpHandler">mouseUpHandler</a></li><li><a href="Entity.html#event:renderStartHandler">renderStartHandler</a></li><li><a href="Entity.html#event:sceneLoadedHandler">sceneLoadedHandler</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Entity.html">Entity</a><ul class='methods'><li data-type='method'><a href="Entity.html#attach">attach</a></li><li data-type='method'><a href="Entity.html#changeGridDisplaySettings">changeGridDisplaySettings</a></li><li data-type='method'><a href="Entity.html#changeLayer">changeLayer</a></li><li data-type='method'><a href="Entity.html#delete">delete</a></li><li data-type='method'><a href="Entity.html#detach">detach</a></li><li data-type='method'><a href="Entity.html#getEntityInstancesBeneath">getEntityInstancesBeneath</a></li><li data-type='method'><a href="Entity.html#move">move</a></li><li data-type='method'><a href="Entity.html#subscribeToKeyUp">subscribeToKeyUp</a></li><li data-type='method'><a href="Entity.html#subscribeToMouseMove">subscribeToMouseMove</a></li><li data-type='method'><a href="Entity.html#subscribeToMouseUp">subscribeToMouseUp</a></li><li data-type='method'><a href="Entity.html#subscribeToRenderStart">subscribeToRenderStart</a></li><li data-type='method'><a href="Entity.html#unsubscribeFromKeyUp">unsubscribeFromKeyUp</a></li><li data-type='method'><a href="Entity.html#unsubscribeFromMouseMove">unsubscribeFromMouseMove</a></li><li data-type='method'><a href="Entity.html#unsubscribeFromMouseUp">unsubscribeFromMouseUp</a></li><li data-type='method'><a href="Entity.html#unsubscribeFromRenderStart">unsubscribeFromRenderStart</a></li></ul></li><li><a href="Grid.html">Grid</a><ul class='methods'><li data-type='method'><a href="Grid.html#getEntityInstances">getEntityInstances</a></li><li data-type='method'><a href="Grid.html#newEntityInstance">newEntityInstance</a></li></ul></li><li><a href="Griga.html">Griga</a><ul class='methods'><li data-type='method'><a href="Griga.html#displayGrid">displayGrid</a></li><li data-type='method'><a href="Griga.html#removeGridFromDisplay">removeGridFromDisplay</a></li></ul></li></ul><h3>Events</h3><ul><li><a href="Entity.html#event:getCurrentParams">getCurrentParams</a></li><li><a href="Entity.html#event:keyDownHandler">keyDownHandler</a></li><li><a href="Entity.html#event:keyUpHandler">keyUpHandler</a></li><li><a href="Entity.html#event:mouseDownHandler">mouseDownHandler</a></li><li><a href="Entity.html#event:mouseMoveHandler">mouseMoveHandler</a></li><li><a href="Entity.html#event:mouseUpHandler">mouseUpHandler</a></li><li><a href="Entity.html#event:renderStartHandler">renderStartHandler</a></li><li><a href="Entity.html#event:sceneLoadedHandler">sceneLoadedHandler</a></li></ul><h3><a href="global.html">Global</a></h3>
 </nav>
 
 <div id="main">
@@ -2212,7 +2212,7 @@
 
     
 
-    <h4 class="name" id="changeGridDisplaySettings"><span class="type-signature"></span>changeGridDisplaySettings<span class="signature">(displayName, displaySettings)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="attach"><span class="type-signature"></span>attach<span class="signature">(c, r)</span><span class="type-signature"></span></h4>
 
     
 
@@ -2224,7 +2224,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#line330">line 330</a>
+        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#line347">line 347</a>
     </li></ul></dd>
     
 
@@ -2262,6 +2262,169 @@
 
 
 
+
+<div class="description usertext">
+    <p>Attaches the detached entity to the grid at (c, r)</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>c</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Column</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>r</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Row</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="changeGridDisplaySettings"><span class="type-signature"></span>changeGridDisplaySettings<span class="signature">(displayName, displaySettings)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#line331">line 331</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>Changes the displaySettings of this.grid on a display. Settings you don't specify stay the same</p>
+</div>
 
 
 
@@ -2327,7 +2490,7 @@
             <td class="type">
             
                 
-<span class="param-type">*</span>
+<span class="param-type"><a href="global.html#displaySettings">displaySettings</a></span>
 
 
             
@@ -2337,7 +2500,7 @@
 
             
 
-            <td class="description last"><p>displaySettingsObject</p></td>
+            <td class="description last"><p>Object containing all displaySettings you wan't to change</p></td>
         </tr>
 
     
@@ -2379,7 +2542,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#line319">line 319</a>
+        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#line320">line 320</a>
     </li></ul></dd>
     
 
@@ -2503,7 +2666,7 @@
 
     
 
-    <h4 class="name" id="getCurrentParams"><span class="type-signature"></span>getCurrentParams<span class="signature">()</span><span class="type-signature"> &rarr; {Object.&lt;string, *>}</span></h4>
+    <h4 class="name" id="delete"><span class="type-signature"></span>delete<span class="signature">()</span><span class="type-signature"></span></h4>
 
     
 
@@ -2515,7 +2678,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#line244">line 244</a>
+        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#line338">line 338</a>
     </li></ul></dd>
     
 
@@ -2555,7 +2718,181 @@
 
 
 <div class="description usertext">
-    <p>Returns the params object used by grid.getCurrentSceneData. Should be overwritten if you want to save params at grid.getCurrentSceneData</p>
+    <p>Deletes the entity</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="detach"><span class="type-signature"></span>detach<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#line359">line 359</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>Detaches the attached entity. The position of the entity will stay the same</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="getEntityInstancesBeneath"><span class="type-signature"></span>getEntityInstancesBeneath<span class="signature">()</span><span class="type-signature"> &rarr; {Array.&lt;<a href="Entity.html#~CustomEntityClass">Entity~CustomEntityClass</a>>}</span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#line431">line 431</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>Returns an Array of all entities beneath this entity. Only works for detached entities</p>
 </div>
 
 
@@ -2593,7 +2930,7 @@
     </dt>
     <dd>
         
-<span class="param-type">Object.&lt;string, *></span>
+<span class="param-type">Array.&lt;<a href="Entity.html#~CustomEntityClass">Entity~CustomEntityClass</a>></span>
 
 
     </dd>
@@ -2608,7 +2945,7 @@
 
     
 
-    <h4 class="name" id="move"><span class="type-signature"></span>move<span class="signature">(to)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="move"><span class="type-signature"></span>move<span class="signature">(newPosition)</span><span class="type-signature"></span></h4>
 
     
 
@@ -2620,7 +2957,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#line357">line 357</a>
+        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#line410">line 410</a>
     </li></ul></dd>
     
 
@@ -2660,7 +2997,7 @@
 
 
 <div class="description usertext">
-    <p>Moves attached entityInstance on this.grid</p>
+    <p>Moves entity to newPosition</p>
 </div>
 
 
@@ -2698,7 +3035,149 @@
 
         <tr>
             
-                <td class="name"><code>to</code></td>
+                <td class="name"><code>newPosition</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#directionString">directionString</a></span>
+|
+
+<span class="param-type"><a href="global.html#relativePosition">relativePosition</a></span>
+|
+
+<span class="param-type"><a href="global.html#absolutePosition">absolutePosition</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Where the entity should move to</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="subscribeToKeyUp"><span class="type-signature"></span>subscribeToKeyUp<span class="signature">(key)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#line439">line 439</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>Subscribes the Entity to the keyUp event for the specified key</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>key</code></td>
             
 
             <td class="type">
@@ -2714,12 +3193,866 @@
 
             
 
-            <td class="description last"><p>Direction-string, relative-position [dc, dr], or absolute-position Object {c, r}</p></td>
+            <td class="description last"><p>key</p></td>
         </tr>
 
     
     </tbody>
 </table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="subscribeToMouseMove"><span class="type-signature"></span>subscribeToMouseMove<span class="signature">(displayName)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#line488">line 488</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>Subscribes the entity to the mouseMove event on the specified display</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>displayName</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Name of the display</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="subscribeToMouseUp"><span class="type-signature"></span>subscribeToMouseUp<span class="signature">(displayName)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#line471">line 471</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>Subscribes the entity to the mouseUp event on the specified display</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>displayName</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Name of the display</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="subscribeToRenderStart"><span class="type-signature"></span>subscribeToRenderStart<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#line455">line 455</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>Subscribes the entity to the renderStart event</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="unsubscribeFromKeyUp"><span class="type-signature"></span>unsubscribeFromKeyUp<span class="signature">(key)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#line447">line 447</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>Unsubscribes the Entity from the keyUp event for the specified key</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>key</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>key</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="unsubscribeFromMouseMove"><span class="type-signature"></span>unsubscribeFromMouseMove<span class="signature">(displayName)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#line496">line 496</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>Unsubscribes the entity from the mouseMove event on the specified display</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>displayName</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Name of the display</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="unsubscribeFromMouseUp"><span class="type-signature"></span>unsubscribeFromMouseUp<span class="signature">(displayName)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#line479">line 479</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>Unsubscribes the entity from the mouseUp event on the specified display</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>displayName</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Name of the display</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="unsubscribeFromRenderStart"><span class="type-signature"></span>unsubscribeFromRenderStart<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#line462">line 462</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>Unsubscribes the entity from the renderStart event</p>
+</div>
+
+
+
+
+
+
+
+
+
 
 
 
@@ -2829,6 +4162,111 @@
 
     
 
+    <h4 class="name" id="event:getCurrentParams">getCurrentParams</h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#line245">line 245</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>Returns the params object used by grid.getCurrentSceneData. Should be overwritten if you want to save params at grid.getCurrentSceneData</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Object.&lt;string, *></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
     <h4 class="name" id="event:keyDownHandler">keyDownHandler</h4>
 
     
@@ -2841,7 +4279,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#line271">line 271</a>
+        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#line272">line 272</a>
     </li></ul></dd>
     
 
@@ -2977,7 +4415,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#line279">line 279</a>
+        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#line280">line 280</a>
     </li></ul></dd>
     
 
@@ -3113,7 +4551,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#line290">line 290</a>
+        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#line291">line 291</a>
     </li></ul></dd>
     
 
@@ -3295,7 +4733,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#line310">line 310</a>
+        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#line311">line 311</a>
     </li></ul></dd>
     
 
@@ -3477,7 +4915,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#line300">line 300</a>
+        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#line301">line 301</a>
     </li></ul></dd>
     
 
@@ -3659,7 +5097,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#line253">line 253</a>
+        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#line254">line 254</a>
     </li></ul></dd>
     
 
@@ -3795,7 +5233,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#line262">line 262</a>
+        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#line263">line 263</a>
     </li></ul></dd>
     
 
@@ -3881,7 +5319,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.6</a> on Sat Oct 24 2020 11:56:09 GMT+0200 (GMT+02:00) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.6</a> on Sun Oct 25 2020 17:44:06 GMT+0100 (GMT+01:00) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
 </footer>
 
 <script>prettyPrint();</script>

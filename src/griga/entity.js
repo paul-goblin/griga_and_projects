@@ -240,6 +240,7 @@ export class Entity {
   /**
    * Returns the params object used by grid.getCurrentSceneData. Should be overwritten if you want to save params at grid.getCurrentSceneData
    * @returns {Object<string, *>}
+   * @event
    */
   getCurrentParams() { //used to getCurrentSceneData
     return {}; 
@@ -323,18 +324,26 @@ export class Entity {
   }
 
   /**
-   * 
+   * Changes the displaySettings of this.grid on a display. Settings you don't specify stay the same
    * @param {string} displayName - Name of the display to change the gridDisplaySettings
-   * @param {*} displaySettings - displaySettingsObject
+   * @param {displaySettings} displaySettings - Object containing all displaySettings you wan't to change
    */
   changeGridDisplaySettings( displayName, displaySettings ){
     this.grid.displays[ displayName ].changeGridDisplaySettings( this.grid.name, displaySettings );
   }
 
+  /**
+   * Deletes the entity
+   */
   delete(){
     this.grid.deleteEntityInstance( this );
   }
 
+  /**
+   * Attaches the detached entity to the grid at (c, r)
+   * @param {number} c - Column
+   * @param {number} r - Row
+   */
   attach( c, r ){
     if (!this.detached){ return console.warn('can\'t attach an already attached Entity') };
 
@@ -344,6 +353,9 @@ export class Entity {
     this.grid.attachEntityInstance( this );
   }
 
+  /**
+   * Detaches the attached entity. The position of the entity will stay the same
+   */
   detach(){
     if (this.detached){ return console.warn('can\'t detach an already detached Entity') };
     this.detached = true;
@@ -351,56 +363,136 @@ export class Entity {
   }
 
   /**
-   * Moves attached entityInstance on this.grid
-   * @param {string} to - Direction-string, relative-position [dc, dr], or absolute-position Object {c, r}
+   * String containing a direction. Possible are: 'top','up','north'; 'right','east'; 'bottom','down','south'; 'left','west'; 'here','stay'. The directionString isn't case sensitive
+   * @typedef {string} directionString
    */
-  move( to ){
-    this.grid.moveEntityInstance( this, to );
+
+  /**
+   * Array of the form [dc, dr] representing a position relative to the entities current position.
+   * @typedef {number[]} relativePosition
+   */
+
+  /**
+   * Object of the form {c, r} representing an absolute position.
+   * @typedef {Object} absolutePosition
+   */
+
+  formatPositionAsAbsolutePosition( position ){
+    let absPos = null;
+    if (typeof position === 'object') {//abs. coords {c, r}
+      absPos = position;
+    } else if (typeof position === 'array') {//rel. pos [dc, dr]
+      absPos = {
+        c: entityInstance.c + position[0],
+        r: entityInstance.r + position[1],
+      }
+    } else if (typeof position === 'string') {//direction string
+      absPos = absPos = {c: this.c, r: this.r};
+      if (['top','up','north'].includes( position.toLowerCase() )) {
+        absPos.r--;
+      } else if (['right','east'].includes( position.toLowerCase() )) {
+        absPos.c++;
+      } else if (['bottom','down','south'].includes( position.toLowerCase() )) {
+        absPos.r++;
+      } else if (['left','west'].includes( position.toLowerCase() )) {
+        absPos.c--;
+      } else if (['here','stay'].includes( position.toLowerCase() )) {
+        //nothing
+      }
+    }
+    return absPos;
   }
 
+  /**
+   * Moves entity to newPosition
+   * @param {directionString|relativePosition|absolutePosition} newPosition - Where the entity should move to
+   */
+  move( newPosition ){
+    newPosition = this.formatPositionAsAbsolutePosition( newPosition );
+    if (this.detached){
+      this.c = newPosition.c;
+      this.r = newPosition.r;
+    }
+    else { this.grid.moveEntityInstance( this, newPosition ) };
+  }
+
+  //toDo
   addText( id, text, size, color, fontFamily, cOffset, rOffset ){
     this.texts[ id ] = new Text( id, text, size, color, fontFamily, cOffset, rOffset );
   }
-
   removeText( id ){
     delete this.texts[ id ];
   }
 
+  /**
+   * Returns an Array of all entities beneath this entity. Only works for detached entities
+   * @returns {Entity~CustomEntityClass[]}
+   */
   getEntityInstancesBeneath(){
     return this.grid.getEntityInstancesBeneathDetachedEntityInstance( this );
   }
 
+  /**
+   * Subscribes the Entity to the keyUp event for the specified key
+   * @param {string} key - key
+   */
   subscribeToKeyUp( key ){
     this.keyUpSubscriptions.push( key );
     this.grid.subscribeEntityInstanceToKeyUp( this, key );
   }
+  /**
+   * Unsubscribes the Entity from the keyUp event for the specified key
+   * @param {string} key - key
+   */
   unsubscribeFromKeyUp( key ){
     this.keyUpSubscriptions.splice( this.keyUpSubscriptions.indexOf( key ), 1 );
     this.grid.unsubscribeEntityInstanceFromKeyUp( this, key );
   }
 
+  /**
+   * Subscribes the entity to the renderStart event
+   */
   subscribeToRenderStart(){
     this.renderStartSubscription = true;
     this.grid.subscribeEntityInstanceToRenderStart( this );
   }
+  /**
+   * Unsubscribes the entity from the renderStart event
+   */
   unsubscribeFromRenderStart(){
     this.renderStartSubscription = false;
     this.grid.unsubscribeEntityInstanceFromRenderStart( this );
   }
 
+  /**
+   * Subscribes the entity to the mouseUp event on the specified display
+   * @param {string} displayName - Name of the display
+   */
   subscribeToMouseUp( displayName ){
     this.mouseUpSubscriptions.push( displayName );
     this.grid.subscribeEntityInstanceToMouseUp( this, displayName );
   }
+  /**
+   * Unsubscribes the entity from the mouseUp event on the specified display
+   * @param {string} displayName - Name of the display
+   */
   unsubscribeFromMouseUp( displayName ){
     this.mouseUpSubscriptions.splice( this.mouseUpSubscriptions.indexOf( displayName ), 1 );
     this.grid.unsubscribeEntityInstanceFromMouseUp( this, displayName );
   }
 
+  /**
+   * Subscribes the entity to the mouseMove event on the specified display
+   * @param {string} displayName - Name of the display
+   */
   subscribeToMouseMove( displayName ){
     this.mouseMoveSubscriptions.push( displayName );
     this.grid.subscribeEntityInstanceToMouseMove( this, displayName );
   }
+  /**
+   * Unsubscribes the entity from the mouseMove event on the specified display
+   * @param {string} displayName - Name of the display
+   */
   unsubscribeFromMouseMove( displayName ){
     this.mouseMoveSubscriptions.splice( this.mouseMoveSubscriptions.indexOf( displayName ), 1 );
     this.grid.unsubscribeEntityInstanceFromMouseMove( this, displayName );

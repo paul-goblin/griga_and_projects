@@ -27,7 +27,7 @@
 
 <nav >
     
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Entity.html">Entity</a><ul class='methods'><li data-type='method'><a href="Entity.html#changeGridDisplaySettings">changeGridDisplaySettings</a></li><li data-type='method'><a href="Entity.html#changeLayer">changeLayer</a></li><li data-type='method'><a href="Entity.html#getCurrentParams">getCurrentParams</a></li><li data-type='method'><a href="Entity.html#move">move</a></li></ul></li><li><a href="Grid.html">Grid</a></li><li><a href="Griga.html">Griga</a><ul class='methods'><li data-type='method'><a href="Griga.html#displayGrid">displayGrid</a></li><li data-type='method'><a href="Griga.html#removeGridFromDisplay">removeGridFromDisplay</a></li></ul></li></ul><h3>Events</h3><ul><li><a href="Entity.html#event:keyDownHandler">keyDownHandler</a></li><li><a href="Entity.html#event:keyUpHandler">keyUpHandler</a></li><li><a href="Entity.html#event:mouseDownHandler">mouseDownHandler</a></li><li><a href="Entity.html#event:mouseMoveHandler">mouseMoveHandler</a></li><li><a href="Entity.html#event:mouseUpHandler">mouseUpHandler</a></li><li><a href="Entity.html#event:renderStartHandler">renderStartHandler</a></li><li><a href="Entity.html#event:sceneLoadedHandler">sceneLoadedHandler</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Entity.html">Entity</a><ul class='methods'><li data-type='method'><a href="Entity.html#attach">attach</a></li><li data-type='method'><a href="Entity.html#changeGridDisplaySettings">changeGridDisplaySettings</a></li><li data-type='method'><a href="Entity.html#changeLayer">changeLayer</a></li><li data-type='method'><a href="Entity.html#delete">delete</a></li><li data-type='method'><a href="Entity.html#detach">detach</a></li><li data-type='method'><a href="Entity.html#getEntityInstancesBeneath">getEntityInstancesBeneath</a></li><li data-type='method'><a href="Entity.html#move">move</a></li><li data-type='method'><a href="Entity.html#subscribeToKeyUp">subscribeToKeyUp</a></li><li data-type='method'><a href="Entity.html#subscribeToMouseMove">subscribeToMouseMove</a></li><li data-type='method'><a href="Entity.html#subscribeToMouseUp">subscribeToMouseUp</a></li><li data-type='method'><a href="Entity.html#subscribeToRenderStart">subscribeToRenderStart</a></li><li data-type='method'><a href="Entity.html#unsubscribeFromKeyUp">unsubscribeFromKeyUp</a></li><li data-type='method'><a href="Entity.html#unsubscribeFromMouseMove">unsubscribeFromMouseMove</a></li><li data-type='method'><a href="Entity.html#unsubscribeFromMouseUp">unsubscribeFromMouseUp</a></li><li data-type='method'><a href="Entity.html#unsubscribeFromRenderStart">unsubscribeFromRenderStart</a></li></ul></li><li><a href="Grid.html">Grid</a><ul class='methods'><li data-type='method'><a href="Grid.html#getEntityInstances">getEntityInstances</a></li><li data-type='method'><a href="Grid.html#newEntityInstance">newEntityInstance</a></li></ul></li><li><a href="Griga.html">Griga</a><ul class='methods'><li data-type='method'><a href="Griga.html#displayGrid">displayGrid</a></li><li data-type='method'><a href="Griga.html#removeGridFromDisplay">removeGridFromDisplay</a></li></ul></li></ul><h3>Events</h3><ul><li><a href="Entity.html#event:getCurrentParams">getCurrentParams</a></li><li><a href="Entity.html#event:keyDownHandler">keyDownHandler</a></li><li><a href="Entity.html#event:keyUpHandler">keyUpHandler</a></li><li><a href="Entity.html#event:mouseDownHandler">mouseDownHandler</a></li><li><a href="Entity.html#event:mouseMoveHandler">mouseMoveHandler</a></li><li><a href="Entity.html#event:mouseUpHandler">mouseUpHandler</a></li><li><a href="Entity.html#event:renderStartHandler">renderStartHandler</a></li><li><a href="Entity.html#event:sceneLoadedHandler">sceneLoadedHandler</a></li></ul><h3><a href="global.html">Global</a></h3>
 </nav>
 
 <div id="main">
@@ -241,18 +241,22 @@ export class Griga {
 //PUBLIC xD
 
   /**
+   * @typedef {Object} displaySettings
+   * @property {number} [left = 0] - Left offset of the grid in % of display width 
+   * @property {number} [top = 0] - Top offset of the grid in % of display height
+     @property {number} [width = 1] - Width of the grid in % of display width 
+     @property {number} [height = 1] - Height of the grid in % of display height 
+     @property {number} [columnsOnScreen = 1] - The number of columns which fit into the grids width
+     @property {number} [rowsOnScreen = 1] - The number of rows which fit into the grids height
+     @property {number} [columnShift = 0] - The number of columns the Grid should be shifted in c direction
+     @property {number} [rowShift = 1] - The number of rows the Grid should be shifted in r direction
+   */
+
+  /**
    * Displays a grid on a display
    * @param {string} displayName - Name of the Display
    * @param {string} gridName - Name of the Grid
-   * @param {Object} displaySettings - Object containing all your displaysettings
-   * @param {number} [displaySettings.left = 0] - Left offset of the grid in % of display width 
-   * @param {number} [displaySettings.top = 0] - Top offset of the grid in % of display height
-     @param {number} [displaySettings.width = 1] - Width of the grid in % of display width 
-     @param {number} [displaySettings.height = 1] - Height of the grid in % of display height 
-     @param {number} [displaySettings.columnsOnScreen = 1] - The number of columns which fit into the grids width
-     @param {number} [displaySettings.rowsOnScreen = 1] - The number of rows which fit into the grids height
-     @param {number} [displaySettings.columnShift = 0] - The number of columns the Grid should be shifted in c direction
-     @param {number} [displaySettings.rowShift = 1] - The number of rows the Grid should be shifted in r direction
+   * @param {displaySettings} displaySettings - Object containing all your displaySettings
    */
   displayGrid( displayName, gridName, displaySettings ){
     //validate displaySettings
@@ -292,7 +296,7 @@ export class Griga {
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.6</a> on Sat Oct 24 2020 11:56:09 GMT+0200 (GMT+02:00) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.6</a> on Sun Oct 25 2020 17:44:06 GMT+0100 (GMT+01:00) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
 </footer>
 
 <script>prettyPrint();</script>
