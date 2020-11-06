@@ -383,7 +383,11 @@ export class Grid {
     return entityInstances;
   }
 
-  //detached collision
+  /**
+   * gets all detached entities which are "under" the coordinates (c, r)
+   * @param {number} c - C coordinate
+   * @param {number} r - R coordinate
+   */
   getDetachedEntityInstancesByCoordinates( c, r ){
     const entityInstances = this.detachedData.filter( entityInstance => {
       return (c > entityInstance.c && c < entityInstance.c+entityInstance.width
@@ -392,6 +396,7 @@ export class Grid {
     return entityInstances;
   }
 
+  //only used by entity methods
   getEntityInstancesBeneathDetachedEntityInstance( detachedEntityInstance ){
     const startC = Math.floor( detachedEntityInstance.c );
     const endC = detachedEntityInstance.c + detachedEntityInstance.width;
@@ -409,7 +414,10 @@ export class Grid {
     return entityInstances;
   }
 
-  //sceneStuff
+  /**
+   * loads a scene into the grid
+   * @param {Grid~sceneData} sceneData - SceneData Object
+   */
   loadScene( sceneData ){
     //TODO detached
 
@@ -428,6 +436,22 @@ export class Grid {
     this.sceneLoadedHandler();
   }
 
+  /**
+   * @typedef {Object} Grid~sceneData
+   * @property {Array[]} detached - Array containing data for a detached entity
+   * @property {string} detached.0 - Name of the CustomEntityClass
+   * @property {any} detached.1 - Entity params
+   * @property {Object} detached.2 - Position of the detached Entity
+   * @property {number} [detached.2.c=0] - C position
+   * @property {number} [detached.2.r=0] - R position
+   * @property {Array[][]} attached - Array inside a 2D array representing all [c, r] tiles on the grid containing data for an attached entity
+   * @property {string} attached.0 - Name of the CustomEntityClass
+   * @property {any} attached.1 - Entity params
+   */
+
+  /**
+   * clears the Scene, all entites get deleted
+   */
   clearScene(){
     this.allEntityInstances = [];
     this.entityData = {};
@@ -444,6 +468,10 @@ export class Grid {
     this.mouseMoveSubscriptions = {};
   }
 
+  /**
+   * gets the current state of the grid as sceneData. If you have entites which should save parameters in the sceneData, use (overwrite) the getCurrentParams method of Entity
+   * @returns {Grid~sceneData}
+   */
   getCurrentSceneData(){
     const sceneData = {
       detached: [],
@@ -463,6 +491,7 @@ export class Grid {
     return sceneData;
   }
 
+  //only used by grid mouse event xD
   resetMouse(){
     this.mouse = {
       displayName: null,
