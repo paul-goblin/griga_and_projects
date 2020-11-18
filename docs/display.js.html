@@ -1,4 +1,48 @@
-class GridLink {
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>display.js - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Display.html">Display</a></li><li><a href="Entity.html">Entity</a><ul class='methods'><li data-type='method'><a href="Entity.html#addText">addText</a></li><li data-type='method'><a href="Entity.html#attach">attach</a></li><li data-type='method'><a href="Entity.html#changeGridDisplaySettings">changeGridDisplaySettings</a></li><li data-type='method'><a href="Entity.html#changeLayer">changeLayer</a></li><li data-type='method'><a href="Entity.html#delete">delete</a></li><li data-type='method'><a href="Entity.html#detach">detach</a></li><li data-type='method'><a href="Entity.html#getEntityInstancesBeneath">getEntityInstancesBeneath</a></li><li data-type='method'><a href="Entity.html#move">move</a></li><li data-type='method'><a href="Entity.html#removeText">removeText</a></li><li data-type='method'><a href="Entity.html#subscribeToKeyUp">subscribeToKeyUp</a></li><li data-type='method'><a href="Entity.html#subscribeToMouseMove">subscribeToMouseMove</a></li><li data-type='method'><a href="Entity.html#subscribeToMouseUp">subscribeToMouseUp</a></li><li data-type='method'><a href="Entity.html#subscribeToRenderStart">subscribeToRenderStart</a></li><li data-type='method'><a href="Entity.html#unsubscribeFromKeyUp">unsubscribeFromKeyUp</a></li><li data-type='method'><a href="Entity.html#unsubscribeFromMouseMove">unsubscribeFromMouseMove</a></li><li data-type='method'><a href="Entity.html#unsubscribeFromMouseUp">unsubscribeFromMouseUp</a></li><li data-type='method'><a href="Entity.html#unsubscribeFromRenderStart">unsubscribeFromRenderStart</a></li></ul></li><li><a href="Grid.html">Grid</a><ul class='methods'><li data-type='method'><a href="Grid.html#clearScene">clearScene</a></li><li data-type='method'><a href="Grid.html#getCurrentSceneData">getCurrentSceneData</a></li><li data-type='method'><a href="Grid.html#getDetachedEntityInstancesByCoordinates">getDetachedEntityInstancesByCoordinates</a></li><li data-type='method'><a href="Grid.html#getEntityInstances">getEntityInstances</a></li><li data-type='method'><a href="Grid.html#loadScene">loadScene</a></li><li data-type='method'><a href="Grid.html#newEntityInstance">newEntityInstance</a></li></ul></li><li><a href="Griga.html">Griga</a><ul class='methods'><li data-type='method'><a href="Griga.html#displayGrid">displayGrid</a></li><li data-type='method'><a href="Griga.html#removeGridFromDisplay">removeGridFromDisplay</a></li></ul></li><li><a href="Text.html">Text</a></li></ul><h3>Events</h3><ul><li><a href="Entity.html#event:getCurrentParams">getCurrentParams</a></li><li><a href="Entity.html#event:keyDownHandler">keyDownHandler</a></li><li><a href="Entity.html#event:keyUpHandler">keyUpHandler</a></li><li><a href="Entity.html#event:mouseDownHandler">mouseDownHandler</a></li><li><a href="Entity.html#event:mouseMoveHandler">mouseMoveHandler</a></li><li><a href="Entity.html#event:mouseUpHandler">mouseUpHandler</a></li><li><a href="Entity.html#event:renderStartHandler">renderStartHandler</a></li><li><a href="Entity.html#event:sceneLoadedHandler">sceneLoadedHandler</a></li></ul><h3><a href="global.html">Global</a></h3>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">display.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>class GridLink {
   constructor( gridInstance, displaySettings, display ){
     this.gridInstance = gridInstance;
     this.displaySettings = displaySettings;
@@ -193,8 +237,8 @@ export class Display {
     Object.values(this.linkedGrids).forEach( grid => {
       const gridMouseX = this.mouseX - grid.leftInPx + grid.xShift;
       const gridMouseY = this.mouseY - grid.topInPx + grid.yShift;
-      if (gridMouseX >= grid.xShift && gridMouseX < grid.xShift + grid.widthInPx
-       && gridMouseY >= grid.yShift && gridMouseY < grid.yShift + grid.heightInPx) {
+      if (gridMouseX >= grid.xShift &amp;&amp; gridMouseX &lt; grid.xShift + grid.widthInPx
+       &amp;&amp; gridMouseY >= grid.yShift &amp;&amp; gridMouseY &lt; grid.yShift + grid.heightInPx) {
         if (grid.gridInstance.mouse.displayName !== this.name) {
           this.gridsInHover.push( grid.gridInstance.name );
         }
@@ -213,8 +257,8 @@ export class Display {
     Object.values(this.linkedGrids).forEach( grid => {
       const gridMouseX = this.mouseX - grid.leftInPx;
       const gridMouseY = this.mouseY - grid.topInPx;
-      if (gridMouseX >= 0 && gridMouseX < grid.widthInPx
-       && gridMouseY >= 0 && gridMouseY < grid.heightInPx) {
+      if (gridMouseX >= 0 &amp;&amp; gridMouseX &lt; grid.widthInPx
+       &amp;&amp; gridMouseY >= 0 &amp;&amp; gridMouseY &lt; grid.heightInPx) {
         grid.gridInstance.mouseDownHandler( this.name );
       }
     } );
@@ -223,10 +267,34 @@ export class Display {
     Object.values(this.linkedGrids).forEach( grid => {
       const gridMouseX = this.mouseX - grid.leftInPx;
       const gridMouseY = this.mouseY - grid.topInPx;
-      if (gridMouseX >= 0 && gridMouseX < grid.widthInPx
-       && gridMouseY >= 0 && gridMouseY < grid.heightInPx) {
+      if (gridMouseX >= 0 &amp;&amp; gridMouseX &lt; grid.widthInPx
+       &amp;&amp; gridMouseY >= 0 &amp;&amp; gridMouseY &lt; grid.heightInPx) {
         grid.gridInstance.mouseUpHandler( this.name );
       }
     } );
   }
-}
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.6</a> on Wed Nov 18 2020 17:58:37 GMT+0100 (GMT+01:00) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+
+
+</body>
+</html>

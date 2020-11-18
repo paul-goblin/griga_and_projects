@@ -1,18 +1,36 @@
 const Joi = require('@hapi/joi');
 
+/**
+ * @class
+ * @classdesc Represents a Text. To create a Text use the Entity.addText function
+ */
 class Text {
-  constructor( id, text, size, color, fontFamily, cOffset, rOffset ){
-    this.id = id;
-    this.text = text || "Text";
-    this.size = size || 1;
-    this.color = color || "black";
-    this.fontFamily = fontFamily || "arial";
-    this.cOffset = cOffset || 0;
-    this.rOffset = rOffset || 0;
+  /**
+   * @hideconstructor
+   */
+  constructor( textSettings ){
+    this.id = textSettings.id;
+    this.text = textSettings.text || "Text";
+    this.size = textSettings.size || 1;
+    this.color = textSettings.color || "black";
+    this.fontFamily = textSettings.fontFamily || "arial";
+    this.cOffset = textSettings.cOffset || 0;
+    this.rOffset = textSettings.rOffset || 0;
   }
 }
+ /**
+   * @typedef {Object} Text~textSettings
+   * @property {string} id - Id of the text
+   * @property {string} text - The actual text
+   * @property {number} size - Height of the text in rows
+   * @property {string} color - Color of the text (any stadard color format should work)
+   * @property {string} fontFamily - FontFamily of the text
+   * @property {number} cOffset - cOffset of the text
+   * @property {number} rOffset - rOffset of the text
+   */
+
 /**
- * Base class for all Entities. CustomEntityClasses (Childs of Entity) can be passed in with the grigaConfig when initializing Griga
+ * @classdesc Base class for all Entities. CustomEntityClasses (Childs of Entity) can be passed in with the grigaConfig when initializing Griga
  */
 export class Entity {
   //images
@@ -416,10 +434,17 @@ export class Entity {
     else { this.grid.moveEntityInstance( this, newPosition ) };
   }
 
-  //toDo
-  addText( id, text, size, color, fontFamily, cOffset, rOffset ){
-    this.texts[ id ] = new Text( id, text, size, color, fontFamily, cOffset, rOffset );
+  /**
+   * Adds a text to the entity
+   * @param {Text~textSettings} textSettings 
+   */
+  addText( textSettings ){
+    this.texts[ id ] = new Text( textSettings );
   }
+  /**
+   * Removes a text from the entity
+   * @param {string} id 
+   */
   removeText( id ){
     delete this.texts[ id ];
   }
