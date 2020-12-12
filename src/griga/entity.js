@@ -105,11 +105,13 @@ export class Entity {
     //set Properties
     /**
      * @description The entities c position
+     * @readonly
      * @type {number}
      */
     this.c = args.c;
     /**
      * @description The entities r position
+     * @readonly
      * @type {number}
      */
     this.r = args.r;
@@ -131,11 +133,13 @@ export class Entity {
     this.height = validParams.height;
     /**
      * @description Displayed cOffset of the entity in columns
+     * @readonly
      * @type {number}
      */
     this.cOffset = validParams.cOffset;
     /**
      * @description Displayed rOffset of the entity in rows
+     * @readonly
      * @type {number}
      */
     this.rOffset = validParams.rOffset;
@@ -351,6 +355,22 @@ export class Entity {
   }
 
   /**
+   * Sets the entities cOffset property
+   * @param {number} cOffset 
+   */
+  setCOffset( cOffset ){
+    this.cOffset = cOffset;
+  }
+  
+  /**
+   * Sets the entities rOffset property
+   * @param {number} rOffset 
+   */
+  setROffset( rOffset ){
+    this.rOffset = rOffset;
+  }
+
+  /**
    * Deletes the entity
    */
   delete(){
@@ -393,8 +413,15 @@ export class Entity {
   /**
    * Object of the form {c, r} representing an absolute position.
    * @typedef {Object} absolutePosition
+   * @property {number} c
+   * @property {number} r
    */
 
+  /**
+   * Turns any position into a absolutePosition
+   * @param {directionString|relativePosition|absolutePosition} position 
+   * @returns {absolutePosition} absolutePosition
+   */
   formatPositionAsAbsolutePosition( position ){
     let absPos = null;
     if (typeof position === 'object') {//abs. coords {c, r}

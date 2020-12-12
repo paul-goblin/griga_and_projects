@@ -51,7 +51,7 @@ class Warrior extends Entity{
   keyDownHandler( key ){
     console.log( key );
     if(mode == "play"){
-      var target = this.grid.getAbsPos(this.c, this.r, key.slice(5))
+      var target = this.formatPositionAsAbsolutePosition( key.slice(5) );
       var x = this.grid.getEntityInstances( {
         tile: target
       } ).map( instance => instance.constructor.name )
