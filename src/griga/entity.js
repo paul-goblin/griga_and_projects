@@ -21,12 +21,12 @@ class Text {
  /**
    * @typedef {Object} Text~textSettings
    * @property {string} id - Id of the text
-   * @property {string} text - The actual text
-   * @property {number} size - Height of the text in rows
-   * @property {string} color - Color of the text (any stadard color format should work)
-   * @property {string} fontFamily - FontFamily of the text
-   * @property {number} cOffset - cOffset of the text
-   * @property {number} rOffset - rOffset of the text
+   * @property {string} [text] - The actual text
+   * @property {number} [size] - Height of the text in rows
+   * @property {string} [color] - Color of the text (any stadard color format should work)
+   * @property {string} [fontFamily] - FontFamily of the text
+   * @property {number} [cOffset] - cOffset of the text
+   * @property {number} [rOffset] - rOffset of the text
    */
 
 /**
@@ -123,11 +123,13 @@ export class Entity {
     this.detached = args.detached;
     /**
      * @description Displayed width of the entity in columns
+     * @readonly
      * @type {number}
      */
     this.width = validParams.width;
     /**
      * @description Displayed height of the entity in rows
+     * @readonly
      * @type {number}
      */
     this.height = validParams.height;
@@ -145,6 +147,7 @@ export class Entity {
     this.rOffset = validParams.rOffset;
     /**
      * @description Layer at which the the entity is displayed.
+     * @readonly
      * @type {number}
      */
     this.layer = validParams.layer;
@@ -371,6 +374,22 @@ export class Entity {
   }
 
   /**
+   * Sets the entities height property
+   * @param {number} height 
+   */
+  setHeight( height ){
+    this.height = height;
+  }
+  
+  /**
+   * Sets the entities width property
+   * @param {number} width 
+   */
+  setWidth( width ){
+    this.width = width;
+  }
+
+  /**
    * Deletes the entity
    */
   delete(){
@@ -424,13 +443,13 @@ export class Entity {
    */
   formatPositionAsAbsolutePosition( position ){
     let absPos = null;
-    if (typeof position === 'object') {//abs. coords {c, r}
-      absPos = position;
-    } else if (typeof position === 'array') {//rel. pos [dc, dr]
+    if (position.constructor === Array) {//rel. pos [dc, dr]
       absPos = {
-        c: entityInstance.c + position[0],
-        r: entityInstance.r + position[1],
-      }
+        c: this.c + position[0],
+        r: this.r + position[1],
+    }
+    } else if (typeof position === 'object') {//abs. coords {c, r}
+      absPos = position;
     } else if (typeof position === 'string') {//direction string
       absPos = absPos = {c: this.c, r: this.r};
       if (['top','up','north'].includes( position.toLowerCase() )) {
@@ -454,6 +473,7 @@ export class Entity {
    */
   move( newPosition ){
     newPosition = this.formatPositionAsAbsolutePosition( newPosition );
+    console.log(newPosition);
     if (this.detached){
       this.c = newPosition.c;
       this.r = newPosition.r;
@@ -466,7 +486,9 @@ export class Entity {
    * @param {Text~textSettings} textSettings 
    */
   addText( textSettings ){
-    this.texts[ id ] = new Text( textSettings );
+    if (typeof textSettings !== 'object') {return console.error('textSettings needs to be an object')};
+    if (textSettings.id === undefined) {return console.error('textSettings need to have an id property')};
+    this.texts[ textSettings.id ] = new Text( textSettings );
   }
   /**
    * Removes a text from the entity

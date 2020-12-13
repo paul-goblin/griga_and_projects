@@ -20,7 +20,13 @@ class Tick extends Entity {
 
   mouseDownHandler( display, c, r ){
     this.currentImage = 'nichts';
-    this.addText( 'testText', 'LOL!', 0.5, '#00AA00', 'Comic Sans MS', 0, 0 );
+    this.addText( {
+      id: 'testText',
+      text: 'LOL!',
+      size: 0.5,
+      color: '#00AA00',
+      fontFamily: 'Comic Sans MS'
+    } );
   }
 }
 
@@ -64,24 +70,25 @@ class Ghosty extends Entity {
         columnShift: this.c-1,
         rowShift: this.r-1,
       } );
-      this.width = 1;
+      this.setWidth(1);
     } else {
       this.detach();
-      this.width = 2;
+      this.setWidth(2);
     }
   }
 
   renderStartHandler( timePassed ){
-    if (this.keysDown[ 'ArrowUp' ]) {this.r -= timePassed/1000};
-    if (this.keysDown[ 'ArrowDown' ]) {this.r += timePassed/1000};
-    if (this.keysDown[ 'ArrowLeft' ]) {this.c -= timePassed/1000};
-    if (this.keysDown[ 'ArrowRight' ]) {this.c += timePassed/1000};
-
+    console.log(this.r);
+    if (this.keysDown[ 'ArrowUp' ]) {this.move( [0,-timePassed/1000] )};
+    if (this.keysDown[ 'ArrowDown' ]) {this.move( [0,timePassed/1000] )};
+    if (this.keysDown[ 'ArrowLeft' ]) {this.move( [-timePassed/1000,0] )};
+    if (this.keysDown[ 'ArrowRight' ]) {this.move( [timePassed/1000,0] )};
+    console.log(this.r);
     if (this.getEntityInstancesBeneath().map( tick => tick.constructor.name === 'Tick' ).includes(true)) {
-      if (this.keysDown[ 'ArrowUp' ]) {this.r += timePassed/1000};
-      if (this.keysDown[ 'ArrowDown' ]) {this.r -= timePassed/1000};
-      if (this.keysDown[ 'ArrowLeft' ]) {this.c += timePassed/1000};
-      if (this.keysDown[ 'ArrowRight' ]) {this.c -= timePassed/1000};
+      if (this.keysDown[ 'ArrowUp' ]) {this.move( [0,timePassed/1000] )};
+    if (this.keysDown[ 'ArrowDown' ]) {this.move( [0,-timePassed/1000] )};
+    if (this.keysDown[ 'ArrowLeft' ]) {this.move( [timePassed/1000,0] )};
+    if (this.keysDown[ 'ArrowRight' ]) {this.move( [-timePassed/1000,0] )};
     }
 
     if (!Object.values(this.keysDown).includes(true)){ return this.unsubscribeFromRenderStart() };
