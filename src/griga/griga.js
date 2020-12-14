@@ -170,7 +170,7 @@ export class Griga {
     );
     //check for mspt
     const mspt = performance.now() - renderStart;
-    if (mspt > 2) {
+    if (mspt > 3) {
       console.warn( 'mspt: ' + (performance.now() - renderStart) );
     }
     this.windowResized = false;

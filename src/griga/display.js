@@ -92,8 +92,8 @@ export class Display {
 
   //resize
   resizeWrapper(){
-    this.width = parseFloat( getComputedStyle( this.wrapper )
-                 .width.slice( 0,-2 ) );
+    const computedStyle = getComputedStyle( this.wrapper );
+    this.width = parseFloat( computedStyle.width.slice( 0,-2 ) );
     this.height = this.width/this.widthHeightRatio;
     this.wrapper.setAttribute('style', `
       height:${this.height}px;
