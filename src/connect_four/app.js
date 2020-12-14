@@ -1,5 +1,6 @@
 import { Griga } from "../griga/griga";
 import { Entity } from "../griga/entity";
+import emptyFieldsSceneData from "./empty_fields_scene_data.json";
 
 let app = null;
 
@@ -51,6 +52,7 @@ class App {
   constructor() {
     this.griga = new Griga( grigaConfig, griga => this.setupGame( griga ) );
     this.playerTurnLabel = document.getElementById( 'player_turn_label' );
+    this.emptyFieldsSceneData = emptyFieldsSceneData;
   }
 
   setupGame( griga ){
@@ -58,12 +60,6 @@ class App {
     this.griga.displayGrid( 'main-display', 'main-grid', {
       columnsOnScreen: 7, rowsOnScreen: 6,
     } );
-    for (let c = 0; c < 7; c++) {
-      for (let r = 0; r < 6; r++) {
-        griga.grids['main-grid'].newEntityInstance( 'Field', {}, {c,r} );
-      }
-    }
-    this.emptyFieldsSceneData = griga.grids['main-grid'].getCurrentSceneData();
     this.startGame();
   }
 
