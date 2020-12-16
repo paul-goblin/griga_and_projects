@@ -67,15 +67,30 @@ class App {
     this.griga.grids['main-grid'].clearScene();
     this.griga.grids['main-grid'].loadScene( this.emptyFieldsSceneData );
     this.coinsInColumns = [0, 0, 0, 0, 0, 0, 0];
+    this.fastGrid = [
+      [0,0,0,0,0,0],
+      [0,0,0,0,0,0],
+      [0,0,0,0,0,0],
+      [0,0,0,0,0,0],
+      [0,0,0,0,0,0],
+      [0,0,0,0,0,0],
+      [0,0,0,0,0,0]
+    ]; //0 for empty field, 1 for red, 2 for yellow
     this.targetCoinHistory = [];
     this.changePlayerTurn();
   }
 
   place( targetField ){
+    if (this.gameStopped) {return};
     this.targetCoinHistory.push( targetField );
     targetField.currentImage = this.turn;
     this.coinsInColumns[ targetField.c ]++;
-    this.changePlayerTurn();
+    this.fastGrid[ targetField.c ][ targetField.r ] = this.turnNumber;
+    if (this.checkWin( targetField.c, targetField.r )){
+      this.won();
+    } else {
+      this.changePlayerTurn();
+    }
   }
 
   undo(){
@@ -83,16 +98,58 @@ class App {
     if (lastTargetCoin) {
       lastTargetCoin.currentImage = 'empty';
       this.coinsInColumns[ lastTargetCoin.c ]--;
+      this.fastGrid[ lastTargetCoin.c ][ lastTargetCoin.r ] = 0;
       this.targetCoinHistory.splice(-1,1);
       this.changePlayerTurn();
     }
   }
 
   changePlayerTurn(){
-    if (this.turn === 'red') {this.turn = 'yellow'}
-    else {this.turn = 'red'};
-    //this.playerTurnLabel.innerHTML = `${this.turn}'s turn`;
+    if (this.turn === 'red') {this.turn = 'yellow'; this.turnNumber = 2}
+    else {this.turn = 'red'; this.turnNumber = 1};
+    this.playerTurnLabel.innerHTML = 'Playing...';
     this.playerTurnLabel.style.color = this.turn;
+  }
+
+  checkWin( coinC, coinR ){
+
+    const checkVertical = function(){
+      const startR = (coinR-3>=0) ? coinR-3 : 0;
+      const endR = (coinR+3<=5) ? coinR+3 : 5;
+      let consecutive = 0;
+      for (let r = startR; r <= endR; r++) {
+        if (this.fastGrid[coinC][r] === this.turnNumber) {consecutive++}
+        else {consecutive = 0};
+        if (consecutive === 4) {return true}
+        else if (endR-r+consecutive < 4) {return false};
+      }
+    }
+
+    const checkHorizontally = function(){
+      const startC = (coinC-3>=0) ? coinC-3 : 0;
+      const endC = (coinC+3<=6) ? coinC+3 : 6;
+      let consecutive = 0;
+      for (let c = startC; c <= endC; c++) {
+        if (this.fastGrid[c][coinR] === this.turnNumber) {consecutive++}
+        else {consecutive = 0};
+        if (consecutive === 4) {return true}
+        else if (endC-c+consecutive < 4) {return false};
+      }
+    }
+
+    const checkUpwardsDiagonal = function(){
+      const diagonal = coinC+coinR;
+    }
+
+    return (
+      checkHorizontally.call(this) ||
+      checkVertical.call(this)
+    );
+  }
+
+  won(){
+    this.playerTurnLabel.innerHTML = 'Winner!!!';
+    this.gameStopped = true;
   }
 }
 
