@@ -6,18 +6,63 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
+  <!-- Fontawesome -->
+  <script src="https://kit.fontawesome.com/b827237845.js" crossorigin="anonymous"></script>
+
   <!-- Ghosty css -->
   <style>
     body,html {
       padding: 0;
       margin:0;
       height: 100%;
+      font-family: Trebuchet MS;
     }
 
     .wrapper {
-      width: 50%;
+      height: 100%;
+      width: 100%;
+      max-width: 1300px;
       margin: auto;
-      background-color:aliceblue;
+    }
+
+    .top-bar {
+      float: left;
+      width: 100%;
+      overflow: hidden;
+      background-color: #333;
+    }
+
+    .top-bar div {
+      float: left;
+      color: #f2f2f2;
+      text-align: center;
+      padding: 14px 16px;
+      text-decoration: none;
+      font-size: 17px;
+      cursor: pointer;
+    }
+
+    .top-bar div:hover {
+      background-color: #ddd;
+      color: black;
+    }
+
+    .content {
+      height: 100%;
+      background-color: #7dc44e;
+    }
+
+    .screen.start-screen {
+      height: 100%;
+      background-image: url("./tile_img/start_screen.jpg");
+      background-repeat: no-repeat;
+      background-position-x: center;
+      background-position-y: 50px;
+      background-size: contain;
+    }
+
+    .active {
+      background-color: #7dc44e;
     }
 
     .hidden {
@@ -30,7 +75,15 @@
 <!-- body -->
 <body>
   <div class="wrapper">
-    <div id="main-display"></div>
+    <div class="top-bar">
+      <div class="home-button active"><i class="fas fa-home"></i></div>
+      <div class="play-button">Play</div>
+      <div class="editor-button">Editor</div>
+    </div>
+    <div class="content">
+      <div class="screen start-screen"></div>
+      <div class="screen play-screen hidden"><div id="main-display"></div></div>
+    </div>
   </div>
 
   <script src="main.js"></script>
