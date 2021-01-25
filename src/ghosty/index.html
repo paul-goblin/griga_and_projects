@@ -16,6 +16,7 @@
       margin:0;
       height: 100%;
       font-family: Trebuchet MS;
+      overflow: hidden;
     }
 
     .wrapper {
@@ -52,13 +53,20 @@
       background-color: #7dc44e;
     }
 
-    .screen.start-screen {
-      height: 100%;
+    .screen.home-screen {
       background-image: url("./tile_img/start_screen.jpg");
       background-repeat: no-repeat;
       background-position-x: center;
       background-position-y: 50px;
       background-size: contain;
+    }
+
+    .screen {
+      height: 100%;
+    }
+
+    .display {
+      width: 100%;
     }
 
     .active {
@@ -81,8 +89,9 @@
       <div class="editor-button">Editor</div>
     </div>
     <div class="content">
-      <div class="screen start-screen"></div>
-      <div class="screen play-screen hidden"><div id="main-display"></div></div>
+      <div class="screen home-screen"></div>
+      <div class="screen play-screen hidden"><div class="display" id="play-display"></div></div>
+      <div class="screen editor-screen hidden"><div class="display" id="editor-display"></div></div>
     </div>
   </div>
 

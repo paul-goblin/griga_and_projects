@@ -1,1 +1,1 @@
-module.exports = "connect_four"; 
+module.exports = "ghosty"; 
