@@ -200,7 +200,7 @@ export class Display {
         }
         const gridMouseC = gridMouseX/grid.tileWidthInPx;
         const gridMouseR = gridMouseY/grid.tileHeightInPx;
-        grid.gridInstance.mouseMoveHandler( this.name, gridMouseC,gridMouseR );
+        grid.gridInstance.mouseMoveHandler( this.name, gridMouseC,gridMouseR, e.buttons, e.ctrlKey );
       }
       else if (grid.gridInstance.mouse.displayName === this.name) {
         grid.gridInstance.mouseLeaveHandler( this.name );
@@ -215,7 +215,7 @@ export class Display {
       const gridMouseY = this.mouseY - grid.topInPx;
       if (gridMouseX >= 0 && gridMouseX < grid.widthInPx
        && gridMouseY >= 0 && gridMouseY < grid.heightInPx) {
-        grid.gridInstance.mouseDownHandler( this.name );
+        grid.gridInstance.mouseDownHandler( this.name, e.ctrlKey );
       }
     } );
   }
@@ -225,7 +225,7 @@ export class Display {
       const gridMouseY = this.mouseY - grid.topInPx;
       if (gridMouseX >= 0 && gridMouseX < grid.widthInPx
        && gridMouseY >= 0 && gridMouseY < grid.heightInPx) {
-        grid.gridInstance.mouseUpHandler( this.name );
+        grid.gridInstance.mouseUpHandler( this.name, e.ctrlKey );
       }
     } );
   }

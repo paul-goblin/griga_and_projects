@@ -70,6 +70,8 @@ export class Entity {
       mouseDownSubscriptions: Joi.array().items(Joi.string()).default([]),
       mouseUpSubscriptions: Joi.array().items(Joi.string()).default([]),
       mouseMoveSubscriptions: Joi.array().items(Joi.string()).default([]),
+      mouseEnterSubscriptions: Joi.array().items(Joi.string()).default([]),
+      mouseLeaveSubscriptions: Joi.array().items(Joi.string()).default([]),
     } );
   }
 
@@ -88,6 +90,8 @@ export class Entity {
    * @param {string[]} [params.mouseDownSubscriptions = []] - Array of displayNames for which display the entity subscribes to the mouseDown Event
    * @param {string[]} [params.mouseUpSubscriptions = []] - Array of displayNames for which display the entity subscribes to the mouseUp Event
    * @param {string[]} [params.mouseMoveSubscriptions = []] - Array of displayNames for which display the entity subscribes to the mouseMove Event
+   * @param {string[]} [params.mouseEnterSubscriptions = []] - Array of displayNames for which display the entity subscribes to the mouseEnter Event
+   * @param {string[]} [params.mouseLeaveSubscriptions = []] - Array of displayNames for which display the entity subscribes to the mouseLeave Event
    * @param {Object} args - The Object passed in to all CustomEntityClasses as second argument when constructed by the Griga Famework
    */
   constructor( params, args ){
@@ -194,6 +198,18 @@ export class Entity {
      */
     this.mouseMoveSubscriptions = validParams.mouseMoveSubscriptions;
     /**
+     * @description Array of displayNames for which display the entity is subscribed to the mouseEnter Event
+     * @readonly
+     * @type {string[]}
+     */
+    this.mouseEnterSubscriptions = validParams.mouseEnterSubscriptions;
+    /**
+     * @description Array of displayNames for which display the entity is subscribed to the mouseLeave Event
+     * @readonly
+     * @type {string[]}
+     */
+    this.mouseLeaveSubscriptions = validParams.mouseLeaveSubscriptions;
+    /**
      * @description The grid the entity is in
      * @readonly
      * @type {Grid}
@@ -239,6 +255,12 @@ export class Entity {
     } );
     this.mouseMoveSubscriptions.forEach( displayName => {
       this.grid.subscribeEntityInstanceToMouseMove( this, displayName );
+    } );
+    this.mouseEnterSubscriptions.forEach( displayName => {
+      this.grid.subscribeEntityInstanceToMouseEnter( this, displayName );
+    } );
+    this.mouseLeaveSubscriptions.forEach( displayName => {
+      this.grid.subscribeEntityInstanceToMouseLeave( this, displayName );
     } );
   }
 
@@ -313,28 +335,50 @@ export class Entity {
    * @param {number} mouseR - R-position of the mouseDown Event
    * @event
    */
-  mouseDownHandler( displayName, mouseC, mouseR ){
-    console.log( displayName, mouseC, mouseR );
+  mouseDownHandler( displayName, mouseC, mouseR, ctrlKey ){
+    console.log( displayName, mouseC, mouseR, ctrlKey );
   }
   /**
    * Get's called when a click ends on a display if the entity subscribed to the mouseUp Event for that display. Should be overwritten to execute code on click-release
-   * @param {string} displayName - Name of the display the mouseDown Event occured on
-   * @param {number} mouseC - C-position of the mouseDown Event
-   * @param {number} mouseR - R-position of the mouseDown Event
+   * @param {string} displayName - Name of the display the mouseUp Event occured on
+   * @param {number} mouseC - C-position of the mouseUp Event
+   * @param {number} mouseR - R-position of the mouseUp Event
    * @event
    */
-  mouseUpHandler( displayName, mouseC, mouseR ){
-    console.log( displayName, mouseC, mouseR );
+  mouseUpHandler( displayName, mouseC, mouseR, ctrlKey ){
+    console.log( displayName, mouseC, mouseR, ctrlKey );
   }
   /**
    * Get's called when a mouseMove Event occurs on a display if the entity subscribed to the mouseMove Event for that display. Can be used for drag-and-drop in combination with mouseDown and mouseUp Events
-   * @param {string} displayName - Name of the display the mouseDown Event occured on
-   * @param {number} mouseC - C-position of the mouseDown Event
-   * @param {number} mouseR - R-position of the mouseDown Event
+   * @param {string} displayName - Name of the display the mouseMove Event occured on
+   * @param {number} mouseC - C-position of the mouseMove Event
+   * @param {number} mouseR - R-position of the mouseMove Event
    * @event
    */
   mouseMoveHandler( displayName, mouseC, mouseR ){
     console.log( displayName, mouseC, mouseR );
+  }
+  /**
+   * Get's called when the mouse enters the tile the entity is in and the entity is subscribed to the mouseMove Event for that display. 
+   * @param {string} displayName - Name of the display the mouseEnter Event occured on
+   * @param {number} mouseC - C-position of the mouseEnter Event
+   * @param {number} mouseR - R-position of the mouseEnter Event
+   * @param {boolean} mousePressed - If the mouse is currently pressed down
+   * @event
+   */
+  mouseEnterHandler( displayName, mouseC, mouseR, mouseButtons, ctrlKey ){
+    console.log( displayName, mouseC, mouseR, mouseButtons, ctrlKey );
+  }
+  /**
+   * Get's called when the mouse leaves the tile the entity is in and the entity is subscribed to the mouseLeave Event for that display. 
+   * @param {string} displayName - Name of the display the mouseLeave Event occured on
+   * @param {number} mouseC - C-position of the mouseLeave Event
+   * @param {number} mouseR - R-position of the mouseLeave Event
+   * @param {boolean} mousePressed - If the mouse is currently pressed down
+   * @event
+   */
+  mouseLeaveHandler( displayName, mouseC, mouseR, mouseButtons, ctrlKey ){
+    console.log( displayName, mouseC, mouseR, mouseButtons, ctrlKey );
   }
 
   //functions to use
@@ -570,5 +614,39 @@ export class Entity {
   unsubscribeFromMouseMove( displayName ){
     this.mouseMoveSubscriptions.splice( this.mouseMoveSubscriptions.indexOf( displayName ), 1 );
     this.grid.unsubscribeEntityInstanceFromMouseMove( this, displayName );
+  }
+
+  /**
+   * Subscribes the entity to the mouseEnter event on the specified display
+   * @param {string} displayName - Name of the display
+   */
+  subscribeToMouseEnter( displayName ){
+    this.mouseEnterSubscriptions.push( displayName );
+    this.grid.subscribeEntityInstanceToMouseEnter( this, displayName );
+  }
+  /**
+   * Unsubscribes the entity from the mouseEnter event on the specified display
+   * @param {string} displayName - Name of the display
+   */
+  unsubscribeFromMouseEnter( displayName ){
+    this.mouseEnterSubscriptions.splice( this.mouseEnterSubscriptions.indexOf( displayName ), 1 );
+    this.grid.unsubscribeEntityInstanceFromMouseEnter( this, displayName );
+  }
+
+  /**
+   * Subscribes the entity to the mouseLeave event on the specified display
+   * @param {string} displayName - Name of the display
+   */
+  subscribeToMouseLeave( displayName ){
+    this.mouseLeaveSubscriptions.push( displayName );
+    this.grid.subscribeEntityInstanceToMouseLeave( this, displayName );
+  }
+  /**
+   * Unsubscribes the entity from the mouseLeave event on the specified display
+   * @param {string} displayName - Name of the display
+   */
+  unsubscribeFromMouseLeave( displayName ){
+    this.mouseLeaveSubscriptions.splice( this.mouseLeaveSubscriptions.indexOf( displayName ), 1 );
+    this.grid.unsubscribeEntityInstanceFromMouseLeave( this, displayName );
   }
 }

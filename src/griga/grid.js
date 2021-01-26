@@ -67,11 +67,38 @@ export class Grid {
     }
   }
 
-  mouseMoveHandler( displayName, mouseC,mouseR ){
+  mouseMoveHandler( displayName, mouseC,mouseR, mouseButtons, ctrlKey ){
+    //check for mouse enter TODO
+    let movedToNewTile = false;
+    if (Math.floor(this.mouse.c) !== Math.floor(mouseC)
+     || Math.floor(this.mouse.r) !== Math.floor(mouseR)) {
+      movedToNewTile = true;
+    }
+
+    if (movedToNewTile) {
+      //fire mouse Leave Event
+      const targets = this.gridData[Math.floor(this.mouse.c)][Math.floor(this.mouse.r)]
+      targets.forEach( entityInstance => {
+        if (entityInstance.mouseLeaveSubscriptions.includes( this.mouse.displayName )) {
+          entityInstance.mouseLeaveHandler( this.mouse.displayName, this.mouse.c, this.mouse.r, mouseButtons, ctrlKey );
+        }
+      } );
+    }
+    
     //update this.mouse
     this.mouse.displayName = displayName;
     this.mouse.c = mouseC;
     this.mouse.r = mouseR;
+
+    if (movedToNewTile) {
+      //fire mouse Enter Event
+      const targets = this.gridData[Math.floor(this.mouse.c)][Math.floor(this.mouse.r)]
+      targets.forEach( entityInstance => {
+        if (entityInstance.mouseEnterSubscriptions.includes( this.mouse.displayName )) {
+          entityInstance.mouseEnterHandler( this.mouse.displayName, this.mouse.c, this.mouse.r, mouseButtons, ctrlKey );
+        }
+      } );
+    }
 
     if (this.mouseMoveSubscriptions.hasOwnProperty( this.mouse.displayName )) {
       this.mouseMoveSubscriptions[ this.mouse.displayName ].forEach( entityInstance => {
@@ -84,21 +111,21 @@ export class Grid {
     this.resetMouse();
   }
 
-  mouseDownHandler( e ){
+  mouseDownHandler( displayName, ctrlKey ){
     const targets = this.gridData[Math.floor(this.mouse.c)][Math.floor(this.mouse.r)].concat(//tiles
       this.getDetachedEntityInstancesByCoordinates( this.mouse.c, this.mouse.r ) );//detached
     targets.forEach( entityInstance => {
       if (entityInstance.mouseDownSubscriptions.includes( this.mouse.displayName )) {
-        entityInstance.mouseDownHandler( this.mouse.displayName, this.mouse.c, this.mouse.r );
+        entityInstance.mouseDownHandler( this.mouse.displayName, this.mouse.c, this.mouse.r, ctrlKey );
       }
     } );
   }
-  mouseUpHandler( e ){
+  mouseUpHandler( displayName, ctrlKey ){
     const targets = this.gridData[Math.floor(this.mouse.c)][Math.floor(this.mouse.r)].concat(//tiles
       this.getDetachedEntityInstancesByCoordinates( this.mouse.c, this.mouse.r ) );//detached
     targets.forEach( entityInstance => {
       if (entityInstance.mouseUpSubscriptions.includes( this.mouse.displayName )) {
-        entityInstance.mouseUpHandler( this.mouse.displayName, this.mouse.c, this.mouse.r );
+        entityInstance.mouseUpHandler( this.mouse.displayName, this.mouse.c, this.mouse.r, ctrlKey );
       }
     } );
   }
@@ -175,6 +202,30 @@ export class Grid {
   unsubscribeEntityInstanceFromMouseMove( entityInstance, displayName ){
     const i = this.mouseMoveSubscriptions[displayName].indexOf( entityInstance );
     this.mouseMoveSubscriptions[displayName].splice( i, 1 );
+  }
+
+  subscribeEntityInstanceToMouseEnter( entityInstance, displayName ){
+    if (this.mouseEnterSubscriptions.hasOwnProperty( displayName )) {
+      this.mouseEnterSubscriptions[displayName].push( entityInstance );
+    } else {
+      this.mouseEnterSubscriptions[displayName] = [ entityInstance ];
+    }
+  }
+  unsubscribeEntityInstanceFromMouseEnter( entityInstance, displayName ){
+    const i = this.mouseEnterSubscriptions[displayName].indexOf( entityInstance );
+    this.mouseEnterSubscriptions[displayName].splice( i, 1 );
+  }
+
+  subscribeEntityInstanceToMouseLeave( entityInstance, displayName ){
+    if (this.mouseLeaveSubscriptions.hasOwnProperty( displayName )) {
+      this.mouseLeaveSubscriptions[displayName].push( entityInstance );
+    } else {
+      this.mouseLeaveSubscriptions[displayName] = [ entityInstance ];
+    }
+  }
+  unsubscribeEntityInstanceFromMouseLeave( entityInstance, displayName ){
+    const i = this.mouseLeaveSubscriptions[displayName].indexOf( entityInstance );
+    this.mouseLeaveSubscriptions[displayName].splice( i, 1 );
   }
 
   //display interactions
@@ -466,6 +517,8 @@ export class Grid {
     this.mouseDownSubscriptions = {};
     this.mouseUpSubscriptions = {};
     this.mouseMoveSubscriptions = {};
+    this.mouseEnterSubscriptions = {};
+    this.mouseLeaveSubscriptions = {};
   }
 
   /**

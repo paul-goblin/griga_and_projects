@@ -1,33 +1,49 @@
 import { Griga } from "../griga/griga";
 import { Editor } from "./editor";
+import { BackgroundTile } from "./entities/background_tile";
+import { SelectionBackground } from "./entities/selection_background";
+import { Stone } from "./entities/stone";
 import { Play } from "./play";
+
+const CS = 16;
+const RS = 10;
 
 const grigaConfig = {
   displays:[
     {
       name: 'play',
       wrapperId: 'play-display',
-      widthHeightRatio: 16/9,
+      widthHeightRatio: CS/RS,
     },
     {
       name: 'editor',
       wrapperId: 'editor-display',
-      widthHeightRatio: 16/9,
+      widthHeightRatio: CS/RS,
+    },
+    {
+      name: 'selection',
+      wrapperId: 'selection-display',
+      widthHeightRatio: 10/1
     }
   ],
   grids:[
     {
       name: 'play',
-      columns: 16,
-      rows: 9,
+      columns: CS,
+      rows: RS,
     },
     {
       name: 'editor',
-      columns: 16,
-      rows: 9,
+      columns: CS,
+      rows: RS,
+    },
+    {
+      name: 'selection-hotbar',
+      columns: 10,
+      rows: 1,
     }
   ],
-  entities:[],
+  entities:[BackgroundTile, SelectionBackground, Stone],
 }
 
 class App {
@@ -47,7 +63,26 @@ class App {
   }
 
   startGame( griga ){
-    console.log( griga );
+    for (let r = 0; r < RS; r++) {
+      for (let c = 0; c < CS; c++) {
+        griga.grids['play'].newEntityInstance('BackgroundTile', {}, {detached: false, c: c, r: r});
+        griga.grids['editor'].newEntityInstance(
+          'BackgroundTile',
+          {selection: this.editor.selection},
+          {detached: false, c: c, r: r});
+      }
+    }
+    
+    griga.grids['play'].newEntityInstance('Stone', {}, {c:0,r:0});
+
+    for (let c = 0; c < 10; c++) {
+      griga.grids['selection-hotbar'].newEntityInstance(
+        'SelectionBackground',
+        {selection: this.editor.selection},
+        {detached: false, c: c, r: 0}
+      );
+    }
+    griga.grids['selection-hotbar'].newEntityInstance('Stone', {}, {c:0,r:0});
   }
 
   handleHomeButtonClick(){

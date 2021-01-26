@@ -235,7 +235,7 @@ export class Griga {
    */
   removeGridFromDisplay( gridName, displayName ){
     this.displays[ displayName ].unlinkGrid( gridName );
-    this.grids[ gridName ].displays.pop( displayName );
+    delete this.grids[ gridName ].displays.displayName;
   }
 
 }

@@ -3,8 +3,8 @@ export class Play {
         this.app = app;
         this.griga = griga;
         this.display_settings = {
-            columnsOnScreen: 16,
-            rowsOnScreen: 9,
+            columnsOnScreen: griga.grids['play'].columns,
+            rowsOnScreen: griga.grids['play'].rows,
         }
     }
 
