@@ -3,10 +3,13 @@ import { Entity } from '../../griga/entity';
 export class BackgroundTile extends Entity {
   constructor( params, args ){
     super( {
-      mouseDownSubscriptions: ['editor'],
-      mouseEnterSubscriptions: ['editor']
+      
     }, args );
-    this.selection = params.selection;
+    if (this.grid.name === 'editor') {
+      this.subscribeToMouseDown('editor');
+      this.subscribeToMouseEnter('editor');
+      this.selection = params.selection;
+    }
     this.type = params.type || Math.floor(Math.random()*8);
     this.currentImage = 'p' + this.type;
   }

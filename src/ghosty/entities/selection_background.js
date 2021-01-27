@@ -30,10 +30,14 @@ export class SelectionBackground extends Entity {
 
   mouseDownHandler(){
     const otherEntities = this.grid.getEntityInstances({tile:{c:this.c,r:this.r},notType:'SelectionBackground'});
-    if (otherEntities.length === 1 && this.currentImage === 'deactive') {
-      this.selection.setActiveSelectionBackground( this );
-    } else if (otherEntities.length === 1 && this.currentImage === 'active') {
-      this.selection.setActiveSelectionBackground( null );
+    if (otherEntities.length === 1) {
+      this.setOtherEntity( otherEntities[0] );
+      if (this.currentImage === 'deactive') {
+        this.selection.setActiveSelectionBackground( this );
+      }
+      else if (this.currentImage === 'active') {
+        this.selection.setActiveSelectionBackground( null );
+      }
     }
   }
 }

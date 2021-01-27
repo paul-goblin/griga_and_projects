@@ -48,6 +48,10 @@
       color: black;
     }
 
+    .top-bar .editor-test-button {
+      float:right;
+    }
+
     .content {
       height: 100%;
       background-color: #7dc44e;
@@ -132,13 +136,14 @@
       <div class="home-button active"><i class="fas fa-home"></i></div>
       <div class="play-button">Play</div>
       <div class="editor-button">Editor</div>
+      <div class="editor-test-button hidden">Test</div>
     </div>
     <div class="content">
       <div class="screen home-screen"></div>
       <div class="screen play-screen hidden"><div class="display" id="play-display"></div></div>
       <div class="screen editor-screen hidden">
         <div class="display" id="editor-display"></div>
-        <div class="lower-bar">
+        <div class="lower-bar hidden">
           <div class="selection-display-box lower-item">
             <div class="display" id="selection-display"></div>
           </div>

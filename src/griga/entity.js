@@ -482,10 +482,11 @@ export class Entity {
 
   /**
    * Turns any position into a absolutePosition
-   * @param {directionString|relativePosition|absolutePosition} position 
+   * @param {directionString|relativePosition|absolutePosition} position
+   * @param {string} [borderMode="ignore"] - what to do when the position is off the grid. Possible are: ignore, modulo
    * @returns {absolutePosition} absolutePosition
    */
-  formatPositionAsAbsolutePosition( position ){
+  formatPositionAsAbsolutePosition( position, borderMode = 'ignore' ){
     let absPos = null;
     if (position.constructor === Array) {//rel. pos [dc, dr]
       absPos = {
@@ -508,6 +509,12 @@ export class Entity {
         //nothing
       }
     }
+
+    if ( borderMode === 'modulo' ) {
+      absPos.c = (absPos.c + this.grid.columns) % this.grid.columns;
+      absPos.r = (absPos.r + this.grid.rows) % this.grid.rows;
+    }
+
     return absPos;
   }
 
@@ -517,7 +524,6 @@ export class Entity {
    */
   move( newPosition ){
     newPosition = this.formatPositionAsAbsolutePosition( newPosition );
-    console.log(newPosition);
     if (this.detached){
       this.c = newPosition.c;
       this.r = newPosition.r;
@@ -580,6 +586,23 @@ export class Entity {
   unsubscribeFromRenderStart(){
     this.renderStartSubscription = false;
     this.grid.unsubscribeEntityInstanceFromRenderStart( this );
+  }
+
+  /**
+   * Subscribes the entity to the mouseDown event on the specified display
+   * @param {string} displayName - Name of the display
+   */
+  subscribeToMouseDown( displayName ){
+    this.mouseDownSubscriptions.push( displayName );
+    this.grid.subscribeEntityInstanceToMouseDown( this, displayName );
+  }
+  /**
+   * Unsubscribes the entity from the mouseDown event on the specified display
+   * @param {string} displayName - Name of the display
+   */
+  unsubscribeFromMouseDown( displayName ){
+    this.mouseDownSubscriptions.splice( this.mouseDownSubscriptions.indexOf( displayName ), 1 );
+    this.grid.unsubscribeEntityInstanceFromMouseDown( this, displayName );
   }
 
   /**

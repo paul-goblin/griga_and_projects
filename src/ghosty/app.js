@@ -1,8 +1,9 @@
 import { Griga } from "../griga/griga";
 import { Editor } from "./editor";
 import { BackgroundTile } from "./entities/background_tile";
+import { Ghosty } from "./entities/ghosty_entities/ghosty";
+import { Stone } from "./entities/ghosty_entities/stone";
 import { SelectionBackground } from "./entities/selection_background";
-import { Stone } from "./entities/stone";
 import { Play } from "./play";
 
 const CS = 16;
@@ -38,12 +39,17 @@ const grigaConfig = {
       rows: RS,
     },
     {
+      name: 'editor-test',
+      columns: CS,
+      rows: RS,
+    },
+    {
       name: 'selection-hotbar',
       columns: 10,
       rows: 1,
     }
   ],
-  entities:[BackgroundTile, SelectionBackground, Stone],
+  entities:[BackgroundTile, SelectionBackground, Stone, Ghosty],
 }
 
 class App {
@@ -55,6 +61,8 @@ class App {
     this.home_screen = document.querySelector('.home-screen');
     this.play_screen = document.querySelector('.play-screen');
     this.editor_screen = document.querySelector('.editor-screen');
+    this.save_button = document.querySelector('.save-button');
+    this.editor_test_button = document.querySelector('.editor-test-button');
     this.state = 'home';
     this.griga = new Griga( grigaConfig, griga => this.startGame( griga ) );
     this.play = new Play( this, this.griga );
@@ -83,6 +91,7 @@ class App {
       );
     }
     griga.grids['selection-hotbar'].newEntityInstance('Stone', {}, {c:0,r:0});
+    griga.grids['selection-hotbar'].newEntityInstance('Ghosty', {}, {c:1,r:0});
   }
 
   handleHomeButtonClick(){
@@ -137,10 +146,12 @@ class App {
   }
 
   setupEventListeners(){
-    this.home_button.addEventListener('click', e => this.handleHomeButtonClick())
-    this.play_button.addEventListener('click', e => this.handlePlayButtonClick())
-    this.editor_button.addEventListener('click', e => this.handleEditorButtonClick())
+    this.home_button.addEventListener('click', e => this.handleHomeButtonClick());
+    this.play_button.addEventListener('click', e => this.handlePlayButtonClick());
+    this.editor_button.addEventListener('click', e => this.handleEditorButtonClick());
     this.content_div.addEventListener('click', e => this.handleContentDivClick())
+    this.save_button.addEventListener('click', e => this.editor.handleSaveButtonClick( e ));
+    this.editor_test_button.addEventListener('click', e => this.editor.handleTestButtonClick( e ));
   }
 }
 
