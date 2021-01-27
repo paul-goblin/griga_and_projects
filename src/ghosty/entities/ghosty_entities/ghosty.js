@@ -4,7 +4,7 @@ export class Ghosty extends GhostyEntity {
   constructor( params, args ){
     super( {
       keyDownSubscriptions: ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight']
-    }, args );
+    }, args, 10 );
   }
 
   static get imgSources(){
@@ -17,6 +17,6 @@ export class Ghosty extends GhostyEntity {
   }
 
   validateMove( direction, automove, requestChain = [] ){
-    return [false, this.requestMove( direction, false )];
+    return [false, this.requestMove( direction, false, requestChain, false )];
   }
 }

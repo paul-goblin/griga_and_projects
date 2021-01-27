@@ -1,7 +1,7 @@
 import { Entity } from '../../griga/entity';
 
 export class GhostyEntity extends Entity {
-  constructor( params, args ){
+  constructor( params, args, layer = 1 ){
     //overwrite params if the entities are in editor or selection-hotbar grid
     if (args.grid.name === 'selection-hotbar') {
       params = {
@@ -13,6 +13,7 @@ export class GhostyEntity extends Entity {
     } else if (args.grid.name === 'editor') {
       params = {};
     }
+    params.layer = layer;
     super( params, args );
     if (this.grid.name === 'selection-hotbar') {
       this.selectionBackground = this.grid.getEntityInstances({tile:{c:this.c,r:this.r},type:'SelectionBackground'})[0];
@@ -25,12 +26,16 @@ export class GhostyEntity extends Entity {
    * @param {boolean} automove If true, the entities will move automatically when the move is allowed.
    * @param {*} requestChain 
    */
-  requestMove( direction, automove = false, requestChain = []){
-    if (requestChain.length > 0) {
+  requestMove( direction, automove = false, requestChain = [], callValidation = false){
+    if (requestChain.length > 0 && callValidation) {
       const validation = this.validateMove( direction, automove, requestChain );
       if (!validation[0]) {
         return validation[1];
       }
+    }
+    //avoid overflow, just allow move
+    if (requestChain.map( a => a[0] ).includes( this )) {
+      return true;
     }
     requestChain.push([this, direction]);
     const absPos = this.formatPositionAsAbsolutePosition(direction, 'modulo');
@@ -38,7 +43,7 @@ export class GhostyEntity extends Entity {
       tile: absPos,
       notType: 'BackgroundTile'
     } );
-    const sucesses = entitiesOnTile.map( e => e.requestMove(direction, automove, requestChain) );
+    const sucesses = entitiesOnTile.map( e => e.requestMove(direction, automove, requestChain, true) );
     if (sucesses.includes( false )) {
       return false;
     } else {

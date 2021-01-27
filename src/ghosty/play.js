@@ -9,12 +9,16 @@ export class Play {
             columnsOnScreen: this.grid.columns,
             rowsOnScreen: this.grid.rows,
         }
+        this.level = null;
     }
 
     start(){
         this.app.play_button.classList.add('active');
         this.app.play_screen.classList.remove('hidden');
-        this.grid.loadScene(testLevel);
+        if (!this.level) {
+            this.level = testLevel
+            this.grid.loadScene(testLevel);
+        }
         this.griga.displayGrid('play', 'play', this.display_settings);
         this.griga.windowResized = true;
     }

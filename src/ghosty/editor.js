@@ -53,6 +53,7 @@ export class Editor {
         this.state = 'test';
         this.app.editor_test_button.innerHTML = 'edit';
         const sceneData = this.grid.getCurrentSceneData();
+        this.test_grid.clearScene();
         this.test_grid.loadScene( sceneData );
         this.griga.displayGrid('editor', 'editor-test', this.display_settings);
         this.griga.windowResized = true;

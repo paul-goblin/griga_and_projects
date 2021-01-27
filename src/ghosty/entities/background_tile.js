@@ -25,6 +25,10 @@ export class BackgroundTile extends Entity {
              p7: './tile_img/background_flowers_7.jpg',};
   }
 
+  getCurrentParams() {
+    return {selection: this.selection}
+  }
+
   mouseDownHandler( displayName, mouseC, mouseR, ctrlKey ){
     if (this.selection.selectedEntity) {
       const stonesOnTile = this.grid.getEntityInstances({tile:{c:this.c,r:this.r},type:  this.selection.selectedEntity.constructor.name});

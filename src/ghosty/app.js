@@ -64,6 +64,7 @@ class App {
     this.save_button = document.querySelector('.save-button');
     this.editor_test_button = document.querySelector('.editor-test-button');
     this.state = 'home';
+    this.backgroundTileScene = null;
     this.griga = new Griga( grigaConfig, griga => this.startGame( griga ) );
     this.play = new Play( this, this.griga );
     this.editor = new Editor( this, this.griga );
@@ -80,6 +81,7 @@ class App {
           {detached: false, c: c, r: r});
       }
     }
+    this.backgroundTileScene = griga.grids['play'].getCurrentSceneData();
     
     griga.grids['play'].newEntityInstance('Stone', {}, {c:0,r:0});
 
