@@ -49,6 +49,7 @@ export class GhostyEntity extends Entity {
     } else {
       if (automove) {
         this.move(absPos);
+        entitiesOnTile.forEach( e => e.entityMovedToTile( this ) );
       }
       return true;
     }
@@ -62,5 +63,9 @@ export class GhostyEntity extends Entity {
    */
   validateMove( direction, automove, requestChain = [] ){
     return [false, false];
+  }
+
+  entityMovedToTile( entity ) {
+    //do something
   }
 }

@@ -21,7 +21,7 @@ export class Editor {
         this.app.editor_button.classList.add('active');
         this.app.editor_screen.classList.remove('hidden');
         this.app.editor_test_button.classList.remove('hidden');
-        if (!this.state) {this.startEditState();}
+        if (!this.state) {this.startEditState()};
         this.griga.displayGrid('selection', 'selection-hotbar', this.selection_display_settings);
         this.griga.windowResized = true;
     }

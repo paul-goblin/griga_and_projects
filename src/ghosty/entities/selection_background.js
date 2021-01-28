@@ -5,7 +5,6 @@ export class SelectionBackground extends Entity {
     super( {
       mouseDownSubscriptions: ['selection']
     }, args );
-    this.selection = params.selection
     this.otherEntity = null;
     this.currentImage = 'deactive';
   }
@@ -33,10 +32,10 @@ export class SelectionBackground extends Entity {
     if (otherEntities.length === 1) {
       this.setOtherEntity( otherEntities[0] );
       if (this.currentImage === 'deactive') {
-        this.selection.setActiveSelectionBackground( this );
+        this.griga.ghosty.selection.setActiveSelectionBackground( this );
       }
       else if (this.currentImage === 'active') {
-        this.selection.setActiveSelectionBackground( null );
+        this.griga.ghosty.selection.setActiveSelectionBackground( null );
       }
     }
   }

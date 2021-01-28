@@ -2,6 +2,7 @@ import { Griga } from "../griga/griga";
 import { Editor } from "./editor";
 import { BackgroundTile } from "./entities/background_tile";
 import { Ghosty } from "./entities/ghosty_entities/ghosty";
+import { Goal } from "./entities/ghosty_entities/goal";
 import { Stone } from "./entities/ghosty_entities/stone";
 import { SelectionBackground } from "./entities/selection_background";
 import { Play } from "./play";
@@ -49,7 +50,7 @@ const grigaConfig = {
       rows: 1,
     }
   ],
-  entities:[BackgroundTile, SelectionBackground, Stone, Ghosty],
+  entities:[BackgroundTile, SelectionBackground, Stone, Ghosty, Goal],
 }
 
 class App {
@@ -61,6 +62,7 @@ class App {
     this.home_screen = document.querySelector('.home-screen');
     this.play_screen = document.querySelector('.play-screen');
     this.editor_screen = document.querySelector('.editor-screen');
+    this.play_levels_button = document.querySelector('.play-levels-button');
     this.save_button = document.querySelector('.save-button');
     this.editor_test_button = document.querySelector('.editor-test-button');
     this.state = 'home';
@@ -72,12 +74,16 @@ class App {
   }
 
   startGame( griga ){
+    griga.ghosty = {
+      selection: this.editor.selection,
+      levelDone: this.levelDone
+    }
     for (let r = 0; r < RS; r++) {
       for (let c = 0; c < CS; c++) {
         griga.grids['play'].newEntityInstance('BackgroundTile', {}, {detached: false, c: c, r: r});
         griga.grids['editor'].newEntityInstance(
           'BackgroundTile',
-          {selection: this.editor.selection},
+          {},
           {detached: false, c: c, r: r});
       }
     }
@@ -88,12 +94,17 @@ class App {
     for (let c = 0; c < 10; c++) {
       griga.grids['selection-hotbar'].newEntityInstance(
         'SelectionBackground',
-        {selection: this.editor.selection},
+        {},
         {detached: false, c: c, r: 0}
       );
     }
     griga.grids['selection-hotbar'].newEntityInstance('Stone', {}, {c:0,r:0});
     griga.grids['selection-hotbar'].newEntityInstance('Ghosty', {}, {c:1,r:0});
+    griga.grids['selection-hotbar'].newEntityInstance('Goal', {}, {c:2,r:0});
+  }
+
+  levelDone(){
+    console.log('level done!');
   }
 
   handleHomeButtonClick(){
@@ -154,6 +165,8 @@ class App {
     this.content_div.addEventListener('click', e => this.handleContentDivClick())
     this.save_button.addEventListener('click', e => this.editor.handleSaveButtonClick( e ));
     this.editor_test_button.addEventListener('click', e => this.editor.handleTestButtonClick( e ));
+    this.play_levels_button.addEventListener('click', e => this.play.handleLevelsButtonClick( e ));
+    this.play.levels_container.addEventListener('click', e => this.play.handleLevelsContainerClick( e ));
   }
 }
 
