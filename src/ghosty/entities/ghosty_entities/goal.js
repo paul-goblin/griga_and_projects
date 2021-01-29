@@ -2,15 +2,15 @@ import { GhostyEntity } from '../ghosty_entity';
 
 export class Goal extends GhostyEntity {
   constructor( params, args ){
-    super( {}, args, 10 );
+    super( {}, args, 5 );
   }
 
   static get imgSources(){
     return { default: './tile_img/oil_lamp.png'};
   }
 
-  validateMove(){
-    return [false, true];
+  allowMove(){
+    return true;
   }
 
   entityMovedToTile( entity ){
@@ -21,7 +21,19 @@ export class Goal extends GhostyEntity {
     }
   }
 
+  taskDone() {
+    let ghosties = this.grid.getEntityInstances( {
+      tile: {c:this.c, r:this.r},
+      type: 'Ghosty',
+    } );
+    if (ghosties[0]) {return true};
+    return false;
+  }
+
   checkLevelDone(){
-    return true;
+    let goals = this.grid.getEntityInstances( {type: 'Goal'} );
+    if (!goals.map(goal => goal.taskDone()).includes(false)) {
+      this.griga.ghosty.levelDone();
+    }
   }
 }

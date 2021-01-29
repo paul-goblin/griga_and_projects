@@ -4,6 +4,7 @@ import { BackgroundTile } from "./entities/background_tile";
 import { Ghosty } from "./entities/ghosty_entities/ghosty";
 import { Goal } from "./entities/ghosty_entities/goal";
 import { Stone } from "./entities/ghosty_entities/stone";
+import { WoodenBox } from "./entities/ghosty_entities/wooden_box";
 import { SelectionBackground } from "./entities/selection_background";
 import { Play } from "./play";
 
@@ -50,7 +51,7 @@ const grigaConfig = {
       rows: 1,
     }
   ],
-  entities:[BackgroundTile, SelectionBackground, Stone, Ghosty, Goal],
+  entities:[BackgroundTile, SelectionBackground, Stone, Ghosty, Goal, WoodenBox],
 }
 
 class App {
@@ -74,10 +75,7 @@ class App {
   }
 
   startGame( griga ){
-    griga.ghosty = {
-      selection: this.editor.selection,
-      levelDone: this.levelDone
-    }
+    griga.ghosty = this
     for (let r = 0; r < RS; r++) {
       for (let c = 0; c < CS; c++) {
         griga.grids['play'].newEntityInstance('BackgroundTile', {}, {detached: false, c: c, r: r});
@@ -88,8 +86,6 @@ class App {
       }
     }
     this.backgroundTileScene = griga.grids['play'].getCurrentSceneData();
-    
-    griga.grids['play'].newEntityInstance('Stone', {}, {c:0,r:0});
 
     for (let c = 0; c < 10; c++) {
       griga.grids['selection-hotbar'].newEntityInstance(
@@ -101,10 +97,13 @@ class App {
     griga.grids['selection-hotbar'].newEntityInstance('Stone', {}, {c:0,r:0});
     griga.grids['selection-hotbar'].newEntityInstance('Ghosty', {}, {c:1,r:0});
     griga.grids['selection-hotbar'].newEntityInstance('Goal', {}, {c:2,r:0});
+    griga.grids['selection-hotbar'].newEntityInstance('WoodenBox', {}, {c:3,r:0});
   }
 
   levelDone(){
-    console.log('level done!');
+    if (this.state === 'play') {
+      this.play.levelDone();
+    }
   }
 
   handleHomeButtonClick(){

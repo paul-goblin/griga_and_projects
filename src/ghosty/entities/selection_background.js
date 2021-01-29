@@ -32,10 +32,10 @@ export class SelectionBackground extends Entity {
     if (otherEntities.length === 1) {
       this.setOtherEntity( otherEntities[0] );
       if (this.currentImage === 'deactive') {
-        this.griga.ghosty.selection.setActiveSelectionBackground( this );
+        this.griga.ghosty.editor.selection.setActiveSelectionBackground( this );
       }
       else if (this.currentImage === 'active') {
-        this.griga.ghosty.selection.setActiveSelectionBackground( null );
+        this.griga.ghosty.editor.selection.setActiveSelectionBackground( null );
       }
     }
   }

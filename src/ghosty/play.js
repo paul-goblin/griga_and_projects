@@ -1,5 +1,4 @@
-import testLevel from './level/test_level.json';
-import introductionLevel from './level/introduction.json';
+import classicLevels from './level/all_classic_levels.json';
 
 export class Play {
     constructor( app, griga ){
@@ -13,10 +12,6 @@ export class Play {
             rowsOnScreen: this.grid.rows,
         }
         this.level = 0;
-        this.levels = [
-            ['Test Level', testLevel],
-            ['Introduction', introductionLevel]
-        ]
         this.state = null;
         this.undo_history = [];
     }
@@ -39,10 +34,10 @@ export class Play {
 
     updateLevelsContainer(){
         let htmlString = '';
-        this.levels.forEach( (level, i) => {
+        classicLevels.forEach( (level, i) => {
             htmlString += `
             <div class="level-bar">
-                <div class="level-name button">${level[0]}</div>
+                <div class="level-name button">${level.name}</div>
                 <div class="level-play-button button right" data-level="${i}">play</div>
             </div>
             `
@@ -53,7 +48,7 @@ export class Play {
     startPlayState() {
         this.state = 'play';
         this.app.play_levels_button.innerHTML = 'levels';
-        this.grid.loadScene( this.levels[ this.level ][1] );
+        this.loadLevel();
         this.display_wrapper.classList.remove('hidden');
         this.griga.windowResized = true;
     }
@@ -61,8 +56,7 @@ export class Play {
     endPlayState() {
         this.state = null;
         this.display_wrapper.classList.add('hidden');
-        this.grid.clearScene();
-        this.grid.loadScene( this.app.backgroundTileScene );
+        this.clearLevel();
     }
 
     startLevelsState() {
@@ -75,6 +69,23 @@ export class Play {
     endLevelsState() {
         this.state = null;
         this.levels_container.classList.add('hidden');
+    }
+
+    loadLevel() {
+        this.grid.loadScene( classicLevels[ this.level ].sceneData );
+    }
+
+    clearLevel() {
+        this.grid.clearScene()
+        this.grid.loadScene( this.app.backgroundTileScene );
+    }
+
+    levelDone() {
+        if (classicLevels[ this.level + 1 ]) {
+            this.level++;
+            this.clearLevel();
+            this.loadLevel();
+        }
     }
 
     handleLevelsButtonClick( e ){
@@ -92,7 +103,7 @@ export class Play {
     }
 
     handleLevelPlayButtonClicked( target ){
-        this.level = target.getAttribute('data-level');
+        this.level = parseInt(target.getAttribute('data-level'));
         this.endLevelsState();
         this.startPlayState();
     }

@@ -20,52 +20,72 @@ export class GhostyEntity extends Entity {
     }
   }
 
-  /**
-   * requests a move in the given direction. 
-   * @param {*} direction 
-   * @param {boolean} automove If true, the entities will move automatically when the move is allowed.
-   * @param {*} requestChain 
-   */
-  requestMove( direction, automove = false, requestChain = [], callValidation = false){
-    if (requestChain.length > 0 && callValidation) {
-      const validation = this.validateMove( direction, automove, requestChain );
-      if (!validation[0]) {
-        return validation[1];
-      }
-    }
-    //avoid overflow, just allow move
-    if (requestChain.map( a => a[0] ).includes( this )) {
-      return true;
-    }
+  move( direction ) {
+    const absPos = this.formatPositionAsAbsolutePosition(direction, 'modulo');
+    const entitiesOnTile = this.grid.getEntityInstances( {
+      tile: absPos,
+      notType: 'BackgroundTile'
+    } );
+    entitiesOnTile.forEach( entity => {
+      entity.entityWillMoveToTile( this, direction );
+    } );
+    Entity.prototype.move.call( this, absPos );
+    entitiesOnTile.forEach( entity => {
+      entity.entityMovedToTile( this, direction );
+    } );
+  }
+
+  requestMove( direction, requestChain = [] ) {
     requestChain.push([this, direction]);
     const absPos = this.formatPositionAsAbsolutePosition(direction, 'modulo');
     const entitiesOnTile = this.grid.getEntityInstances( {
       tile: absPos,
       notType: 'BackgroundTile'
     } );
-    const sucesses = entitiesOnTile.map( e => e.requestMove(direction, automove, requestChain, true) );
+    const sucesses = entitiesOnTile.map( e => e.validateMove(requestChain) );
     if (sucesses.includes( false )) {
       return false;
     } else {
-      if (automove) {
-        this.move(absPos);
-        entitiesOnTile.forEach( e => e.entityMovedToTile( this ) );
-      }
       return true;
     }
   }
 
   /**
-   * checks if the requested move is valid. Should be overwritten by Child. Returns [doMove, allowMove]
-   * @param {*} direction 
+   * validates a move in the given direction. Should only be called from GhostyEntity.startMove;
    * @param {*} requestChain 
-   * @returns {boolean[]}
    */
-  validateMove( direction, automove, requestChain = [] ){
-    return [false, false];
+  validateMove( requestChain ){
+    //avoid overflow, just allow move
+    if (requestChain.map( a => a[0] ).includes( this )) {
+      return true;
+    }
+    const allowMove = this.allowMove( requestChain );
+    return allowMove;
   }
 
-  entityMovedToTile( entity ) {
-    //do something
+  /**
+   * checks if the requested move is valid. Should be overwritten by Child. Returns [request, 
+   * @param {*} requestChain 
+   * @param {*} direction 
+   * @returns {boolean}
+   */
+  allowMove( requestChain = [] ){
+    return false;
+  }
+
+  allowPlacing( entity ){
+    return entity.layer !== this.layer;
+  }
+
+  allowBeingPlaced( tile ){
+    return true;
+  }
+
+  entityWillMoveToTile( entity, direction ) {
+    //doSomething
+  }
+
+  entityMovedToTile( entity, direction ) {
+    //doSomething
   }
 }

@@ -28,10 +28,19 @@ export class BackgroundTile extends Entity {
   }
 
   mouseDownHandler( displayName, mouseC, mouseR, ctrlKey ){
-    if (this.griga.ghosty.selection.selectedEntity) {
-      const stonesOnTile = this.grid.getEntityInstances({tile:{c:this.c,r:this.r},type:  this.griga.ghosty.selection.selectedEntity.constructor.name});
+    if (this.griga.ghosty.editor.selection.selectedEntity) {
+      const stonesOnTile = this.grid.getEntityInstances({tile:{c:this.c,r:this.r},type:  this.griga.ghosty.editor.selection.selectedEntity.constructor.name});
       if (stonesOnTile.length === 0 && !ctrlKey) {
-        this.grid.newEntityInstance(  this.griga.ghosty.selection.selectedEntity.constructor.name, {}, {c:this.c,r:this.r});
+        const selectedEntity = this.griga.ghosty.editor.selection.selectedEntity;
+        const entitiesOnTile = this.grid.getEntityInstances( {
+          tile: {c:this.c, r:this.r},
+          notType: 'BackgroundTile'
+        } );
+        if (!entitiesOnTile.map(e => e.allowPlacing( selectedEntity )).includes(false)) {
+          if (selectedEntity.allowBeingPlaced( {c:this.c, r:this.r} )) {
+            this.grid.newEntityInstance(  selectedEntity.constructor.name, {}, {c:this.c,r:this.r});
+          }
+        }
       } else if (stonesOnTile.length === 1 && ctrlKey) {
         stonesOnTile[0].delete()
       }

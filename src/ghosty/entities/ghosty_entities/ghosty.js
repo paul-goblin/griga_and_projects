@@ -5,6 +5,7 @@ export class Ghosty extends GhostyEntity {
     super( {
       keyDownSubscriptions: ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight']
     }, args, 10 );
+    this.validatedEntities = [];
   }
 
   static get imgSources(){
@@ -13,10 +14,17 @@ export class Ghosty extends GhostyEntity {
 
   keyDownHandler( key ){
     const direction = key.slice(5).toLowerCase();
-    this.requestMove( direction, true );
+    if (this.requestMove( direction )) {
+      this.move( direction );
+    }
+    this.validatedEntities = [];
   }
 
-  validateMove( direction, automove, requestChain = [] ){
-    return [false, this.requestMove( direction, false, requestChain, false )];
+  validateMove( requestChain ){
+    if (this.validatedEntities.includes( requestChain[requestChain.length-1][0] )){
+      return true;
+    }
+    this.validatedEntities.push(requestChain[requestChain.length-1][0]);
+    return this.requestMove( requestChain[requestChain.length-1][1] );
   }
 }
