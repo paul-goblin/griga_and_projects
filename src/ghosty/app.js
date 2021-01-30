@@ -49,6 +49,11 @@ const grigaConfig = {
       name: 'selection-hotbar',
       columns: 10,
       rows: 1,
+    },
+    {
+      name: 'preview',
+      columns: CS,
+      rows: RS
     }
   ],
   entities:[BackgroundTile, SelectionBackground, Stone, Ghosty, Goal, WoodenBox],
@@ -77,14 +82,10 @@ class App {
     griga.ghosty = this
     for (let r = 0; r < RS; r++) {
       for (let c = 0; c < CS; c++) {
-        griga.grids['play'].newEntityInstance('BackgroundTile', {}, {detached: false, c: c, r: r});
-        griga.grids['editor'].newEntityInstance(
-          'BackgroundTile',
-          {},
-          {detached: false, c: c, r: r});
+        griga.grids['editor'].newEntityInstance('BackgroundTile', {}, {detached: false, c: c, r: r});
       }
     }
-    this.backgroundTileScene = griga.grids['play'].getCurrentSceneData();
+    this.backgroundTileScene = griga.grids['editor'].getCurrentSceneData();
 
     for (let c = 0; c < 10; c++) {
       griga.grids['selection-hotbar'].newEntityInstance(

@@ -5,6 +5,7 @@ export class Play {
         this.app = app;
         this.griga = griga;
         this.grid = griga.grids['play'];
+        this.previewGrid = griga.grids['preview'];
         this.levels_button = document.querySelector('.play-levels-button');
         this.levels_container = document.querySelector('.levels-container');
         this.play_elements = document.querySelector('.play-play-elements');
@@ -20,6 +21,7 @@ export class Play {
         this.levelIndex = 0;
         this.state = null;
         this.undo_history = [];
+        this.detailsLevelIndex = null;
     }
 
     start(){
@@ -39,6 +41,9 @@ export class Play {
     }
 
     updateLevelsContainer(){
+        Object.keys(this.griga.displays).filter( k => k.slice(0, 12) === 'play-preview' ).forEach( d => {
+            this.griga.deleteDisplay( d );
+        } );
         let htmlString = '';
         classicLevels.forEach( (level, i) => {
             htmlString += `
@@ -46,9 +51,20 @@ export class Play {
                 <div class="level-name button">${level.name}</div>
                 <div class="level-play-button button right" data-level="${i}"><i class="fas fa-play"></i></div>
             </div>
+            <div class="level-details level-bar hidden" id="level-details-${i}" data-index="${i}">
+                <div class="display preview-display" id="preview-display-${i}"></div>
+                <div class="item preview-details-container">
+                    <div class="preview-difficulty-line preview-line">difficulty: <span class="difficulty-${i}">${level.difficulty}</span></div>
+                    <div class="preview-creator-line preview-line">creator: <span class="creator-${i}">${level.creator}</span></div>
+                </div>
+                </div>
+            </div>
             `
         } );
         this.levels_container.innerHTML = htmlString;
+        classicLevels.forEach( (level, i) => {
+            this.griga.newDisplay( 'play-preview-'+i, 'preview-display-'+i, this.grid.columns/this.grid.rows );
+        } );
     }
 
     startPlayState() {
@@ -70,28 +86,50 @@ export class Play {
         this.updateLevelsContainer();
         this.levels_container.classList.remove('hidden');
         this.levels_button.innerHTML = 'continue';
+        this.showLevelDetails(this.levelIndex);
     }
 
     endLevelsState() {
         this.state = null;
+        this.hideLevelDetails();
         this.levels_container.classList.add('hidden');
     }
 
     loadLevel( levelIndex = this.levelIndex ) {
         this.levelIndex = levelIndex;
+        this.grid.loadScene( this.app.backgroundTileScene );
         this.grid.loadScene( classicLevels[ this.levelIndex ].sceneData );
         this.play_level_name.innerHTML = classicLevels[ this.levelIndex ].name;
     }
 
     clearLevel() {
-        this.grid.clearScene()
-        this.grid.loadScene( this.app.backgroundTileScene );
+        this.grid.clearScene();
     }
 
     levelDone() {
         if (classicLevels[ this.levelIndex + 1 ]) {
             this.clearLevel();
             this.loadLevel();
+        }
+    }
+
+    showLevelDetails( detailsLevelIndex ){
+        this.detailsLevelIndex = detailsLevelIndex;
+        const levelDetailsBar = document.getElementById('level-details-'+ detailsLevelIndex);
+        levelDetailsBar.classList.remove('hidden');
+        this.griga.displayGrid('play-preview-'+detailsLevelIndex, 'preview', this.display_settings);
+        this.previewGrid.loadScene( this.app.backgroundTileScene );
+        this.previewGrid.loadScene( classicLevels[ this.detailsLevelIndex ].sceneData );
+        this.griga.windowResized = true;
+    }
+
+    hideLevelDetails(){
+        if (this.detailsLevelIndex || this.detailsLevelIndex === 0) {
+            const levelDetailsBar = document.getElementById('level-details-'+this.detailsLevelIndex);
+            levelDetailsBar.classList.add('hidden');
+            this.griga.removeGridFromDisplay('preview', 'play-preview-'+this.detailsLevelIndex);
+            this.previewGrid.clearScene();
+            this.detailsLevelIndex = null;
         }
     }
 
@@ -106,7 +144,11 @@ export class Play {
     }
 
     handleLevelNameClicked( target ){
-        console.log('TODO: show level details!');
+        const levelDetailsBar = target.parentElement.nextElementSibling;
+        if (levelDetailsBar.classList.contains('hidden')) {
+            this.hideLevelDetails();
+            this.showLevelDetails( parseInt(levelDetailsBar.getAttribute('data-index')) );
+        }
     }
 
     handleLevelPlayButtonClicked( target ){
@@ -152,7 +194,7 @@ export class Play {
 
     setupEventListeners(){
         this.levels_button.addEventListener('click', e => this.handleLevelsButtonClick( e ));
-        this.levels_container.addEventListener('click', e => this.handleLevelsContainerClick( e ));
+        this.levels_container.addEventListener('mousedown', e => this.handleLevelsContainerClick( e ));
         this.previous_level_button.addEventListener('click', e => this.handlePreviousLevelButtonClick( e ));
         this.next_level_button.addEventListener('click', e => this.handleNextLevelButtonClick( e ));
         this.play_level_name.addEventListener('click', e => this.handlePlayLevelNameClick( e ));

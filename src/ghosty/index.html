@@ -37,6 +37,10 @@
       margin: 20px;
     }
 
+    .level-details {
+      margin-top: -20px;
+    }
+
     .top-bar .button {
       float: left;
     }
@@ -78,19 +82,20 @@
     }
 
     .display {
-      width: 100%;
+      margin: 14px 16px;
+      background-color: #7dc44e;
     }
 
     .lower-bar, .level-bar  {
       display: flex;
-      justify-content: flex-end;
+      justify-content: space-between;
       flex-wrap: nowrap;
       overflow: hidden;
       background-color: #333;
     }
 
     .level-bar .level-name {
-      flex-grow: 1;
+      flex-grow: 10;
     }
 
     .button.save-button {
@@ -107,6 +112,10 @@
       transform: translate(-50%, -50%);
     }
 
+    .button i {
+      pointer-events: none;
+    }
+
     .selection-display-box {
       flex-grow: 1;
       padding: 0;
@@ -118,6 +127,22 @@
     .levels-container {
       margin: 0px auto;
       max-width: 700px;
+    }
+
+    .preview-display {
+      max-width: 300px;
+      flex-grow: 10;
+      margin-top: 0px;
+    }
+
+    .preview-details-container {
+      text-align: left;
+      flex-grow: 1;
+      padding-top: 0px;
+    }
+
+    .preview-line {
+      line-height: 1.5em;
     }
 
     .active {
@@ -160,6 +185,13 @@
           <div class="level-bar">
             <div class="level-name button">Levels didn't Load</div>
             <div class="level-play-button button right"><i class="fas fa-play"></i></div>
+          </div>
+          <div class="level-details level-bar hidden" id="level-details-0" data-index="0">
+            <div class="display preview-display" id="preview-display-0"></div>
+            <div class="item preview-details-container">
+              <div class="preview-difficulty-line preview-line">difficulty: <span class="difficulty-0">easy</span></div>
+              <div class="preview-creator-line preview-line">creator: <span class="creator-0">Tom Kopolt</span></div>
+            </div>
           </div>
         </div>
       </div>

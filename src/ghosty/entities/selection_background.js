@@ -10,7 +10,7 @@ export class SelectionBackground extends Entity {
   }
 
   static get imgSources(){
-    return { deactive: './tile_img/selection_background.jpg',
+    return { deactive: '',
              active: './tile_img/selection_background_active.jpg'
     };
   }

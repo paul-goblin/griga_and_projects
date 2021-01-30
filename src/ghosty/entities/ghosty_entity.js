@@ -10,7 +10,7 @@ export class GhostyEntity extends Entity {
         cOffset: 0.1,
         rOffset: 0.1
       }
-    } else if (args.grid.name === 'editor') {
+    } else if (['editor', 'preview'].includes(args.grid.name)) {
       params = {};
     }
     params.layer = layer;

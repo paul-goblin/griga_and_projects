@@ -235,7 +235,30 @@ export class Griga {
    */
   removeGridFromDisplay( gridName, displayName ){
     this.displays[ displayName ].unlinkGrid( gridName );
-    delete this.grids[ gridName ].displays.displayName;
+    delete this.grids[ gridName ].displays[ displayName ];
+  }
+
+  /**
+   * Adds a new Display to griga.displays.
+   * @param {string} name - Name of the Display
+   * @param {string} wrapperId - Id of the html-element for the display
+   * @param {*} widthHeightRatio -Width Height ratio
+   */
+  newDisplay( name, wrapperId, widthHeightRatio = 1 ){
+    this.displays[ name ] = new Display( {
+      name, wrapperId, widthHeightRatio
+    } );
+  }
+
+  /**
+   * Deletes a Display and all its Links to Grids
+   * @param {string} name 
+   */
+  deleteDisplay( name ){
+    Object.keys(this.displays[name].linkedGrids).forEach( grid => {
+      delete this.grids[ grid ].gridInstance.displays[ name ];
+    } );
+    delete this.displays[name];
   }
 
 }
