@@ -63,7 +63,6 @@ class App {
     this.home_screen = document.querySelector('.home-screen');
     this.play_screen = document.querySelector('.play-screen');
     this.editor_screen = document.querySelector('.editor-screen');
-    this.play_levels_button = document.querySelector('.play-levels-button');
     this.save_button = document.querySelector('.save-button');
     this.editor_test_button = document.querySelector('.editor-test-button');
     this.state = 'home';
@@ -164,8 +163,7 @@ class App {
     this.content_div.addEventListener('click', e => this.handleContentDivClick())
     this.save_button.addEventListener('click', e => this.editor.handleSaveButtonClick( e ));
     this.editor_test_button.addEventListener('click', e => this.editor.handleTestButtonClick( e ));
-    this.play_levels_button.addEventListener('click', e => this.play.handleLevelsButtonClick( e ));
-    this.play.levels_container.addEventListener('click', e => this.play.handleLevelsContainerClick( e ));
+    this.play.setupEventListeners();
   }
 }
 

@@ -34,10 +34,10 @@
     }
 
     .level-bar {
-      margin-top: 20px;
+      margin: 20px;
     }
 
-    .top-bar .button, .level-bar .button {
+    .top-bar .button {
       float: left;
     }
 
@@ -85,7 +85,6 @@
       display: flex;
       justify-content: flex-end;
       flex-wrap: nowrap;
-      width: 100%;
       overflow: hidden;
       background-color: #333;
     }
@@ -145,11 +144,22 @@
     <div class="content">
       <div class="screen home-screen"></div>
       <div class="screen play-screen hidden">
-        <div class="display" id="play-display"></div>
+        <!-- play-play -->
+        <div class="play-play-elements"> 
+          <div class="level-bar level-top-bar">
+            <div class="button" id="previous-level-button"><i class="fas fa-chevron-left"></i></div>
+            <div class="level-name button" id="play-level-name">Level Bar didn't load</div>
+            <div class="button" id="next-level-button"><i class="fas fa-chevron-right"></i></div>
+            <div class="button" id="play-restart-button"><i class="fas fa-fast-backward"></i></div>
+            <div class="button" id="play-undo-button"><i class="fas fa-undo"></i></div>
+          </div>
+          <div class="display" id="play-display"></div>
+        </div>
+        <!-- play-level -->
         <div class="levels-container hidden">
           <div class="level-bar">
             <div class="level-name button">Levels didn't Load</div>
-            <div class="level-play-button button right">play</div>
+            <div class="level-play-button button right"><i class="fas fa-play"></i></div>
           </div>
         </div>
       </div>
