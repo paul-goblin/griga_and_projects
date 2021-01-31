@@ -9,6 +9,7 @@ export class Play {
         this.levels_button = document.querySelector('.play-levels-button');
         this.levels_container = document.querySelector('.levels-container');
         this.play_elements = document.querySelector('.play-play-elements');
+        this.levels_elements = document.querySelector('.play-levels-elements');
         this.play_level_name = document.getElementById('play-level-name');
         this.previous_level_button = document.getElementById('previous-level-button');
         this.next_level_button = document.getElementById('next-level-button');
@@ -84,7 +85,7 @@ export class Play {
     startLevelsState() {
         this.state = 'levels';
         this.updateLevelsContainer();
-        this.levels_container.classList.remove('hidden');
+        this.levels_elements.classList.remove('hidden');
         this.levels_button.innerHTML = 'continue';
         this.showLevelDetails(this.levelIndex);
     }
@@ -92,7 +93,7 @@ export class Play {
     endLevelsState() {
         this.state = null;
         this.hideLevelDetails();
-        this.levels_container.classList.add('hidden');
+        this.levels_elements.classList.add('hidden');
     }
 
     loadLevel( levelIndex = this.levelIndex ) {
@@ -121,6 +122,7 @@ export class Play {
         this.previewGrid.loadScene( this.app.backgroundTileScene );
         this.previewGrid.loadScene( classicLevels[ this.detailsLevelIndex ].sceneData );
         this.griga.windowResized = true;
+        this.app.style.setScrollbarHeight();
     }
 
     hideLevelDetails(){
@@ -130,6 +132,7 @@ export class Play {
             this.griga.removeGridFromDisplay('preview', 'play-preview-'+this.detailsLevelIndex);
             this.previewGrid.clearScene();
             this.detailsLevelIndex = null;
+            this.app.style.setScrollbarHeight();
         }
     }
 
@@ -148,6 +151,8 @@ export class Play {
         if (levelDetailsBar.classList.contains('hidden')) {
             this.hideLevelDetails();
             this.showLevelDetails( parseInt(levelDetailsBar.getAttribute('data-index')) );
+        } else {
+            this.hideLevelDetails();
         }
     }
 

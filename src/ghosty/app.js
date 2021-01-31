@@ -7,6 +7,7 @@ import { Stone } from "./entities/ghosty_entities/stone";
 import { WoodenBox } from "./entities/ghosty_entities/wooden_box";
 import { SelectionBackground } from "./entities/selection_background";
 import { Play } from "./play";
+import { Style } from "./style";
 
 const CS = 16;
 const RS = 10;
@@ -75,6 +76,7 @@ class App {
     this.griga = new Griga( grigaConfig, griga => this.startGame( griga ) );
     this.play = new Play( this, this.griga );
     this.editor = new Editor( this, this.griga );
+    this.style = new Style();
     this.setupEventListeners();
   }
 

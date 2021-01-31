@@ -17,6 +17,7 @@
       height: 100%;
       font-family: Trebuchet MS;
       overflow: hidden;
+      background-color: #151515;
     }
 
     .wrapper {
@@ -52,6 +53,7 @@
       text-decoration: none;
       font-size: 17px;
       cursor: pointer;
+      transition: 200ms linear;
     }
 
     .button:hover {
@@ -145,6 +147,53 @@
       line-height: 1.5em;
     }
 
+    .category-bar {
+      justify-content: flex-start;
+    }
+
+    .your-levels-button {
+      background-color: darkcyan;
+    }
+
+    .your-levels-container .level-bar {
+      background-color:darkcyan;
+    }
+
+    .scrollbar {
+      height: 400px;
+      width: 100%;
+      color: #f2f2f2;
+      background-color: #333;
+      cursor: grab;
+      transition: 200ms linear;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    .scrollbar-box {
+      margin: 0 20px;
+      height: 10000px;
+      float: right;
+      width: 16px;
+      position: relative;
+      transition: 200ms linear;
+    }
+
+    .scrollbar:hover {
+      width: 36px;
+      background-color: #ddd;
+      color: black;
+    }
+
+    .scrollbar-box:hover {
+      width: 36px;
+    }
+
+    .scrollbar:active {
+      cursor: grabbing;
+    }
+
     .active {
       background-color: #7dc44e;
     }
@@ -181,16 +230,25 @@
           <div class="display" id="play-display"></div>
         </div>
         <!-- play-level -->
-        <div class="levels-container hidden">
-          <div class="level-bar">
-            <div class="level-name button">Levels didn't Load</div>
-            <div class="level-play-button button right"><i class="fas fa-play"></i></div>
+        <div class="play-levels-elements hidden">
+          <div class="level-bar category-bar">
+            <div class="classic-button button">Classic</div>
+            <div class="your-levels-button button">Your Levels</div>
           </div>
-          <div class="level-details level-bar hidden" id="level-details-0" data-index="0">
-            <div class="display preview-display" id="preview-display-0"></div>
-            <div class="item preview-details-container">
-              <div class="preview-difficulty-line preview-line">difficulty: <span class="difficulty-0">easy</span></div>
-              <div class="preview-creator-line preview-line">creator: <span class="creator-0">Tom Kopolt</span></div>
+          <div class="scrollbar-box">
+            <div class="scrollbar"></div>
+          </div>
+          <div class="levels-container classic-container">
+            <div class="level-bar">
+              <div class="level-name button">Levels didn't Load</div>
+              <div class="level-play-button button right"><i class="fas fa-play"></i></div>
+            </div>
+            <div class="level-details level-bar hidden" id="level-details-0" data-index="0">
+              <div class="display preview-display" id="preview-display-0"></div>
+              <div class="item preview-details-container">
+                <div class="preview-difficulty-line preview-line">difficulty: <span class="difficulty-0">easy</span></div>
+                <div class="preview-creator-line preview-line">creator: <span class="creator-0">Tom Kopolt</span></div>
+              </div>
             </div>
           </div>
         </div>
