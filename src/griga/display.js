@@ -91,6 +91,13 @@ export class Display {
   }
 
   //resize
+  resize(){
+    this.resizeWrapper();
+    for (let gridLink of Object.values( this.linkedGrids )) {
+      gridLink.resizeCanvas();
+    };
+  }
+
   resizeWrapper(){
     const computedStyle = getComputedStyle( this.wrapper );
     this.width = parseFloat( computedStyle.width.slice( 0,-2 ) );
@@ -135,13 +142,7 @@ export class Display {
     ctx.clearRect( 0,0, offCanvas.width, offCanvas.height);
   }
 
-  render( windowResized ){
-    if (windowResized) {
-      this.resizeWrapper();
-      for (let gridLink of Object.values( this.linkedGrids )) {
-        gridLink.resizeCanvas();
-      };
-    }
+  render(){
 
     this.updateDisplayData();
 

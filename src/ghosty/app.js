@@ -6,6 +6,7 @@ import { Goal } from "./entities/ghosty_entities/goal";
 import { Stone } from "./entities/ghosty_entities/stone";
 import { WoodenBox } from "./entities/ghosty_entities/wooden_box";
 import { SelectionBackground } from "./entities/selection_background";
+import { Levels } from "./levels";
 import { Play } from "./play";
 import { Style } from "./style";
 
@@ -42,11 +43,6 @@ const grigaConfig = {
       rows: RS,
     },
     {
-      name: 'editor-test',
-      columns: CS,
-      rows: RS,
-    },
-    {
       name: 'selection-hotbar',
       columns: 10,
       rows: 1,
@@ -62,44 +58,30 @@ const grigaConfig = {
 
 class App {
   constructor() {
+    this.backgroundTileScene = {"detached":[],"tiles":[[[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]]],[[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]]],[[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]]],[[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]]],[[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]]],[[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]]],[[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]]],[[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]]],[[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]]],[[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]]],[[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]]],[[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]]],[[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]]],[[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]]],[[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]]],[[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]],[["BackgroundTile",{}]]]]}
     this.home_button = document.querySelector('.home-button');
     this.play_button = document.querySelector('.play-button');
+    this.levels_button = document.querySelector('.levels-button');
     this.editor_button = document.querySelector('.editor-button');
     this.content_div = document.querySelector('.content');
     this.home_screen = document.querySelector('.home-screen');
     this.play_screen = document.querySelector('.play-screen');
     this.editor_screen = document.querySelector('.editor-screen');
-    this.save_button = document.querySelector('.save-button');
-    this.editor_test_button = document.querySelector('.editor-test-button');
+    this.levels_screen = document.querySelector('.levels-screen');
     this.state = 'home';
-    this.backgroundTileScene = null;
+    this.displaySettings = {columnsOnScreen: CS, rowsOnScreen: RS};
     this.griga = new Griga( grigaConfig, griga => this.startGame( griga ) );
+    this.levels = new Levels( this );
     this.play = new Play( this, this.griga );
     this.editor = new Editor( this, this.griga );
-    this.style = new Style();
+    this.style = new Style( this );
     this.setupEventListeners();
   }
 
   startGame( griga ){
-    griga.ghosty = this
-    for (let r = 0; r < RS; r++) {
-      for (let c = 0; c < CS; c++) {
-        griga.grids['editor'].newEntityInstance('BackgroundTile', {}, {detached: false, c: c, r: r});
-      }
-    }
-    this.backgroundTileScene = griga.grids['editor'].getCurrentSceneData();
-
-    for (let c = 0; c < 10; c++) {
-      griga.grids['selection-hotbar'].newEntityInstance(
-        'SelectionBackground',
-        {},
-        {detached: false, c: c, r: 0}
-      );
-    }
-    griga.grids['selection-hotbar'].newEntityInstance('Stone', {}, {c:0,r:0});
-    griga.grids['selection-hotbar'].newEntityInstance('Ghosty', {}, {c:1,r:0});
-    griga.grids['selection-hotbar'].newEntityInstance('Goal', {}, {c:2,r:0});
-    griga.grids['selection-hotbar'].newEntityInstance('WoodenBox', {}, {c:3,r:0});
+    griga.ghosty = this;
+    this.play.startGame();
+    this.editor.startGame();
   }
 
   levelDone(){
@@ -108,53 +90,42 @@ class App {
     }
   }
 
-  handleHomeButtonClick(){
-    if (this.state !== 'home') {
-      this.home_button.classList.add('active');
-      this.home_screen.classList.remove('hidden');
-      if (this.state === 'play') {
-        this.play.end();
-      }
-      if (this.state === 'editor') {
-        this.editor.end();
-      }
-      this.state = 'home';
+  endActiveState(){
+    if (this.state === 'home') {
+      this.home_button.classList.remove('active');
+      this.home_screen.classList.add('hidden');
+    }
+    else {
+      this[this.state].end();
     }
   }
 
+  handleHomeButtonClick(){
+    this.endActiveState();
+    this.home_button.classList.add('active');
+    this.home_screen.classList.remove('hidden');
+    this.state = 'home';
+    this.style.resizeWrapper();
+  }
+
   handlePlayButtonClick(){
-    if (this.state !== 'play') {
-      if (this.state === 'home') {
-        this.home_button.classList.remove('active');
-        this.home_screen.classList.add('hidden');
-      }
-      if (this.state === 'editor') {
-        this.editor.end();
-      }
-      this.state = 'play';
-      this.play.start();
-    }
+    this.endActiveState();
+    this.play.start();
   }
   
   handleEditorButtonClick(){
-    if (this.state !== 'editor') {
-      if (this.state === 'play') {
-        this.play.end()
-      }
-      if (this.state === 'home') {
-        this.home_button.classList.remove('active');
-        this.home_screen.classList.add('hidden');
-      }
-      this.state = 'editor';
-      this.editor.start();
-    }
+    this.endActiveState();
+    this.editor.start();
+  }
+
+  handleLevelsButtonClick(){
+    this.endActiveState();
+    this.levels.start();
   }
   
   handleContentDivClick(){
     if (this.state === 'home') {
-      this.home_button.classList.remove('active');
-      this.home_screen.classList.add('hidden');
-      this.state = 'play'
+      this.endActiveState();
       this.play.start();
     }
   }
@@ -163,10 +134,8 @@ class App {
     this.home_button.addEventListener('click', e => this.handleHomeButtonClick());
     this.play_button.addEventListener('click', e => this.handlePlayButtonClick());
     this.editor_button.addEventListener('click', e => this.handleEditorButtonClick());
-    this.content_div.addEventListener('click', e => this.handleContentDivClick())
-    this.save_button.addEventListener('click', e => this.editor.handleSaveButtonClick( e ));
-    this.editor_test_button.addEventListener('click', e => this.editor.handleTestButtonClick( e ));
-    this.play.setupEventListeners();
+    this.levels_button.addEventListener('click', e => this.handleLevelsButtonClick());
+    this.content_div.addEventListener('click', e => this.handleContentDivClick());
   }
 }
 

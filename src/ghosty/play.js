@@ -1,106 +1,50 @@
-import classicLevels from './level/all_classic_levels.json';
-
 export class Play {
     constructor( app, griga ){
         this.app = app;
         this.griga = griga;
         this.grid = griga.grids['play'];
-        this.previewGrid = griga.grids['preview'];
-        this.levels_button = document.querySelector('.play-levels-button');
-        this.levels_container = document.querySelector('.levels-container');
-        this.play_elements = document.querySelector('.play-play-elements');
-        this.levels_elements = document.querySelector('.play-levels-elements');
         this.play_level_name = document.getElementById('play-level-name');
         this.previous_level_button = document.getElementById('previous-level-button');
         this.next_level_button = document.getElementById('next-level-button');
         this.play_restart_button = document.getElementById('play-restart-button');
         this.play_undo_button = document.getElementById('play-undo-button');
-        this.display_settings = {
-            columnsOnScreen: this.grid.columns,
-            rowsOnScreen: this.grid.rows,
-        }
+        this.level = this.app.levels.levels['classic'][0];
+        this.category = 'classic';
         this.levelIndex = 0;
         this.state = null;
         this.undo_history = [];
-        this.detailsLevelIndex = null;
+
+        this.setupEventListeners();
     }
 
-    start(){
+    startGame(){
+        this.griga.displayGrid('play', 'play', this.app.displaySettings);
+    }
+
+    start( level, category, levelIndex ){
         this.app.play_button.classList.add('active');
         this.app.play_screen.classList.remove('hidden');
-        this.levels_button.classList.remove('hidden');
-        this.griga.displayGrid('play', 'play', this.display_settings);
-        if (!this.state) {this.startPlayState()};
-        this.griga.windowResized = true;
+        this.state = 'play';
+        this.app.state = 'play';
+        this.loadLevel( level, category, levelIndex );
+        this.griga.resizeDisplays();
+        this.app.style.resizeWrapper();
     }
 
     end(){
-        this.griga.removeGridFromDisplay('play', 'play');
+        this.state = null;
+        this.clearLevel();
         this.app.play_button.classList.remove('active');
         this.app.play_screen.classList.add('hidden');
-        this.levels_button.classList.add('hidden');
     }
 
-    updateLevelsContainer(){
-        Object.keys(this.griga.displays).filter( k => k.slice(0, 12) === 'play-preview' ).forEach( d => {
-            this.griga.deleteDisplay( d );
-        } );
-        let htmlString = '';
-        classicLevels.forEach( (level, i) => {
-            htmlString += `
-            <div class="level-bar">
-                <div class="level-name button">${level.name}</div>
-                <div class="level-play-button button right" data-level="${i}"><i class="fas fa-play"></i></div>
-            </div>
-            <div class="level-details level-bar hidden" id="level-details-${i}" data-index="${i}">
-                <div class="display preview-display" id="preview-display-${i}"></div>
-                <div class="item preview-details-container">
-                    <div class="preview-difficulty-line preview-line">difficulty: <span class="difficulty-${i}">${level.difficulty}</span></div>
-                    <div class="preview-creator-line preview-line">creator: <span class="creator-${i}">${level.creator}</span></div>
-                </div>
-                </div>
-            </div>
-            `
-        } );
-        this.levels_container.innerHTML = htmlString;
-        classicLevels.forEach( (level, i) => {
-            this.griga.newDisplay( 'play-preview-'+i, 'preview-display-'+i, this.grid.columns/this.grid.rows );
-        } );
-    }
-
-    startPlayState() {
-        this.state = 'play';
-        this.levels_button.innerHTML = 'levels';
-        this.loadLevel();
-        this.play_elements.classList.remove('hidden');
-        this.griga.windowResized = true;
-    }
-
-    endPlayState() {
-        this.state = null;
-        this.play_elements.classList.add('hidden');
-        this.clearLevel();
-    }
-
-    startLevelsState() {
-        this.state = 'levels';
-        this.updateLevelsContainer();
-        this.levels_elements.classList.remove('hidden');
-        this.levels_button.innerHTML = 'continue';
-        this.showLevelDetails(this.levelIndex);
-    }
-
-    endLevelsState() {
-        this.state = null;
-        this.hideLevelDetails();
-        this.levels_elements.classList.add('hidden');
-    }
-
-    loadLevel( levelIndex = this.levelIndex ) {
+    loadLevel( level = this.level, category = this.category, levelIndex = this.levelIndex) {
+        this.level = level;
+        this.category = category;
         this.levelIndex = levelIndex;
         this.grid.loadScene( this.app.backgroundTileScene );
-        this.grid.loadScene( classicLevels[ this.levelIndex ].sceneData );
-        this.play_level_name.innerHTML = classicLevels[ this.levelIndex ].name;
+        this.grid.loadScene( this.level.sceneData );
+        this.play_level_name.innerHTML = this.level.name;
     }
 
     clearLevel() {
@@ -108,84 +52,30 @@ export class Play {
     }
 
     levelDone() {
-        if (classicLevels[ this.levelIndex + 1 ]) {
+        console.log('TODO: level done!');
+    }
+
+    handlePreviousLevelButtonClick( e ){
+        if (this.levelIndex !== 0) {
+            this.level = this.app.levels.levels[this.category][--this.levelIndex];
             this.clearLevel();
             this.loadLevel();
         }
     }
 
-    showLevelDetails( detailsLevelIndex ){
-        this.detailsLevelIndex = detailsLevelIndex;
-        const levelDetailsBar = document.getElementById('level-details-'+ detailsLevelIndex);
-        levelDetailsBar.classList.remove('hidden');
-        this.griga.displayGrid('play-preview-'+detailsLevelIndex, 'preview', this.display_settings);
-        this.previewGrid.loadScene( this.app.backgroundTileScene );
-        this.previewGrid.loadScene( classicLevels[ this.detailsLevelIndex ].sceneData );
-        this.griga.windowResized = true;
-        this.app.style.setScrollbarHeight();
-    }
-
-    hideLevelDetails(){
-        if (this.detailsLevelIndex || this.detailsLevelIndex === 0) {
-            const levelDetailsBar = document.getElementById('level-details-'+this.detailsLevelIndex);
-            levelDetailsBar.classList.add('hidden');
-            this.griga.removeGridFromDisplay('preview', 'play-preview-'+this.detailsLevelIndex);
-            this.previewGrid.clearScene();
-            this.detailsLevelIndex = null;
-            this.app.style.setScrollbarHeight();
-        }
-    }
-
-    handleLevelsButtonClick( e ){
-        if (this.state === 'play') {
-            this.endPlayState();
-            this.startLevelsState();
-        } else {
-            this.endLevelsState();
-            this.startPlayState();
-        }
-    }
-
-    handleLevelNameClicked( target ){
-        const levelDetailsBar = target.parentElement.nextElementSibling;
-        if (levelDetailsBar.classList.contains('hidden')) {
-            this.hideLevelDetails();
-            this.showLevelDetails( parseInt(levelDetailsBar.getAttribute('data-index')) );
-        } else {
-            this.hideLevelDetails();
-        }
-    }
-
-    handleLevelPlayButtonClicked( target ){
-        this.levelIndex = parseInt(target.getAttribute('data-level'));
-        this.endLevelsState();
-        this.startPlayState();
-    }
-
-    handleLevelsContainerClick( e ){
-        if (e.target.classList.contains('level-name')) {
-            this.handleLevelNameClicked( e.target );
-        } else if (e.target.classList.contains('level-play-button')) {
-            this.handleLevelPlayButtonClicked( e.target );
-        }
-    }
-
-    handlePreviousLevelButtonClick( e ){
-        if (this.levelIndex !== 0) {
-            this.clearLevel();
-            this.loadLevel( this.levelIndex-1 );
-        }
-    }
-
     handleNextLevelButtonClick( e ){
-        if (this.levelIndex !== classicLevels.length-1) {
+        if (this.levelIndex !== this.app.levels.levels[this.category].length-1) {
+            this.level = this.app.levels.levels[this.category][++this.levelIndex];
             this.clearLevel();
-            this.loadLevel( this.levelIndex+1 );
+            this.loadLevel();
         }
     }
 
     handlePlayLevelNameClick( e ){
-        this.handleLevelsButtonClick( e );
+        this.end();
+        this.app.levels.start( this.category );
+        this.app.levels.showLevelDetails( this.levelIndex );
+        this.app.style.setScrollPosToLevel( this.levelIndex );
     }
 
     handlePlayRestartButtonClicked( e ){
@@ -198,8 +88,6 @@ export class Play {
     }
 
     setupEventListeners(){
-        this.levels_button.addEventListener('click', e => this.handleLevelsButtonClick( e ));
-        this.levels_container.addEventListener('mousedown', e => this.handleLevelsContainerClick( e ));
         this.previous_level_button.addEventListener('click', e => this.handlePreviousLevelButtonClick( e ));
         this.next_level_button.addEventListener('click', e => this.handleNextLevelButtonClick( e ));
         this.play_level_name.addEventListener('click', e => this.handlePlayLevelNameClick( e ));

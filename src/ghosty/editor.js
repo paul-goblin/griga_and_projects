@@ -1,67 +1,74 @@
+import { Display } from "../griga/display";
+import { Popup } from "./popup";
+
 export class Editor {
     constructor( app, griga ){
+        this.hotbar_scene_data = {"detached":[],"tiles":[[[["SelectionBackground",{}]]],[[["SelectionBackground",{}]]],[[["SelectionBackground",{}]]],[[["SelectionBackground",{}]]],[[["SelectionBackground",{}]]],[[["SelectionBackground",{}]]],[[["SelectionBackground",{}]]],[[["SelectionBackground",{}]]],[[["SelectionBackground",{}]]],[[["SelectionBackground",{}]]]]}
         this.app = app;
         this.griga = griga;
         this.grid = griga.grids['editor'];
-        this.test_grid = griga.grids['editor-test'];
+        this.hotbar_grid = griga.grids['selection-hotbar'];
         this.lower_bar = document.querySelector('.lower-bar');
+        this.save_button = document.getElementById('editor-save-button');
+        this.test_button = document.getElementById('editor-test-button');
+        this.level_name = document.getElementById('editor-level-name');
+        this.rename_button= document.getElementById('editor-rename-button');
+        this.level = this.app.levels.levels['presets'][0];
+        this.category = 'presets';
+        this.levelIndex = 0;
         this.state = null;
-        this.selection = new Selection( this );
-        this.display_settings = {
-            columnsOnScreen: this.grid.columns,
-            rowsOnScreen: this.grid.rows,
+        this.selection = new Selection( this, this.hotbar_grid );
+        this.hotbarDisplaySettings = {
+            columnsOnScreen: this.hotbar_grid.columns,
+            rowsOnScreen: this.hotbar_grid.rows,
         }
-        this.selection_display_settings = {
-            columnsOnScreen: griga.grids['selection-hotbar'].columns,
-            rowsOnScreen: griga.grids['selection-hotbar'].rows,
-        }
+        this.setupEventListeners();
     }
 
-    start(){
+    startGame(){
+        this.hotbar_grid.loadScene( this.hotbar_scene_data );
+        Object.keys(this.griga.entities).filter( entityName => {
+            return !['SelectionBackground', 'BackgroundTile'].includes( entityName );
+        } ).forEach( (entityName, i) => {
+            this.hotbar_grid.newEntityInstance(entityName, {}, {c:i,r:0});
+        } );
+    }
+
+    start( level, category, levelIndex ){
         this.app.editor_button.classList.add('active');
         this.app.editor_screen.classList.remove('hidden');
-        this.app.editor_test_button.classList.remove('hidden');
-        if (!this.state) {this.startEditState()};
-        this.griga.displayGrid('selection', 'selection-hotbar', this.selection_display_settings);
-        this.griga.windowResized = true;
+        this.state = 'editor';
+        this.app.state = 'editor';
+        this.selection.activateFirstSelectionBackground();
+        this.griga.displayGrid('editor', 'editor', this.app.displaySettings);
+        this.griga.displayGrid('selection', 'selection-hotbar', this.hotbarDisplaySettings);
+        this.loadLevel( level, category, levelIndex );
+        this.griga.resizeDisplays();
+    }
+
+    loadLevel( level = this.level, category = this.category, levelIndex = this.levelIndex) {
+        this.level = level;
+        this.category = category;
+        this.levelIndex = levelIndex;
+        this.grid.loadScene( this.app.backgroundTileScene );
+        this.grid.loadScene( this.level.sceneData );
+        this.level_name.innerHTML = this.level.name;
+    }
+
+    clearLevel() {
+        this.grid.clearScene();
     }
 
     end(){
-        this.griga.removeGridFromDisplay('selection-hotbar', 'selection')
+        this.griga.removeGridFromDisplay(this.state, 'editor');
+        this.griga.removeGridFromDisplay('selection-hotbar', 'selection');
+        this.clearLevel();
         this.app.editor_button.classList.remove('active');
-        this.app.editor_test_button.classList.add('hidden');
         this.app.editor_screen.classList.add('hidden');
     }
 
-    startEditState() {
-        this.state = 'edit';
-        this.app.editor_test_button.innerHTML = 'test';
-        this.lower_bar.classList.remove('hidden');
-        this.selection.activateFirstSelectionBackground();
-        this.griga.displayGrid('editor', 'editor', this.display_settings);
-        this.griga.windowResized = true;
-    }
-
-    endEditState() {
-        this.state = null;
-        this.griga.removeGridFromDisplay('editor', 'editor');
-        this.lower_bar.classList.add('hidden');
-        this.selection.setActiveSelectionBackground( null );
-    }
-
-    startTestState() {
-        this.state = 'test';
-        this.app.editor_test_button.innerHTML = 'edit';
-        const sceneData = this.grid.getCurrentSceneData();
-        this.test_grid.clearScene();
-        this.test_grid.loadScene( sceneData );
-        this.griga.displayGrid('editor', 'editor-test', this.display_settings);
-        this.griga.windowResized = true;
-    }
-
-    endTestState() {
-        this.state = null;
-        this.griga.removeGridFromDisplay('editor-test', 'editor');
+    showSavePopup(){
+        this.popup = new Popup( 'editor-display', 'Works!' );
     }
 
     handleSaveButtonClick( e ){
@@ -69,29 +76,42 @@ export class Editor {
             const sceneData = this.grid.getCurrentSceneData( ['BackgroundTile'] );
             navigator.clipboard.writeText(JSON.stringify(sceneData));
             console.log('copied sceneDataJsonText');
+        } else {
+            this.showSavePopup();
         }
     }
 
+    handleLevelNameClick( e ){
+        this.end();
+        this.app.levels.start( 'yourLevels' );
+    }
+
     handleTestButtonClick( e ){
-        if (this.state === 'edit') {
-            this.endEditState();
-            this.startTestState();
-        } else {
-            this.endTestState();
-            this.startEditState();
-        }
+        console.log('test button clicked');
+    }
+
+    handleRenameButtonClick( e ){
+        console.log('rename');
+    }
+
+    setupEventListeners(){
+        this.save_button.addEventListener('click', e => this.handleSaveButtonClick( e ));
+        this.test_button.addEventListener('click', e => this.handleTestButtonClick( e ));
+        this.level_name.addEventListener('click', e => this.handleLevelNameClick( e ));
+        this.rename_button.addEventListener('click', e => this.handleRenameButtonClick( e ));
     }
 }
 
 class Selection {
-    constructor( editor ){
+    constructor( editor, hotbar ){
         this.editor = editor;
+        this.hotbar = hotbar;
         this.activeSelectionBackground = null;
         this.selectedEntity = null;
     }
 
     activateFirstSelectionBackground() {
-        this.editor.griga.grids['selection-hotbar'].getEntityInstances( {
+        this.hotbar.getEntityInstances( {
             tile: {c:0, r:0},
             type: 'SelectionBackground'
         } )[0].mouseDownHandler();

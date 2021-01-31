@@ -52,8 +52,11 @@
       padding: 14px 16px;
       text-decoration: none;
       font-size: 17px;
-      cursor: pointer;
       transition: 200ms linear;
+    }
+
+    .button {
+      cursor: pointer;
     }
 
     .button:hover {
@@ -86,6 +89,60 @@
     .display {
       margin: 14px 16px;
       background-color: #7dc44e;
+      position: relative;
+    }
+
+    .display .popup {
+      z-index: 100;
+      color: #f2f2f2;
+      text-align: center;
+      text-decoration: none;
+      font-size: 17px;
+      background-color: #333;
+      margin: 0;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      -ms-transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%);
+    }
+
+    .popup .popup-message, .popup .popup-input-line {
+      line-height: 1.5em;
+      margin: 14px 16px 0 16px;
+    }
+
+    .popup .popup-message {
+      background-color: #7dc44e;
+      padding: 14px 16px;
+    }
+
+    .popup .popup-buttons-bar {
+      margin: 0;
+      margin: 14px 16px;
+    }
+
+    .popup .popup-buttons-bar .button {
+      background-color: darkcyan;
+      flex-grow: 1;
+    }
+    .popup .popup-buttons-bar .button:first-child {
+      margin-right: 16px;
+    }
+
+    .popup .popup-input-line {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .popup input {
+      font-size: 17px;
+      margin-left: 5px;
+    }
+
+    .popup input:focus {
+      outline: none;
+      background-color: #f2f2f2;
     }
 
     .lower-bar, .level-bar  {
@@ -100,6 +157,9 @@
       flex-grow: 10;
     }
 
+    /* 
+    style for button inside the selection level-bar
+
     .button.save-button {
       padding: 14px 36px;
       position: relative;
@@ -112,7 +172,7 @@
       left: 50%;
       -ms-transform: translate(-50%, -50%);
       transform: translate(-50%, -50%);
-    }
+    } */
 
     .button i {
       pointer-events: none;
@@ -128,7 +188,16 @@
 
     .levels-container {
       margin: 0px auto;
-      max-width: 700px;
+      max-width: 800px;
+      position: relative;
+    }
+
+    .levels-container .level-bar:first-child {
+      margin-top: 0px;
+    }
+
+    .levels-container-container {
+      overflow: hidden;
     }
 
     .preview-display {
@@ -150,13 +219,8 @@
     .category-bar {
       justify-content: flex-start;
     }
-
-    .your-levels-button {
+    .levels-screen .button.active{
       background-color: darkcyan;
-    }
-
-    .your-levels-container .level-bar {
-      background-color:darkcyan;
     }
 
     .scrollbar {
@@ -168,7 +232,7 @@
       transition: 200ms linear;
       position: absolute;
       top: 0;
-      left: 0;
+      right: 0;
     }
 
     .scrollbar-box {
@@ -211,35 +275,35 @@
     <div class="top-bar">
       <div class="home-button button active"><i class="fas fa-home"></i></div>
       <div class="play-button button">Play</div>
+      <div class="levels-button button">Levels</div>
       <div class="editor-button button">Editor</div>
-      <div class="editor-test-button right button hidden">Test</div>
-      <div class="play-levels-button right button hidden">Levels</div>
     </div>
     <div class="content">
+      <!-- home -->
       <div class="screen home-screen"></div>
+      <!-- play -->
       <div class="screen play-screen hidden">
-        <!-- play-play -->
-        <div class="play-play-elements"> 
-          <div class="level-bar level-top-bar">
-            <div class="button" id="previous-level-button"><i class="fas fa-chevron-left"></i></div>
-            <div class="level-name button" id="play-level-name">Level Bar didn't load</div>
-            <div class="button" id="next-level-button"><i class="fas fa-chevron-right"></i></div>
-            <div class="button" id="play-restart-button"><i class="fas fa-fast-backward"></i></div>
-            <div class="button" id="play-undo-button"><i class="fas fa-undo"></i></div>
-          </div>
-          <div class="display" id="play-display"></div>
+        <div class="level-bar level-top-bar">
+          <div class="button" id="previous-level-button"><i class="fas fa-chevron-left"></i></div>
+          <div class="level-name button" id="play-level-name">Level Bar didn't load</div>
+          <div class="button" id="next-level-button"><i class="fas fa-chevron-right"></i></div>
+          <div class="button" id="play-restart-button"><i class="fas fa-fast-backward"></i></div>
+          <div class="button" id="play-undo-button"><i class="fas fa-undo"></i></div>
         </div>
-        <!-- play-level -->
-        <div class="play-levels-elements hidden">
-          <div class="level-bar category-bar">
-            <div class="classic-button button">Classic</div>
-            <div class="your-levels-button button">Your Levels</div>
-          </div>
-          <div class="scrollbar-box">
-            <div class="scrollbar"></div>
-          </div>
-          <div class="levels-container classic-container">
-            <div class="level-bar">
+        <div class="display" id="play-display"></div>
+      </div>
+      <!-- levels -->
+      <div class="screen levels-screen hidden">
+        <div class="level-bar category-bar">
+          <div class="button" id="classic-button">Classic</div>
+          <div class="button" id="your-levels-button">Your Levels</div>
+        </div>
+        <div class="scrollbar-box">
+          <div class="scrollbar"></div>
+        </div>
+        <div class="levels-container-container">
+          <div class="levels-container">
+            <!-- <div class="level-bar">
               <div class="level-name button">Levels didn't Load</div>
               <div class="level-play-button button right"><i class="fas fa-play"></i></div>
             </div>
@@ -249,17 +313,43 @@
                 <div class="preview-difficulty-line preview-line">difficulty: <span class="difficulty-0">easy</span></div>
                 <div class="preview-creator-line preview-line">creator: <span class="creator-0">Tom Kopolt</span></div>
               </div>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
       <div class="screen editor-screen hidden">
-        <div class="display" id="editor-display"></div>
-        <div class="lower-bar hidden">
+        <div class="level-bar editor-top-bar">
+          <div class="button" id="editor-save-button"><i class="fas fa-save"></i></div>
+          <div class="level-name button" id="editor-level-name">Level Bar didn't load</div>
+          <div class="button" id="editor-rename-button"><i class="fas fa-pen"></i></div>
+          <div class="button" id="editor-test-button"><i class="fas fa-play"></i></div>
+        </div>
+        <div class="display" id="editor-display">
+          <!-- popup test -->
+          <div class="popup" id="selection-display-popup">
+            <div class="popup-message">Save your Level:</div>
+            <div class="popup-input-line">
+              <label for="level-name">Name:</label>
+              <input type="text" id="level-name-input" name="level-name" placeholder="untitled">
+            </div>
+            <div class="popup-input-line">
+              <label for="level-name">Difficulty:</label>
+              <input type="text" id="difficulty-name-input" name="difficulty-name" placeholder="easy">
+            </div>
+            <div class="popup-input-line">
+              <label for="level-name">Creator:</label>
+              <input type="text" id="creator-name-input" name="creator-name" placeholder="You">
+            </div>
+            <div class="level-bar popup-buttons-bar">
+              <div class="button popup-button">Back</div>
+              <div class="button popup-button">Save</div>
+            </div>
+          </div>
+        </div>
+        <div class="lower-bar">
           <div class="selection-display-box item">
             <div class="display" id="selection-display"></div>
           </div>
-          <div class="save-button button"><i class="fas fa-save"></i></div>
         </div>
       </div>
     </div>

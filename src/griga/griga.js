@@ -135,9 +135,8 @@ export class Griga {
   }
 
   setupEventListeners(){
-    this.windowResized = false;
     this.keysPressed = [];
-    window.addEventListener('resize', (e) => {this.windowResized = true} );
+    window.addEventListener('resize', (e) => {this.resizeDisplays()} );
     window.addEventListener('keydown', (e) => this.keyDownHandler(e) );
     window.addEventListener('keyup', (e) => this.keyUpHandler(e) );
   }
@@ -166,14 +165,13 @@ export class Griga {
     const renderStart = performance.now();
     //render each Display
     Object.values( this.displays ).forEach( 
-      display => display.render( this.windowResized )
+      display => display.render()
     );
     //check for mspt
     const mspt = performance.now() - renderStart;
     if (mspt > 3) {
       console.warn( 'mspt: ' + (performance.now() - renderStart) );
     }
-    this.windowResized = false;
     requestAnimationFrame( () => this.render() );
   }
 
@@ -185,7 +183,6 @@ export class Griga {
       } );
       this.keysPressed.push( e.key );
     }
-    e.preventDefault();
   }
   keyUpHandler( e ){
     Object.values(this.grids).forEach( grid => {
@@ -256,9 +253,15 @@ export class Griga {
    */
   deleteDisplay( name ){
     Object.keys(this.displays[name].linkedGrids).forEach( grid => {
-      delete this.grids[ grid ].gridInstance.displays[ name ];
+      delete this.grids[ grid ].displays[ name ];
     } );
     delete this.displays[name];
+  }
+
+  resizeDisplays(){
+    Object.values( this.displays ).forEach( 
+      display => display.resize()
+    );
   }
 
 }
