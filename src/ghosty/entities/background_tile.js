@@ -28,6 +28,8 @@ export class BackgroundTile extends Entity {
   }
 
   mouseDownHandler( displayName, mouseC, mouseR, ctrlKey ){
+    if (this.griga.ghosty.editor.popup) {return};
+
     if (this.griga.ghosty.editor.selection.selectedEntity) {
       const stonesOnTile = this.grid.getEntityInstances({tile:{c:this.c,r:this.r},type:  this.griga.ghosty.editor.selection.selectedEntity.constructor.name});
       if (stonesOnTile.length === 0 && !ctrlKey) {

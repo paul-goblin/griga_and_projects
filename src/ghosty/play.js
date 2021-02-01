@@ -27,8 +27,8 @@ export class Play {
         this.state = 'play';
         this.app.state = 'play';
         this.loadLevel( level, category, levelIndex );
-        this.griga.resizeDisplays();
         this.app.style.resizeWrapper();
+        this.griga.resizeDisplays();
     }
 
     end(){

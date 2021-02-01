@@ -17,6 +17,7 @@ export class Editor {
         this.category = 'presets';
         this.levelIndex = 0;
         this.state = null;
+        this.popup = null;
         this.selection = new Selection( this, this.hotbar_grid );
         this.hotbarDisplaySettings = {
             columnsOnScreen: this.hotbar_grid.columns,
@@ -43,6 +44,7 @@ export class Editor {
         this.griga.displayGrid('editor', 'editor', this.app.displaySettings);
         this.griga.displayGrid('selection', 'selection-hotbar', this.hotbarDisplaySettings);
         this.loadLevel( level, category, levelIndex );
+        this.app.style.resizeWrapper();
         this.griga.resizeDisplays();
     }
 
@@ -67,8 +69,46 @@ export class Editor {
         this.app.editor_screen.classList.add('hidden');
     }
 
-    showSavePopup(){
-        this.popup = new Popup( 'editor-display', 'Works!' );
+    showSaveAsNewLevelPopup(){
+        this.popup = new Popup( 'editor-display', '<i class="fas fa-save"></i> Save as new level:',
+        [
+            {id: 'popup-back', text: 'Back', click: iV => this.closePopup( iV )},
+            {id: 'save-popup-save', text: 'Save', click: iV => this.handlePopupSaveNewClick( iV )}
+        ],
+        [
+            {name: 'level-name', label: 'Name:', placeholder: 'unnamed'},
+            {name: 'level-difficulty', label: 'Difficulty:', placeholder: 'easy'},
+            {name: 'level-creator', label: 'Creator:', placeholder: 'You'}
+        ] );
+    }
+
+    handlePopupSaveNewClick( iV ){
+        const [level, category, levelIndex] = this.app.levels.newLevel(
+            iV['level-name'],
+            iV['level-difficulty'],
+            iV['level-creator'],
+            this.grid.getCurrentSceneData( 'BackgroundTile' )
+        );
+        this.clearLevel();
+        this.loadLevel( level, category, levelIndex );
+        this.closePopup();
+    }
+
+    handlePopupRenameClick( iV ){
+        this.app.levels.renameLevel(
+            this.levelIndex,
+            iV['level-name'],
+            iV['level-difficulty'],
+            iV['level-creator']
+        );
+        this.clearLevel();
+        this.loadLevel();
+        this.closePopup();
+    }
+
+    closePopup(){
+        this.popup.close();
+        this.popup = null;
     }
 
     handleSaveButtonClick( e ){
@@ -77,7 +117,7 @@ export class Editor {
             navigator.clipboard.writeText(JSON.stringify(sceneData));
             console.log('copied sceneDataJsonText');
         } else {
-            this.showSavePopup();
+            this.showSaveAsNewLevelPopup();
         }
     }
 
@@ -87,11 +127,31 @@ export class Editor {
     }
 
     handleTestButtonClick( e ){
-        console.log('test button clicked');
+        if (this.category === 'presets') {
+            this.showSaveAsNewLevelPopup();
+        } else if (this.category === 'yourLevels') {
+            this.level.sceneData = this.grid.getCurrentSceneData( ['BackgroundTile'] );
+            this.app.levels.updateLevel( this.levelIndex );
+            this.end();
+            this.app.play.start( this.level, this.category, this.levelIndex );
+        }
     }
 
     handleRenameButtonClick( e ){
-        console.log('rename');
+        if (this.category === 'presets') {
+            this.showSaveAsNewLevelPopup();
+        } else if (this.category === 'yourLevels') {
+            this.popup = new Popup( 'editor-display', `<i class="fas fa-pen"></i> Rename level to:`,
+            [
+                {id: 'popup-back', text: 'Back', click: iV => this.closePopup( iV )},
+                {id: 'rename-popup-rename', text: 'Save', click: iV => this.handlePopupRenameClick( iV )}
+            ],
+            [
+                {name: 'level-name', label: 'Name:', placeholder: this.level.name},
+                {name: 'level-difficulty', label: 'Difficulty:', placeholder: this.level.difficulty},
+                {name: 'level-creator', label: 'Creator:', placeholder: this.level.creator}
+            ] );
+        }
     }
 
     setupEventListeners(){

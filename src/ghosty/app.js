@@ -9,6 +9,7 @@ import { SelectionBackground } from "./entities/selection_background";
 import { Levels } from "./levels";
 import { Play } from "./play";
 import { Style } from "./style";
+import { LocalStorage } from "./local_storage";
 
 const CS = 16;
 const RS = 10;
@@ -70,11 +71,12 @@ class App {
     this.levels_screen = document.querySelector('.levels-screen');
     this.state = 'home';
     this.displaySettings = {columnsOnScreen: CS, rowsOnScreen: RS};
+    this.style = new Style( this );
     this.griga = new Griga( grigaConfig, griga => this.startGame( griga ) );
+    this.localStorage = new LocalStorage( this );
     this.levels = new Levels( this );
     this.play = new Play( this, this.griga );
     this.editor = new Editor( this, this.griga );
-    this.style = new Style( this );
     this.setupEventListeners();
   }
 

@@ -59,7 +59,7 @@ export class Style {
   }
 
   resizeWrapper(){
-    if (this.app.state === 'home' || (this.app.state === 'play' && this.app.play.state === 'levels')) {
+    if (this.app.state === 'home' || (this.app.state === 'levels')) {
       this.wrapper.removeAttribute('style');
     }
     else if (this.app.state === 'play' && this.app.play.state === 'play') {
@@ -67,14 +67,22 @@ export class Style {
       const documentWidth = document.documentElement.clientWidth;
       if (documentHeight-150 < (documentWidth-32)*10/16) {
         this.wrapper.setAttribute('style', `
-          width:${(document.documentElement.clientHeight-150)*16/10 + 32}px;
+          width:${(documentHeight-150)*16/10 + 32}px;
         `);
       } else {
         this.wrapper.removeAttribute('style');
       }
     }
     else if (this.app.state === 'editor') {
-
+      const documentHeight = document.documentElement.clientHeight;
+      const documentWidth = document.documentElement.clientWidth;
+      if (documentHeight-178 < (documentWidth-32)*29/40) {
+        this.wrapper.setAttribute('style', `
+          width:${(documentHeight-178)*40/29 + 32}px;
+        `);
+      } else {
+        this.wrapper.removeAttribute('style');
+      }
     }
   }
 
