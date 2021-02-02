@@ -1,5 +1,6 @@
 import classicLevels from './level/all_classic_levels.json';
 import presetLevels from './level/presets.json';
+import { Popup } from "./popup";
 
 export class Levels {
   constructor( app ){
@@ -14,30 +15,39 @@ export class Levels {
     this.levels_container = document.querySelector('.levels-container');
     this.classic_button = document.getElementById('classic-button');
     this.yourLevels_button = document.getElementById('your-levels-button');
+    this.presets_button = document.getElementById('presets-button');
     this.detailsLevelIndex = null;
 
     this.levels_container.addEventListener('mousedown', e => this.handleLevelsContainerClick( e ));
     this.classic_button.addEventListener('click', e => this.changeState('classic'));
     this.yourLevels_button.addEventListener('click', e => this.changeState('yourLevels'));
+    this.presets_button.addEventListener('click', e => this.changeState('presets'));
+
   }
 
-  start( state = 'classic' ) {
-    this.changeState( state );
+  start( category = 'classic', levelIndex) {
     this.app.state = 'levels';
     this.app.levels_screen.classList.remove('hidden');
     this.app.levels_button.classList.add('active');
+    this.detailsLevelIndex = levelIndex ||  this.levels[ category ].length-1 ;
+    this.changeState( category, this.detailsLevelIndex );
     this.app.style.resizeWrapper();
     this.app.style.setScrollbarHeight();
+    this.app.style.setScrollPosToLevel( this.detailsLevelIndex );
   }
 
   end() {
     this.hideLevelDetails();
     this.app.levels_screen.classList.add('hidden');
     this.app.levels_button.classList.remove('active');
+    this[this.state+'_button'].classList.remove('active');
     this.deleteDisplays();
+    const oldState = this.state;
+    this.state = null;
+    return oldState;
   }
 
-  changeState( state ) {
+  changeState( state, detailsLevelIndex) {
     if (this.state) {
       this[this.state+'_button'].classList.remove('active');
       this.hideLevelDetails();
@@ -47,10 +57,18 @@ export class Levels {
     this[this.state+'_button'].classList.add('active');
     this.clearLevelsContainer();
     this.fillLevelsContainer();
+    this.detailsLevelIndex = detailsLevelIndex || this.levels[ this.state ].length-1;
+    this.showLevelDetails( this.detailsLevelIndex );
     this.app.style.setScrollbarHeight();
+    this.app.style.setScrollPosToLevel( this.detailsLevelIndex );
   }
 
   getLevelHtmlString(level, i){
+    let levelBarButtonsString = `<div class="level-play-button button right" data-level="${i}"><i class="fas fa-play"></i></div>`;
+    if (this.state === 'presets') {
+      levelBarButtonsString = `<div class="button level-edit-button" data-index="${i}"><i class="fas fa-pen"></i></div>`;
+    }
+
     let editorButtonContainer = '';
     if (this.state === 'yourLevels') {
       editorButtonContainer = `
@@ -63,7 +81,7 @@ export class Levels {
     return `
     <div class="level-bar">
         <div class="level-name button">${level.name}</div>
-        <div class="level-play-button button right" data-level="${i}"><i class="fas fa-play"></i></div>
+        ${levelBarButtonsString}
     </div>
     <div class="level-details level-bar hidden" id="level-details-${i}" data-index="${i}">
         <div class="display preview-display" id="preview-display-${i}"></div>
@@ -105,6 +123,8 @@ export class Levels {
     const levelBar = levelDetails.previousElementSibling;
     levelDetails.remove();
     levelBar.remove();
+    this.app.style.setScrollbarHeight();
+    this.app.style.setScrollPos( this.app.style.scrollPos );
   }
   
   showLevelDetails( detailsLevelIndex ){
@@ -116,6 +136,7 @@ export class Levels {
     this.grid.loadScene( this.levels[this.state][ this.detailsLevelIndex ].sceneData );
     this.griga.resizeDisplays();
     this.app.style.setScrollbarHeight();
+    this.app.style.setScrollPosToLevel( this.detailsLevelIndex );
   }
 
   hideLevelDetails(){
@@ -125,8 +146,14 @@ export class Levels {
         this.griga.removeGridFromDisplay('preview', 'play-preview-'+this.detailsLevelIndex);
         this.grid.clearScene();
         this.detailsLevelIndex = null;
-        this.app.style.setScrollbarHeight();
     }
+  }
+
+  deleteLevel( levelIndex ){
+    this.app.localStorage.deleteLevel( this.levels['yourLevels'][levelIndex].name );
+    this.hideLevelDetails();
+    this.levels[this.state].splice( levelIndex, 1 );
+    this.removeLevelFromLevelsContainer( levelIndex );
   }
 
   handleLevelNameClicked( target ){
@@ -136,27 +163,35 @@ export class Levels {
         this.showLevelDetails( parseInt(levelDetailsBar.getAttribute('data-index')) );
     } else {
         this.hideLevelDetails();
+        this.app.style.setScrollbarHeight();
+        this.app.style.setScrollPos( this.app.style.scrollPos );
     }
   }
 
   handleLevelPlayButtonClicked( target ){
     const levelIndex = parseInt(target.getAttribute('data-level'));
-    this.end();
-    this.app.play.start( this.levels[this.state][levelIndex], this.state, levelIndex );
+    const oldState = this.end();
+    this.app.play.start( this.levels[oldState][levelIndex], oldState, levelIndex );
   }
 
   handleLevelEditButtonClicked( target ){
     const levelIndex = parseInt(target.getAttribute('data-index'));
-    this.end();
-    this.app.editor.start( this.levels[this.state][levelIndex], this.state, levelIndex );
+    const oldState = this.end();
+    this.app.editor.start( this.levels[oldState][levelIndex], oldState, levelIndex );
   }
 
   handleLevelDeleteButtonClicked( target ){
     const levelIndex = parseInt(target.getAttribute('data-index'));
-    this.app.localStorage.deleteLevel( this.levels['yourLevels'][levelIndex].name );
-    this.hideLevelDetails();
-    this.levels[this.state].splice( levelIndex, 1 );
-    this.removeLevelFromLevelsContainer( levelIndex );
+    this.popup = new Popup( 'preview-display-'+levelIndex, 'Are you Sure?',
+    [
+      {id: 'popup-play-again', text: 'Cancel', click: () => this.closePopup()},
+      {id: 'popup-next-level', text: 'Delete', click: () => this.deleteLevel( levelIndex )}
+    ] );
+  }
+
+  closePopup(){
+    this.popup.close();
+    this.popup = null;
   }
 
   handleLevelsContainerClick( e ){

@@ -122,7 +122,11 @@ class App {
 
   handleLevelsButtonClick(){
     this.endActiveState();
-    this.levels.start();
+    if (this.state === 'editor') {
+      this.levels.start('yourLevels');
+    } else {
+      this.levels.start('classic');
+    }
   }
   
   handleContentDivClick(){

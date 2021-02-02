@@ -1,3 +1,5 @@
+import { Popup } from "./popup";
+
 export class Play {
     constructor( app, griga ){
         this.app = app;
@@ -52,7 +54,26 @@ export class Play {
     }
 
     levelDone() {
-        console.log('TODO: level done!');
+        this.popup = new Popup( 'play-display', 'Level Done!',
+        [
+            {id: 'popup-play-again', text: 'Play again', click: () => this.handlePopupPlayAgainClick()},
+            {id: 'popup-next-level', text: 'Next level', click: () => this.handlePopupNextLevelClick()}
+        ] );
+    }
+
+    closePopup(){
+        this.popup.close();
+        this.popup = null;
+    }
+
+    handlePopupNextLevelClick() {
+        this.handleNextLevelButtonClick();
+        this.closePopup();
+    }
+
+    handlePopupPlayAgainClick() {
+        this.handlePlayRestartButtonClicked();
+        this.closePopup();
     }
 
     handlePreviousLevelButtonClick( e ){
@@ -63,7 +84,7 @@ export class Play {
         }
     }
 
-    handleNextLevelButtonClick( e ){
+    handleNextLevelButtonClick(){
         if (this.levelIndex !== this.app.levels.levels[this.category].length-1) {
             this.level = this.app.levels.levels[this.category][++this.levelIndex];
             this.clearLevel();
@@ -73,12 +94,10 @@ export class Play {
 
     handlePlayLevelNameClick( e ){
         this.end();
-        this.app.levels.start( this.category );
-        this.app.levels.showLevelDetails( this.levelIndex );
-        this.app.style.setScrollPosToLevel( this.levelIndex );
+        this.app.levels.start( this.category, this.levelIndex );
     }
 
-    handlePlayRestartButtonClicked( e ){
+    handlePlayRestartButtonClicked(){
         this.clearLevel();
         this.loadLevel();
     }

@@ -44,7 +44,7 @@ export class LocalStorage {
     if (index) { indexString = ` ${index}` }
     const itemKey = `ghosty-your-level:${level.name+indexString}`;
     if (localStorage.getItem(itemKey)) {
-      return this.saveLevel( level, index+1 );
+      return this.saveNewLevel( level, index+1 );
     } else {
       level.name += indexString;
       const levelString = JSON.stringify(level);

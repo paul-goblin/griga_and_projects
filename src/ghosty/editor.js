@@ -54,7 +54,11 @@ export class Editor {
         this.levelIndex = levelIndex;
         this.grid.loadScene( this.app.backgroundTileScene );
         this.grid.loadScene( this.level.sceneData );
-        this.level_name.innerHTML = this.level.name;
+        if (category === 'presets') {
+            this.level_name.innerHTML = this.level.name + ' <i>--preset</i>';
+        } else {
+            this.level_name.innerHTML = this.level.name;
+        }
     }
 
     clearLevel() {
@@ -62,6 +66,10 @@ export class Editor {
     }
 
     end(){
+        if ( this.category === 'yourLevels' ){
+            this.level.sceneData = this.grid.getCurrentSceneData( ['BackgroundTile'] );
+            this.app.levels.updateLevel( this.levelIndex );
+        }
         this.griga.removeGridFromDisplay(this.state, 'editor');
         this.griga.removeGridFromDisplay('selection-hotbar', 'selection');
         this.clearLevel();
@@ -72,7 +80,7 @@ export class Editor {
     showSaveAsNewLevelPopup(){
         this.popup = new Popup( 'editor-display', '<i class="fas fa-save"></i> Save as new level:',
         [
-            {id: 'popup-back', text: 'Back', click: iV => this.closePopup( iV )},
+            {id: 'popup-back', text: 'Don\'t save', click: iV => this.closePopup( iV )},
             {id: 'save-popup-save', text: 'Save', click: iV => this.handlePopupSaveNewClick( iV )}
         ],
         [
@@ -91,6 +99,13 @@ export class Editor {
         );
         this.clearLevel();
         this.loadLevel( level, category, levelIndex );
+        if (this.switchToPlayOnLevelSave) {
+            this.handleTestButtonClick();
+        } else if (this.switchToLevelsOnLevelSave) {
+            this.switchToLevels();
+        }
+        this.switchToPlayOnLevelSave = false;
+        this.switchToLevelsOnLevelSave = false;
         this.closePopup();
     }
 
@@ -109,6 +124,16 @@ export class Editor {
     closePopup(){
         this.popup.close();
         this.popup = null;
+        if (this.switchToLevelsOnLevelSave) {
+            this.switchToLevels();
+        }
+        this.switchToPlayOnLevelSave = false;
+        this.switchToLevelsOnLevelSave = false;
+    }
+
+    switchToLevels(){
+        this.end();
+        this.app.levels.start( this.category, this.levelIndex );
     }
 
     handleSaveButtonClick( e ){
@@ -122,16 +147,19 @@ export class Editor {
     }
 
     handleLevelNameClick( e ){
-        this.end();
-        this.app.levels.start( 'yourLevels' );
+        if (this.category === 'presets') {
+            this.switchToLevelsOnLevelSave = true;
+            this.showSaveAsNewLevelPopup();
+        } else if (this.category === 'yourLevels') {
+            this.switchToLevels();
+        }
     }
 
     handleTestButtonClick( e ){
         if (this.category === 'presets') {
+            this.switchToPlayOnLevelSave = true;
             this.showSaveAsNewLevelPopup();
         } else if (this.category === 'yourLevels') {
-            this.level.sceneData = this.grid.getCurrentSceneData( ['BackgroundTile'] );
-            this.app.levels.updateLevel( this.levelIndex );
             this.end();
             this.app.play.start( this.level, this.category, this.levelIndex );
         }
