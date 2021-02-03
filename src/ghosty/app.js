@@ -10,6 +10,7 @@ import { Levels } from "./levels";
 import { Play } from "./play";
 import { Style } from "./style";
 import { LocalStorage } from "./local_storage";
+import { Hole } from "./entities/ghosty_entities/hole";
 
 const CS = 16;
 const RS = 10;
@@ -54,7 +55,7 @@ const grigaConfig = {
       rows: RS
     }
   ],
-  entities:[BackgroundTile, SelectionBackground, Stone, Ghosty, Goal, WoodenBox],
+  entities:[BackgroundTile, SelectionBackground, Stone, Ghosty, Goal, WoodenBox, Hole],
 }
 
 class App {
@@ -84,12 +85,6 @@ class App {
     griga.ghosty = this;
     this.play.startGame();
     this.editor.startGame();
-  }
-
-  levelDone(){
-    if (this.state === 'play') {
-      this.play.levelDone();
-    }
   }
 
   endActiveState(){
@@ -122,8 +117,10 @@ class App {
 
   handleLevelsButtonClick(){
     this.endActiveState();
-    if (this.state === 'editor') {
-      this.levels.start('yourLevels');
+    if (this.state === 'play') {
+      this.levels.start(this.play.category, this.play.levelIndex);
+    } else if (this.state === 'editor') {
+      this.levels.start(this.editor.category, this.editor.levelIndex);
     } else {
       this.levels.start('classic');
     }

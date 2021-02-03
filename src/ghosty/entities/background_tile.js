@@ -6,7 +6,8 @@ export class BackgroundTile extends Entity {
       width: 0.25,
       height: 0.25,
       cOffset: Math.random()*3/4,
-      rOffset: Math.random()*3/4
+      rOffset: Math.random()*3/4,
+      sceneLoadedSubscription: true,
     }, args );
     if (this.grid.name === 'editor') {
       this.subscribeToMouseDown('editor');
@@ -31,20 +32,21 @@ export class BackgroundTile extends Entity {
     if (this.griga.ghosty.editor.popup) {return};
 
     if (this.griga.ghosty.editor.selection.selectedEntity) {
-      const stonesOnTile = this.grid.getEntityInstances({tile:{c:this.c,r:this.r},type:  this.griga.ghosty.editor.selection.selectedEntity.constructor.name});
-      if (stonesOnTile.length === 0 && !ctrlKey) {
+      const sameEntitiesOnTile = this.grid.getEntityInstances({tile:{c:this.c,r:this.r},type:  this.griga.ghosty.editor.selection.selectedEntity.constructor.name});
+      if (sameEntitiesOnTile.length === 0 && !ctrlKey) {
         const selectedEntity = this.griga.ghosty.editor.selection.selectedEntity;
         const entitiesOnTile = this.grid.getEntityInstances( {
           tile: {c:this.c, r:this.r},
           notType: 'BackgroundTile'
         } );
         if (!entitiesOnTile.map(e => e.allowPlacing( selectedEntity )).includes(false)) {
-          if (selectedEntity.allowBeingPlaced( {c:this.c, r:this.r} )) {
+          if (selectedEntity.allowBeingPlaced( {c:this.c, r:this.r}, this.grid )) {
             this.grid.newEntityInstance(  selectedEntity.constructor.name, {}, {c:this.c,r:this.r});
+            this.griga.ghosty.editor.sceneChangedHandler();
           }
         }
-      } else if (stonesOnTile.length === 1 && ctrlKey) {
-        stonesOnTile[0].delete()
+      } else if (sameEntitiesOnTile.length === 1 && ctrlKey) {
+        sameEntitiesOnTile[0].delete()
       }
     }
   }
@@ -52,5 +54,34 @@ export class BackgroundTile extends Entity {
     if (mouseButtons) {
       this.mouseDownHandler( displayName, mouseC, mouseR, ctrlKey );
     }
+  }
+
+  sceneLoadedHandler(){
+    if (this.grid.name !== 'play') {return};
+    this.sceneChanged = false;
+    if (this.c == 0 && this.r == 0) {//keyTrackTile
+      this.griga.ghosty.play.keyTrackEntity = this;
+      Object.keys(this.grid.keyDownSubscriptions).forEach( key => {
+        this.subscribeToKeyDown( key );
+      } );
+    }
+  }
+
+  keyDownHandler( key ){ //keyTrackTile
+    const allEntities = this.grid.getEntityInstances( {
+      notType: 'BackgroundTile'
+    } );
+    const taskDoneArray = allEntities.map( e => e.taskDone() );
+    if (!taskDoneArray.includes( false )) {
+      if (this.grid.getEntityInstances({type:'Goal'})) { //if there exists at least one goal
+        this.griga.ghosty.play.levelDone();
+      }
+    }
+
+    if (this.sceneChanged) {
+      this.griga.ghosty.play.updateUndoHistory();
+    }
+
+    this.sceneChanged = false;
   }
 }

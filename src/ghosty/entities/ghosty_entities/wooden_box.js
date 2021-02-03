@@ -2,7 +2,7 @@ import { GhostyEntity } from '../ghosty_entity';
 
 export class WoodenBox extends GhostyEntity {
   constructor( params, args ){
-    super( {}, args, 10 );
+    super( {}, args, 17 );
     this.setWidth( 0.9 );
     this.setHeight( 0.9 );
     this.setCOffset( 0.05 );

@@ -557,6 +557,23 @@ export class Entity {
   }
 
   /**
+   * Subscribes the Entity to the keyDown event for the specified key
+   * @param {string} key - key
+   */
+  subscribeToKeyDown( key ){
+    this.keyDownSubscriptions.push( key );
+    this.grid.subscribeEntityInstanceToKeyDown( this, key );
+  }
+  /**
+   * Unsubscribes the Entity from the keyDown event for the specified key
+   * @param {string} key - key
+   */
+  unsubscribeFromKeyDown( key ){
+    this.keyDownSubscriptions.splice( this.keyDownSubscriptions.indexOf( key ), 1 );
+    this.grid.unsubscribeEntityInstanceFromKeyDown( this, key );
+  }
+
+  /**
    * Subscribes the Entity to the keyUp event for the specified key
    * @param {string} key - key
    */

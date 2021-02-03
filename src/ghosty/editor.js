@@ -56,8 +56,10 @@ export class Editor {
         this.grid.loadScene( this.level.sceneData );
         if (category === 'presets') {
             this.level_name.innerHTML = this.level.name + ' <i>--preset</i>';
+            this.test_button.classList.add('hidden');
         } else {
             this.level_name.innerHTML = this.level.name;
+            this.test_button.classList.remove('hidden');
         }
     }
 
@@ -66,10 +68,10 @@ export class Editor {
     }
 
     end(){
-        if ( this.category === 'yourLevels' ){
-            this.level.sceneData = this.grid.getCurrentSceneData( ['BackgroundTile'] );
-            this.app.levels.updateLevel( this.levelIndex );
-        }
+        if (this.popup) {
+            //TODO
+            console.log('popup still open');
+        };
         this.griga.removeGridFromDisplay(this.state, 'editor');
         this.griga.removeGridFromDisplay('selection-hotbar', 'selection');
         this.clearLevel();
@@ -77,10 +79,27 @@ export class Editor {
         this.app.editor_screen.classList.add('hidden');
     }
 
+    sceneChangedHandler(){
+        if (this.category === 'yourLevels') {
+            this.level.sceneData = this.grid.getCurrentSceneData( ['BackgroundTile'] );
+            this.app.levels.updateLevel( this.levelIndex );
+        } else if (this.category === 'presets'){
+            const [level, category, levelIndex] = this.saveSceneDataAsNewLevel( this.level.name, 'unknown', 'unknown' );
+            this.clearLevel();
+            this.loadLevel( level, category, levelIndex );
+        }
+    }
+
+    saveSceneDataAsNewLevel( levelName, difficulty, creator ){
+        return this.app.levels.newLevel(levelName, difficulty, creator, 
+            this.grid.getCurrentSceneData( ['BackgroundTile'] )
+        );
+    }
+
     showSaveAsNewLevelPopup(){
         this.popup = new Popup( 'editor-display', '<i class="fas fa-save"></i> Save as new level:',
         [
-            {id: 'popup-back', text: 'Don\'t save', click: iV => this.closePopup( iV )},
+            {id: 'popup-back', text: 'Back', click: iV => this.closePopup( iV )},
             {id: 'save-popup-save', text: 'Save', click: iV => this.handlePopupSaveNewClick( iV )}
         ],
         [
@@ -91,21 +110,11 @@ export class Editor {
     }
 
     handlePopupSaveNewClick( iV ){
-        const [level, category, levelIndex] = this.app.levels.newLevel(
+        this.saveSceneDataAsNewLevel(
             iV['level-name'],
             iV['level-difficulty'],
-            iV['level-creator'],
-            this.grid.getCurrentSceneData( 'BackgroundTile' )
+            iV['level-creator']
         );
-        this.clearLevel();
-        this.loadLevel( level, category, levelIndex );
-        if (this.switchToPlayOnLevelSave) {
-            this.handleTestButtonClick();
-        } else if (this.switchToLevelsOnLevelSave) {
-            this.switchToLevels();
-        }
-        this.switchToPlayOnLevelSave = false;
-        this.switchToLevelsOnLevelSave = false;
         this.closePopup();
     }
 
@@ -124,11 +133,11 @@ export class Editor {
     closePopup(){
         this.popup.close();
         this.popup = null;
-        if (this.switchToLevelsOnLevelSave) {
-            this.switchToLevels();
+        if (this.loadLevelAtPopupClose) {
+            this.clearLevel();
+            this.loadLevel();
         }
-        this.switchToPlayOnLevelSave = false;
-        this.switchToLevelsOnLevelSave = false;
+        this.loadLevelAtPopupClose = false;
     }
 
     switchToLevels(){
@@ -137,37 +146,22 @@ export class Editor {
     }
 
     handleSaveButtonClick( e ){
-        if (e.ctrlKey) {
-            const sceneData = this.grid.getCurrentSceneData( ['BackgroundTile'] );
-            navigator.clipboard.writeText(JSON.stringify(sceneData));
-            console.log('copied sceneDataJsonText');
-        } else {
-            this.showSaveAsNewLevelPopup();
-        }
+        this.showSaveAsNewLevelPopup();
     }
 
     handleLevelNameClick( e ){
-        if (this.category === 'presets') {
-            this.switchToLevelsOnLevelSave = true;
-            this.showSaveAsNewLevelPopup();
-        } else if (this.category === 'yourLevels') {
-            this.switchToLevels();
-        }
+        this.switchToLevels();
     }
 
     handleTestButtonClick( e ){
-        if (this.category === 'presets') {
-            this.switchToPlayOnLevelSave = true;
-            this.showSaveAsNewLevelPopup();
-        } else if (this.category === 'yourLevels') {
-            this.end();
-            this.app.play.start( this.level, this.category, this.levelIndex );
-        }
+        this.end();
+        this.app.play.start( this.level, this.category, this.levelIndex );
     }
 
     handleRenameButtonClick( e ){
         if (this.category === 'presets') {
             this.showSaveAsNewLevelPopup();
+            this.loadLevelAtPopupClose = true;
         } else if (this.category === 'yourLevels') {
             this.popup = new Popup( 'editor-display', `<i class="fas fa-pen"></i> Rename level to:`,
             [

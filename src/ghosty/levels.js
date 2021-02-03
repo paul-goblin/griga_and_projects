@@ -121,6 +121,7 @@ export class Levels {
   removeLevelFromLevelsContainer( levelIndex ){
     const levelDetails = document.getElementById('level-details-'+levelIndex);
     const levelBar = levelDetails.previousElementSibling;
+    this.griga.deleteDisplay( 'play-preview-'+levelIndex );
     levelDetails.remove();
     levelBar.remove();
     this.app.style.setScrollbarHeight();
@@ -154,6 +155,8 @@ export class Levels {
     this.hideLevelDetails();
     this.levels[this.state].splice( levelIndex, 1 );
     this.removeLevelFromLevelsContainer( levelIndex );
+    this.clearLevelsContainer();
+    this.fillLevelsContainer();
   }
 
   handleLevelNameClicked( target ){
@@ -162,9 +165,7 @@ export class Levels {
         this.hideLevelDetails();
         this.showLevelDetails( parseInt(levelDetailsBar.getAttribute('data-index')) );
     } else {
-        this.hideLevelDetails();
-        this.app.style.setScrollbarHeight();
-        this.app.style.setScrollPos( this.app.style.scrollPos );
+        this.handleLevelPlayButtonClicked( target.nextElementSibling );
     }
   }
 

@@ -2,7 +2,7 @@ import { GhostyEntity } from '../ghosty_entity';
 
 export class Stone extends GhostyEntity {
   constructor( params, args ){
-    super( {}, args, 10 );
+    super( {}, args, 17 );
     this.setWidth( 0.9 );
     this.setHeight( 0.9 );
     this.setCOffset( 0.05 );
@@ -17,8 +17,8 @@ export class Stone extends GhostyEntity {
     return false;
   }
 
-  allowBeingPlaced( tile ){
-    const entitiesOnTile = this.griga.grids['editor'].getEntityInstances( {
+  allowBeingPlaced( tile, editorGrid ){
+    const entitiesOnTile = editorGrid.getEntityInstances( {
       tile: tile,
       notType: 'BackgroundTile'
     } );

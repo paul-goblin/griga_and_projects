@@ -20,7 +20,27 @@ export class GhostyEntity extends Entity {
     }
   }
 
-  move( direction ) {
+  setWidth( width ){
+    Entity.prototype.setWidth.call( this, width );
+    if (this.grid.name === 'selection-hotbar') {this.selectionBackground.updateSize( this )};
+  }
+
+  setHeight( height ){
+    Entity.prototype.setHeight.call( this, height );
+    if (this.grid.name === 'selection-hotbar') {this.selectionBackground.updateSize( this )};
+  }
+
+  setCOffset( cOffset ){
+    Entity.prototype.setCOffset.call( this, cOffset );
+    if (this.grid.name === 'selection-hotbar') {this.selectionBackground.updateSize( this )};
+  }
+
+  setROffset( rOffset ){
+    Entity.prototype.setROffset.call( this, rOffset );
+    if (this.grid.name === 'selection-hotbar') {this.selectionBackground.updateSize( this )};
+  }
+
+  move( direction, autoanimate = true ) {
     const absPos = this.formatPositionAsAbsolutePosition(direction, 'modulo');
     const entitiesOnTile = this.grid.getEntityInstances( {
       tile: absPos,
@@ -33,6 +53,17 @@ export class GhostyEntity extends Entity {
     entitiesOnTile.forEach( entity => {
       entity.entityMovedToTile( this, direction );
     } );
+    if (autoanimate) {
+      if ( !this.renderStartSubscription ){
+        this.subscribeToRenderStart();
+        this.cOffsetBeforeMove = this.cOffset;
+        this.rOffsetBeforeMove = this.rOffset;
+      } else {
+        this.resetOffsetToBeforeMove();
+      }
+      this.lastMoveTime = performance.now();
+      this.lastMoveDirection = direction;
+    }
   }
 
   requestMove( direction, requestChain = [] ) {
@@ -63,21 +94,48 @@ export class GhostyEntity extends Entity {
     return allowMove;
   }
 
+  resetOffsetToBeforeMove(){
+    this.setCOffset( this.cOffsetBeforeMove );
+    this.setROffset( this.rOffsetBeforeMove );
+  }
+
+  moveOffsetFunction( timeSinceLastMove, moveDuration ){
+    const offset = 1 - Math.sqrt( timeSinceLastMove/moveDuration );
+    return offset;
+  }
+
+  setMoveAnimationOffset(){
+    const timeSinceLastMove = performance.now() - this.lastMoveTime;
+    const absOffset = this.moveOffsetFunction( timeSinceLastMove, 100 );
+    if (absOffset <= 0) {
+      this.resetOffsetToBeforeMove();
+      this.unsubscribeFromRenderStart();
+    }
+    else if (this.lastMoveDirection === 'right'){ this.setCOffset( -absOffset+this.cOffsetBeforeMove ) }
+    else if (this.lastMoveDirection === 'left'){ this.setCOffset( absOffset+this.cOffsetBeforeMove ) }
+    else if (this.lastMoveDirection === 'up'){ this.setROffset( absOffset+this.rOffsetBeforeMove ) }
+    else if (this.lastMoveDirection === 'down'){ this.setROffset( -absOffset+this.rOffsetBeforeMove ) };
+  }
+
+  renderStartHandler(){
+    this.setMoveAnimationOffset();
+  }
+
   /**
-   * checks if the requested move is valid. Should be overwritten by Child. Returns [request, 
+   * checks if the requested move is valid. Should be overwritten by Child. Returns allowMove
    * @param {*} requestChain 
    * @param {*} direction 
    * @returns {boolean}
    */
-  allowMove( requestChain = [] ){
-    return false;
+  allowMove( requestChain ){
+    return requestChain[ requestChain.length-1 ][0].layer !== this.layer;
   }
 
   allowPlacing( entity ){
     return entity.layer !== this.layer;
   }
 
-  allowBeingPlaced( tile ){
+  allowBeingPlaced( tile, editorGrid ){
     return true;
   }
 
@@ -87,5 +145,10 @@ export class GhostyEntity extends Entity {
 
   entityMovedToTile( entity, direction ) {
     //doSomething
+  }
+
+  //for levelDone check
+  taskDone() {
+    return true;
   }
 }
