@@ -522,11 +522,10 @@ export class Grid {
   }
 
   /**
-   * gets the current state of the grid as sceneData. If you have entites which should save parameters in the sceneData, use (overwrite) the getCurrentParams method of Entity
-   * @param {string[]} ignoreNames - Names of Entities to ignore when creating the szeneData
+   * gets the current state of the grid as sceneData. If you have entites which should save parameters in the sceneData, use (overwrite) the getCurrentParams method of Entity. If you have Entities which shouldn't be included in the sceneData, overwrite ther includeInSceneData Method to return false;
    * @returns {Grid~sceneData}
    */
-  getCurrentSceneData( ignoreNames = [] ){
+  getCurrentSceneData(){
     const sceneData = {
       detached: [],
       tiles: []
@@ -537,11 +536,8 @@ export class Grid {
     this.gridData.forEach( (cData, c) => {
       sceneData.tiles.push([]);
       cData.forEach( (tileData, r) => {
-        const unfilteredData = tileData.map( entityInstance => {
+        sceneData.tiles[c][r] = tileData.filter( e => e.includeInSceneData() ).map( entityInstance => {
           return [entityInstance.constructor.name, entityInstance.getCurrentParams()];
-        } );
-        sceneData.tiles[c][r] = unfilteredData.filter( v => {
-          return !ignoreNames.includes(v[0]);
         } );
       } );
     } );

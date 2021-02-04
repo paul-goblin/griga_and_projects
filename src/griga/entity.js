@@ -285,6 +285,14 @@ export class Entity {
   //functions to override
 
   /**
+   * Returns wether the Entity should be included in the sceneData at Grid.getCurrentSceneData
+   * @returns {boolean}
+  */
+  includeInSceneData() {
+    return true;
+  }
+
+  /**
    * Returns the params object used by grid.getCurrentSceneData. Should be overwritten if you want to save params at grid.getCurrentSceneData
    * @returns {Object<string, *>}
    * @event

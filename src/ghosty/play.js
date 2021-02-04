@@ -78,7 +78,7 @@ export class Play {
     }
 
     updateUndoHistory() {
-        this.undoHistory.push( this.grid.getCurrentSceneData('BackgroundTile') );
+        this.undoHistory.push( this.grid.getCurrentSceneData() );
     }
 
     closePopup(){

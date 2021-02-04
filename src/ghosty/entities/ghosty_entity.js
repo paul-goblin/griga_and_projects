@@ -3,41 +3,65 @@ import { Entity } from '../../griga/entity';
 export class GhostyEntity extends Entity {
   constructor( params, args, layer = 1 ){
     //overwrite params if the entities are in editor or selection-hotbar grid
-    if (args.grid.name === 'selection-hotbar') {
-      params = {
-        width: 0.8,
-        height: 0.8,
-        cOffset: 0.1,
-        rOffset: 0.1
-      }
-    } else if (['editor', 'preview'].includes(args.grid.name)) {
+    if (['editor', 'preview', 'selection-hotbar'].includes(args.grid.name)) {
       params = {};
     }
     params.layer = layer;
     super( params, args );
+    this.widthMultiplier = 1;
+    this.heightMultiplier = 1;
+    this.layerAddend = 0;
+    this.basisWidth = this.width;
+    this.basisHeight = this.height;
+    this.basisCOffset = this.cOffset;
+    this.basisROffset = this.rOffset;
+    this.basisLayer = this.layer;
     if (this.grid.name === 'selection-hotbar') {
       this.selectionBackground = this.grid.getEntityInstances({tile:{c:this.c,r:this.r},type:'SelectionBackground'})[0];
+      this.selectionBackground.setOtherEntity( this );
     }
   }
 
+  addWidthMultiplier( multiplier ){
+    this.widthMultiplier *= multiplier;
+    this.setWidth( this.basisWidth );
+    this.setCOffset( this.basisCOffset );
+  }
+
+  addHeightMultiplier( multiplier ){
+    this.heightMultiplier *= multiplier;
+    this.setHeight( this.basisHeight );
+    this.setROffset( this.basisROffset );
+  }
+
+  addLayerAddend( addend ){
+    this.layerAddend += addend;
+    this.changeLayer( this.basisLayer );
+  }
+
   setWidth( width ){
-    Entity.prototype.setWidth.call( this, width );
-    if (this.grid.name === 'selection-hotbar') {this.selectionBackground.updateSize( this )};
+    this.basisWidth = width;
+    Entity.prototype.setWidth.call( this, width*this.widthMultiplier);
   }
 
   setHeight( height ){
-    Entity.prototype.setHeight.call( this, height );
-    if (this.grid.name === 'selection-hotbar') {this.selectionBackground.updateSize( this )};
+    this.basisHeight = height;
+    Entity.prototype.setHeight.call( this, height*this.heightMultiplier );
   }
 
   setCOffset( cOffset ){
-    Entity.prototype.setCOffset.call( this, cOffset );
-    if (this.grid.name === 'selection-hotbar') {this.selectionBackground.updateSize( this )};
+    this.basisCOffset = cOffset;
+    Entity.prototype.setCOffset.call( this, cOffset + (1-this.widthMultiplier)/2 );
   }
 
   setROffset( rOffset ){
-    Entity.prototype.setROffset.call( this, rOffset );
-    if (this.grid.name === 'selection-hotbar') {this.selectionBackground.updateSize( this )};
+    this.basisROffset = rOffset;
+    Entity.prototype.setROffset.call( this, rOffset + (1-this.heightMultiplier)/2 );
+  }
+
+  changeLayer( layer ){
+    this.basisLayer = layer;
+    Entity.prototype.changeLayer.call( this, layer + this.layerAddend );
   }
 
   move( direction, autoanimate = true ) {
@@ -56,8 +80,8 @@ export class GhostyEntity extends Entity {
     if (autoanimate) {
       if ( !this.renderStartSubscription ){
         this.subscribeToRenderStart();
-        this.cOffsetBeforeMove = this.cOffset;
-        this.rOffsetBeforeMove = this.rOffset;
+        this.cOffsetBeforeMove = this.basisCOffset;
+        this.rOffsetBeforeMove = this.basisROffset;
       } else {
         this.resetOffsetToBeforeMove();
       }
@@ -150,5 +174,9 @@ export class GhostyEntity extends Entity {
   //for levelDone check
   taskDone() {
     return true;
+  }
+
+  newEntityWasPlacedOnTile( entity ) {
+    //doSomething
   }
 }

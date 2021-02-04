@@ -11,6 +11,7 @@ import { Play } from "./play";
 import { Style } from "./style";
 import { LocalStorage } from "./local_storage";
 import { Hole } from "./entities/ghosty_entities/hole";
+import { HoleBorder } from "./entities/ghosty_entities/hole_border";
 
 const CS = 16;
 const RS = 10;
@@ -55,7 +56,7 @@ const grigaConfig = {
       rows: RS
     }
   ],
-  entities:[BackgroundTile, SelectionBackground, Stone, Ghosty, Goal, WoodenBox, Hole],
+  entities:[BackgroundTile, SelectionBackground, Stone, Ghosty, Goal, WoodenBox, Hole, HoleBorder],
 }
 
 class App {

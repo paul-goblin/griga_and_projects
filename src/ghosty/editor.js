@@ -68,10 +68,7 @@ export class Editor {
     }
 
     end(){
-        if (this.popup) {
-            //TODO
-            console.log('popup still open');
-        };
+        if (this.popup) { this.closePopup() };
         this.griga.removeGridFromDisplay(this.state, 'editor');
         this.griga.removeGridFromDisplay('selection-hotbar', 'selection');
         this.clearLevel();
@@ -81,7 +78,7 @@ export class Editor {
 
     sceneChangedHandler(){
         if (this.category === 'yourLevels') {
-            this.level.sceneData = this.grid.getCurrentSceneData( ['BackgroundTile'] );
+            this.level.sceneData = this.grid.getCurrentSceneData();
             this.app.levels.updateLevel( this.levelIndex );
         } else if (this.category === 'presets'){
             const [level, category, levelIndex] = this.saveSceneDataAsNewLevel( this.level.name, 'unknown', 'unknown' );
@@ -92,7 +89,7 @@ export class Editor {
 
     saveSceneDataAsNewLevel( levelName, difficulty, creator ){
         return this.app.levels.newLevel(levelName, difficulty, creator, 
-            this.grid.getCurrentSceneData( ['BackgroundTile'] )
+            this.grid.getCurrentSceneData()
         );
     }
 
@@ -146,6 +143,7 @@ export class Editor {
     }
 
     handleSaveButtonClick( e ){
+        if (this.popup) { this.closePopup() };
         this.showSaveAsNewLevelPopup();
     }
 
@@ -159,6 +157,7 @@ export class Editor {
     }
 
     handleRenameButtonClick( e ){
+        if (this.popup) { this.closePopup() };
         if (this.category === 'presets') {
             this.showSaveAsNewLevelPopup();
             this.loadLevelAtPopupClose = true;

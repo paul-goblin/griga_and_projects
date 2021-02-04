@@ -7,6 +7,7 @@ export class Stone extends GhostyEntity {
     this.setHeight( 0.9 );
     this.setCOffset( 0.05 );
     this.setROffset( 0.05 );
+    console.log( this );
   }
 
   static get imgSources(){

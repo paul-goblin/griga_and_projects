@@ -16,7 +16,10 @@ export class SelectionBackground extends Entity {
   }
 
   setOtherEntity( entityInstance ){
+    console.log(entityInstance);
     this.otherEntity = entityInstance;
+    entityInstance.addWidthMultiplier( 0.8 );
+    entityInstance.addHeightMultiplier( 0.8 );
   }
 
   activate(){
@@ -28,9 +31,7 @@ export class SelectionBackground extends Entity {
   }
 
   mouseDownHandler(){
-    const otherEntities = this.grid.getEntityInstances({tile:{c:this.c,r:this.r},notType:'SelectionBackground'});
-    if (otherEntities.length === 1) {
-      this.setOtherEntity( otherEntities[0] );
+    if (this.otherEntity) {
       if (this.currentImage === 'deactive') {
         this.griga.ghosty.editor.selection.setActiveSelectionBackground( this );
       }

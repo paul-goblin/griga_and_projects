@@ -41,8 +41,9 @@ export class BackgroundTile extends Entity {
         } );
         if (!entitiesOnTile.map(e => e.allowPlacing( selectedEntity )).includes(false)) {
           if (selectedEntity.allowBeingPlaced( {c:this.c, r:this.r}, this.grid )) {
-            this.grid.newEntityInstance(  selectedEntity.constructor.name, {}, {c:this.c,r:this.r});
+            const entity = this.grid.newEntityInstance(  selectedEntity.constructor.name, {}, {c:this.c,r:this.r});
             this.griga.ghosty.editor.sceneChangedHandler();
+            entitiesOnTile.forEach( e => e.newEntityWasPlacedOnTile(entity) );
           }
         }
       } else if (sameEntitiesOnTile.length === 1 && ctrlKey) {
@@ -83,5 +84,9 @@ export class BackgroundTile extends Entity {
     }
 
     this.sceneChanged = false;
+  }
+
+  includeInSceneData() {
+    return false;
   }
 }
