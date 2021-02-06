@@ -2,9 +2,10 @@ import { GhostyEntity } from '../ghosty_entity';
 
 export class Ghosty extends GhostyEntity {
   constructor( params, args ){
-    super( {
-      keyDownSubscriptions: ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight']
-    }, args, 17 );
+    super( params, args, 17 );
+    if (this.grid.name === 'play') {
+      ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].forEach( key => this.subscribeToKeyDown(key));
+    }
     this.validatedEntities = [];
     this.currentImage = 'right';
   }
@@ -27,6 +28,9 @@ export class Ghosty extends GhostyEntity {
 
   validateMove( requestChain ){
     if (this.validatedEntities.includes( requestChain[requestChain.length-1][0] )){
+      return true;
+    }
+    if ( this.layer === 7 && requestChain[requestChain.length-1][0].layer === 17 ){
       return true;
     }
     this.validatedEntities.push(requestChain[requestChain.length-1][0]);

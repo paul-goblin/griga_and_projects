@@ -6,6 +6,12 @@ export class LocalStorage {
     }
   }
 
+  setupLevelSolvedForCategory( category ){
+    if (!localStorage.getItem(`ghosty-levels-solved-in:${category}`)) {
+      localStorage.setItem(`ghosty-levels-solved-in:${category}`, '[]');
+    }
+  }
+
   // if the level.name exists, it increments index until the level.name does not exist
   renameLevel( oldName, newName, difficulty, creator, index = 0 ){
     let indexString = '';
@@ -72,5 +78,32 @@ export class LocalStorage {
     allLevelNames.splice( index, 1 );
     localStorage.setItem( 'ghosty-all-your-level-names', JSON.stringify(allLevelNames) );
     localStorage.removeItem(`ghosty-your-level:${levelName}`);
+    this.removeLevelSolved( levelName, 'yourLevels' );
+  }
+
+  saveLevelSolved( levelName, category ){
+    const solvedLevels = JSON.parse(localStorage.getItem(`ghosty-levels-solved-in:${category}`));
+    if (!solvedLevels.includes(levelName)) {
+      solvedLevels.push( levelName );
+      localStorage.setItem( `ghosty-levels-solved-in:${category}`, JSON.stringify( solvedLevels ) );
+    }
+  }
+
+  removeLevelSolved( levelName, category ){
+    const solvedLevels = JSON.parse(localStorage.getItem(`ghosty-levels-solved-in:${category}`));
+    if (solvedLevels.includes(levelName)) {
+      solvedLevels.splice( solvedLevels.indexOf( levelName ) );
+      localStorage.setItem( `ghosty-levels-solved-in:${category}`, JSON.stringify( solvedLevels ) );
+    }
+  }
+
+  getLevelSolved( levelName, category ){
+    const solvedLevels = JSON.parse(localStorage.getItem(`ghosty-levels-solved-in:${category}`));
+    return solvedLevels.includes( levelName );
+  }
+
+  getNumberOfLevelsSolved( category ){
+    const solvedLevels = JSON.parse(localStorage.getItem(`ghosty-levels-solved-in:${category}`));
+    return solvedLevels.length;
   }
 }

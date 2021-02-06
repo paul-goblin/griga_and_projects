@@ -1,23 +1,9 @@
-import { GhostyEntity } from '../ghosty_entity';
-
-const directionToSide = {
-  up: 'Top',
-  down: 'Bottom',
-  left: 'Left',
-  right: 'Right'
-}
-
-const oppositeDirection = {
-  up: 'down',
-  down: 'up',
-  left: 'right',
-  right: 'left'
-}
+import { directionToSide, GhostyEntity } from '../ghosty_entity';
 
 export class HoleBorder extends GhostyEntity {
   constructor( params, args ){
-    super( {}, args, 2 );
-    this.currentImage = params.side || 'top';
+    super( params, args, 2 );
+    this.currentImage = params.side.toLowerCase() || 'top';
     this.hole = params.hole || null;
   }
 
@@ -28,14 +14,21 @@ export class HoleBorder extends GhostyEntity {
              left: './tile_img/hole_border_left.png'};
   }
 
+  static get includeInLevelEditor() {
+    return false;
+  }
+
   includeInSceneData(){
     return false;
   }
 
-  entityMovedToTile( entity, direction ){
-    if ( this.currentImage === directionToSide[oppositeDirection[direction]].toLowerCase() ){
-      this.hole.adjustSizeOfEntityOnTop( entity );
-      this.hole.adjustLayerOfEntityOnTop( entity );
+  allowLeave( requestChain ){
+    const valid = directionToSide[requestChain[ requestChain.length-1 ][1]].toLowerCase() !== this.currentImage;
+    const down = requestChain[ requestChain.length-1 ][0].layer === 7; //fix
+    if (down && !valid) {
+      return false;
+    } else {
+      return true;
     }
   }
 }

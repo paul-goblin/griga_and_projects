@@ -1,8 +1,9 @@
-import { GhostyEntity } from '../ghosty_entity';
+import { func } from '@hapi/joi';
+import { directionToSide, GhostyEntity, oppositeDirection, oppositeSide } from '../ghosty_entity';
 
 export class Hole extends GhostyEntity {
   constructor( params, args ){
-    super( {}, args, 1 );
+    super( params, args, 1 );
     if (this.grid.name === 'selection-hotbar') {return}
 
     this.holeLeft = this.grid.getEntityInstances(
@@ -22,6 +23,9 @@ export class Hole extends GhostyEntity {
     else { this.borderTop = this.grid.newEntityInstance('HoleBorder', {side:'top', hole:this}, {c:this.c,r:this.r} ) };
     if (this.holeBottom) { this.holeBottom.setHole(this, 'Top') }
     else { this.borderBottom = this.grid.newEntityInstance('HoleBorder', {side:'bottom', hole:this}, {c:this.c,r:this.r} ) };
+  
+    this.newEntityWasPlacedOnTile();
+    this.subscribeToSceneLoaded();
   }
 
   static get imgSources(){
@@ -34,17 +38,65 @@ export class Hole extends GhostyEntity {
     this[`border${side}`] = null;
   }
 
-  adjustSizeOfEntityOnTop( entity ){
-    entity.addHeightMultiplier( 14/16 );
-    entity.addWidthMultiplier( 14/16 );
+  removeHole( side ){
+    this[`hole${side}`] = null;
+    this[`border${side}`] = this.grid.newEntityInstance('HoleBorder', {side, hole:this}, {c:this.c,r:this.r} );
   }
 
-  adjustLayerOfEntityOnTop( entity ){
-    entity.addLayerAddend( -10 );
+  //should have the alias Update Which Entities are Down
+  newEntityWasPlacedOnTile(){
+    const entitiesOnTile = this.grid.getEntityInstances( {
+      tile: {c:this.c, r:this.r}
+    } ).filter( e => !['Hole', 'HoleBorder', 'BackgroundTile'].includes( e.constructor.name ) );
+    for (let layerDigit = 3; layerDigit < 10; layerDigit++) {
+      const downEntity = entitiesOnTile.find( e => e.layer === layerDigit );
+      const upEntities = entitiesOnTile.filter( e => e.layer === layerDigit + 10 );
+      const upEntity = upEntities[upEntities.length-1];
+      if ( !downEntity &&upEntity ){
+        upEntity.moveDown();
+      }
+    }
   }
 
-  newEntityWasPlacedOnTile( entity ){
-    this.adjustSizeOfEntityOnTop( entity );
-    this.adjustLayerOfEntityOnTop( entity );
+  taskDone(){
+    this.newEntityWasPlacedOnTile();
+    return true;
+  }
+
+  sceneLoadedHandler(){
+    const entitiesOnTile = this.grid.getEntityInstances( {
+      tile: {c:this.c, r:this.r}
+    } ).filter( e => !['Hole', 'HoleBorder', 'BackgroundTile'].includes( e.constructor.name ) );
+    if ( entitiesOnTile[0] ){
+      this.newEntityWasPlacedOnTile( entitiesOnTile[0] );
+    }
+  }
+
+  beforeDelete(){
+    Object.values( directionToSide ).forEach( side => {
+      if ( this[`border${side}`] ) {
+        this[`border${side}`].delete();
+      } else {
+        this[`hole${side}`].removeHole( oppositeSide[side.toLowerCase()] );
+      }
+    } );
+    const entitiesOnTile = this.grid.getEntityInstances( {
+      tile: {c:this.c, r:this.r}
+    } ).filter( e => !['Hole', 'HoleBorder', 'BackgroundTile'].includes( e.constructor.name ) );
+    for (let layerDigit = 3; layerDigit < 10; layerDigit++) {
+      const downEntityOnTile = entitiesOnTile.find( e => e.layer === layerDigit);
+      const upEntityOnTile = entitiesOnTile.find( e => e.layer === layerDigit + 10);
+      if (downEntityOnTile) {
+        if (upEntityOnTile) {
+          downEntityOnTile.delete();
+        } else {
+          downEntityOnTile.moveUp();
+        }
+      }
+    }
+  }
+
+  entityOnSameTileWasDeleted( deletedEntity ){
+    this.newEntityWasPlacedOnTile();
   }
 }

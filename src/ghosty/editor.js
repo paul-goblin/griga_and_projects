@@ -1,4 +1,3 @@
-import { Display } from "../griga/display";
 import { Popup } from "./popup";
 
 export class Editor {
@@ -30,6 +29,8 @@ export class Editor {
         this.hotbar_grid.loadScene( this.hotbar_scene_data );
         Object.keys(this.griga.entities).filter( entityName => {
             return !['SelectionBackground', 'BackgroundTile'].includes( entityName );
+        } ).filter( eName => {
+            return this.griga.entities[eName].includeInLevelEditor;
         } ).forEach( (entityName, i) => {
             this.hotbar_grid.newEntityInstance(entityName, {}, {c:i,r:0});
         } );
@@ -57,8 +58,10 @@ export class Editor {
         if (category === 'presets') {
             this.level_name.innerHTML = this.level.name + ' <i>--preset</i>';
             this.test_button.classList.add('hidden');
+            this.rename_button.classList.add('hidden');
         } else {
             this.level_name.innerHTML = this.level.name;
+            this.rename_button.classList.remove('hidden');
             this.test_button.classList.remove('hidden');
         }
     }
@@ -94,7 +97,7 @@ export class Editor {
     }
 
     showSaveAsNewLevelPopup(){
-        this.popup = new Popup( 'editor-display', '<i class="fas fa-save"></i> Save as new level:',
+        this.popup = new Popup( 'editor-display', '<i class="fas fa-clone"></i> Save a copy as:',
         [
             {id: 'popup-back', text: 'Back', click: iV => this.closePopup( iV )},
             {id: 'save-popup-save', text: 'Save', click: iV => this.handlePopupSaveNewClick( iV )}

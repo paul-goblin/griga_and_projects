@@ -23,6 +23,9 @@ export class Levels {
     this.yourLevels_button.addEventListener('click', e => this.changeState('yourLevels'));
     this.presets_button.addEventListener('click', e => this.changeState('presets'));
 
+    this.app.localStorage.setupLevelSolvedForCategory('classic');
+    this.app.localStorage.setupLevelSolvedForCategory('yourLevels');
+    this.app.localStorage.setupLevelSolvedForCategory('presets');
   }
 
   start( category = 'classic', levelIndex) {
@@ -37,6 +40,10 @@ export class Levels {
   }
 
   end() {
+    if (this.popup) {
+      this.popup.close();
+      this.popup = null;
+    };
     this.hideLevelDetails();
     this.app.levels_screen.classList.add('hidden');
     this.app.levels_button.classList.remove('active');
@@ -58,13 +65,21 @@ export class Levels {
     this.clearLevelsContainer();
     this.fillLevelsContainer();
     this.detailsLevelIndex = detailsLevelIndex || this.levels[ this.state ].length-1;
-    this.showLevelDetails( this.detailsLevelIndex );
+    if (this.state === 'classic') {this.detailsLevelIndex = this.numberOfLevelsSolved};
+    if (this.detailsLevelIndex !== -1 ) {
+      this.showLevelDetails( this.detailsLevelIndex );
+    }
     this.app.style.setScrollbarHeight();
-    this.app.style.setScrollPosToLevel( this.detailsLevelIndex );
+    if (this.detailsLevelIndex !== -1 ) {
+      this.app.style.setScrollPosToLevel( this.detailsLevelIndex );
+    }
   }
 
   getLevelHtmlString(level, i){
-    let levelBarButtonsString = `<div class="level-play-button button right" data-level="${i}"><i class="fas fa-play"></i></div>`;
+
+    let solvedString = ['unsolved','solved'][0+this.app.localStorage.getLevelSolved( level.name, this.state )];
+
+    let levelBarButtonsString = `<div class="level-play-button button ${solvedString}" data-level="${i}"><i class="fas fa-play"></i></div>`;
     if (this.state === 'presets') {
       levelBarButtonsString = `<div class="button level-edit-button" data-index="${i}"><i class="fas fa-pen"></i></div>`;
     }
@@ -78,6 +93,7 @@ export class Levels {
       </div>
       `;
     }
+
     return `
     <div class="level-bar">
         <div class="level-name button">${level.name}</div>
@@ -107,9 +123,17 @@ export class Levels {
   }
 
   fillLevelsContainer(){
-    this.levels[this.state].forEach( (level, i) => {
+    if (this.state === 'classic') {
+      this.numberOfLevelsSolved = this.app.localStorage.getNumberOfLevelsSolved( this.state );
+      for (let levelIndex = 0; levelIndex <= this.numberOfLevelsSolved; levelIndex++) {
+        const level = this.levels[this.state][levelIndex];
+        this.insertNewLevelInLevelContainer( level, levelIndex );
+      }
+    } else {
+      this.levels[this.state].forEach( (level, i) => {
         this.insertNewLevelInLevelContainer( level, i );
-    } );
+      } );
+    }
   }
 
   insertNewLevelInLevelContainer( level, i ){
@@ -141,7 +165,7 @@ export class Levels {
   }
 
   hideLevelDetails(){
-    if (this.detailsLevelIndex || this.detailsLevelIndex === 0) {
+    if ((this.detailsLevelIndex || this.detailsLevelIndex === 0) && this.detailsLevelIndex !== -1) {
         const levelDetailsBar = document.getElementById('level-details-'+this.detailsLevelIndex);
         levelDetailsBar.classList.add('hidden');
         this.griga.removeGridFromDisplay('preview', 'play-preview-'+this.detailsLevelIndex);
@@ -157,6 +181,7 @@ export class Levels {
     this.removeLevelFromLevelsContainer( levelIndex );
     this.clearLevelsContainer();
     this.fillLevelsContainer();
+    this.closePopup();
   }
 
   handleLevelNameClicked( target ){
@@ -220,6 +245,7 @@ export class Levels {
 
   updateLevel( levelIndex ){
     this.app.localStorage.saveLevel( this.levels['yourLevels'][levelIndex] );
+    this.app.localStorage.removeLevelSolved( this.levels['yourLevels'][levelIndex].name, 'yourLevels' );
   }
 
   newLevel( name, difficulty, creator, sceneData ){

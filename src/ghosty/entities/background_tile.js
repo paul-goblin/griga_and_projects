@@ -47,7 +47,14 @@ export class BackgroundTile extends Entity {
           }
         }
       } else if (sameEntitiesOnTile.length === 1 && ctrlKey) {
-        sameEntitiesOnTile[0].delete()
+        sameEntitiesOnTile[0].beforeDelete();
+        sameEntitiesOnTile[0].delete();
+        const entitiesOnTile = this.grid.getEntityInstances( {
+          tile: {c:this.c, r:this.r},
+          notType: 'BackgroundTile'
+        } );
+        entitiesOnTile.forEach( e => e.entityOnSameTileWasDeleted(sameEntitiesOnTile[0]) );
+        this.griga.ghosty.editor.sceneChangedHandler();
       }
     }
   }

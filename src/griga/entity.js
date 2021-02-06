@@ -614,6 +614,21 @@ export class Entity {
   }
 
   /**
+   * Subscribes the entity to the sceneLoaded event
+   */
+  subscribeToSceneLoaded(){
+    this.sceneLoadedSubscription = true;
+    this.grid.subscribeEntityInstanceToSceneLoaded( this );
+  }
+  /**
+   * Unsubscribes the entity from the sceneLoaded event
+   */
+  unsubscribeFromSceneLoaded(){
+    this.sceneLoadedSubscription = false;
+    this.grid.unsubscribeEntityInstanceFromSceneLoaded( this );
+  }
+
+  /**
    * Subscribes the entity to the mouseDown event on the specified display
    * @param {string} displayName - Name of the display
    */

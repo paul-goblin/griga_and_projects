@@ -11,9 +11,9 @@ export class Play {
         this.play_restart_button = document.getElementById('play-restart-button');
         this.play_undo_button = document.getElementById('play-undo-button');
         this.play_edit_button = document.getElementById('play-edit-button');
-        this.level = this.app.levels.levels['classic'][0];
+        this.levelIndex = this.app.localStorage.getNumberOfLevelsSolved('classic');
         this.category = 'classic';
-        this.levelIndex = 0;
+        this.level = this.app.levels.levels[this.category][this.levelIndex];
         this.state = null;
         this.keyTrackEntity = null;
         this.undoHistory = [];
@@ -45,6 +45,10 @@ export class Play {
     }
 
     end(){
+        if (this.popup) {
+            this.popup.close();
+            this.popup = null;
+          };
         this.state = null;
         this.clearLevel();
         this.app.play_button.classList.remove('active');
@@ -68,6 +72,7 @@ export class Play {
 
     levelDone() {
         if (this.popup) {return};
+        this.app.localStorage.saveLevelSolved( this.level.name, this.category );
         let nextButtonText = 'Next level'
         if (this.category === 'yourLevels') { nextButtonText = 'Edit' };
         this.popup = new Popup( 'play-display', 'Level Done!',

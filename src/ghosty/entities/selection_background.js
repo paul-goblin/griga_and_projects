@@ -16,7 +16,6 @@ export class SelectionBackground extends Entity {
   }
 
   setOtherEntity( entityInstance ){
-    console.log(entityInstance);
     this.otherEntity = entityInstance;
     entityInstance.addWidthMultiplier( 0.8 );
     entityInstance.addHeightMultiplier( 0.8 );

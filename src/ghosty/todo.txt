@@ -1,0 +1,38 @@
+SOON:
+
+  Bugs:
+    levelcount system breaks if i add more easy levels in between
+    Browsersupport:
+      Firefox
+      Safari
+
+  Game Mechanic bugs:
+    ghosties change image on Undo
+    Corners of hole Borders are missing
+    holes update bug (nothing, hole, hole+ghosty, hole+box+ghosty, hole+ghosty), then move to the left
+
+  Feature:
+    "new" Button in Editor
+    unlock entities in classic to use in Editor
+    gray out the next/previous level buttons if there is no next/previous unlocked level
+    download level
+    upload level
+    edit level name in levels state
+
+  Game Mechanic Features:
+    Inventory
+    Items:
+      Shovel
+    Springs (to get out of holes)
+
+
+BIG:
+
+  Online:
+    Accounts
+    Level:
+      Rating
+      Difficulty Voting
+    Custom Entities
+
+  Story Mode:
