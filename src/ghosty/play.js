@@ -11,7 +11,7 @@ export class Play {
         this.play_restart_button = document.getElementById('play-restart-button');
         this.play_undo_button = document.getElementById('play-undo-button');
         this.play_edit_button = document.getElementById('play-edit-button');
-        this.levelIndex = this.app.localStorage.getNumberOfLevelsSolved('classic');
+        this.levelIndex = this.app.levels.classicHighestLevelIndex;
         this.category = 'classic';
         this.level = this.app.levels.levels[this.category][this.levelIndex];
         this.state = null;
@@ -63,6 +63,18 @@ export class Play {
         this.grid.loadScene( this.level.sceneData );
         this.undoHistory.push( this.level.sceneData );
         this.play_level_name.innerHTML = this.level.name;
+        if ( this.category === 'classic' ) {
+            if ( this.levelIndex === this.app.levels.classicHighestLevelIndex ) {
+                this.next_level_button.classList.add('disabled');
+            } else {
+                this.next_level_button.classList.remove('disabled');
+            }
+            if ( this.levelIndex === 0 ) {
+                this.previous_level_button.classList.add('disabled');
+            } else {
+                this.previous_level_button.classList.remove('disabled');
+            }
+        }
     }
 
     clearLevel() {
@@ -72,8 +84,8 @@ export class Play {
 
     levelDone() {
         if (this.popup) {return};
-        this.app.localStorage.saveLevelSolved( this.level.name, this.category );
-        let nextButtonText = 'Next level'
+        this.app.levels.levelDone( this.levelIndex );
+        let nextButtonText = 'Next level';
         if (this.category === 'yourLevels') { nextButtonText = 'Edit' };
         this.popup = new Popup( 'play-display', 'Level Done!',
         [
@@ -106,6 +118,7 @@ export class Play {
     }
 
     handlePreviousLevelButtonClick( e ){
+        if (this.previous_level_button.classList.contains('disabled')) {return};
         if (this.levelIndex !== 0) {
             this.level = this.app.levels.levels[this.category][--this.levelIndex];
             this.clearLevel();
@@ -114,6 +127,7 @@ export class Play {
     }
 
     handleNextLevelButtonClick(){
+        if (this.next_level_button.classList.contains('disabled')) {return};
         if (this.levelIndex !== this.app.levels.levels[this.category].length-1) {
             this.level = this.app.levels.levels[this.category][++this.levelIndex];
             this.clearLevel();

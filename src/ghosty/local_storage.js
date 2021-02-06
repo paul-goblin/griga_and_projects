@@ -4,6 +4,9 @@ export class LocalStorage {
     if (!localStorage.getItem('ghosty-all-your-level-names')) {
       localStorage.setItem('ghosty-all-your-level-names', '[]');
     }
+    if (!localStorage.getItem(`ghosty-highest-levels:`)) {
+      localStorage.setItem(`ghosty-highest-levels:`, '{}');
+    }
   }
 
   setupLevelSolvedForCategory( category ){
@@ -105,5 +108,16 @@ export class LocalStorage {
   getNumberOfLevelsSolved( category ){
     const solvedLevels = JSON.parse(localStorage.getItem(`ghosty-levels-solved-in:${category}`));
     return solvedLevels.length;
+  }
+
+  saveHighestLevel( levelName, category ){
+    const highestLevel = JSON.parse(localStorage.getItem('ghosty-highest-levels:'));
+    highestLevel[category] = levelName;
+    localStorage.setItem( 'ghosty-highest-levels:', JSON.stringify( highestLevel ) );
+  }
+
+  getHighestLevel( category ){
+    const highestLevel = JSON.parse(localStorage.getItem('ghosty-highest-levels:'));
+    return highestLevel[category];
   }
 }

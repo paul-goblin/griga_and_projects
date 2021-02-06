@@ -1,7 +1,7 @@
 SOON:
 
   Bugs:
-    levelcount system breaks if i add more easy levels in between
+    Popup + other buttons Interaction is wierd
     Browsersupport:
       Firefox
       Safari
@@ -14,10 +14,10 @@ SOON:
   Feature:
     "new" Button in Editor
     unlock entities in classic to use in Editor
-    gray out the next/previous level buttons if there is no next/previous unlocked level
     download level
     upload level
     edit level name in levels state
+    key inputs to controll the site
 
   Game Mechanic Features:
     Inventory

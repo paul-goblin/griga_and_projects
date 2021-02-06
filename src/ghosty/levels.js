@@ -26,6 +26,7 @@ export class Levels {
     this.app.localStorage.setupLevelSolvedForCategory('classic');
     this.app.localStorage.setupLevelSolvedForCategory('yourLevels');
     this.app.localStorage.setupLevelSolvedForCategory('presets');
+    this.getClassicLevelsHighestLevelIndex();
   }
 
   start( category = 'classic', levelIndex) {
@@ -65,13 +66,28 @@ export class Levels {
     this.clearLevelsContainer();
     this.fillLevelsContainer();
     this.detailsLevelIndex = detailsLevelIndex || this.levels[ this.state ].length-1;
-    if (this.state === 'classic') {this.detailsLevelIndex = this.numberOfLevelsSolved};
+    if (this.state === 'classic') {this.detailsLevelIndex = this.classicHighestLevelIndex};
     if (this.detailsLevelIndex !== -1 ) {
       this.showLevelDetails( this.detailsLevelIndex );
     }
     this.app.style.setScrollbarHeight();
     if (this.detailsLevelIndex !== -1 ) {
       this.app.style.setScrollPosToLevel( this.detailsLevelIndex );
+    }
+  }
+
+  getClassicLevelsHighestLevelIndex(){
+    const classicHighestLevelName = this.app.localStorage.getHighestLevel('classic') || 'Introduction';
+    const classicHighestLevel = this.levels['classic'].find( l => l.name === classicHighestLevelName );
+    this.classicHighestLevelIndex = this.levels['classic'].indexOf( classicHighestLevel );
+    console.log(this.classicHighestLevelIndex);
+  }
+
+  levelDone( levelIndex ){
+    this.app.localStorage.saveLevelSolved( this.levels['classic'][this.classicHighestLevelIndex].name, 'classic' );
+    if ( levelIndex === this.classicHighestLevelIndex ) {
+      this.classicHighestLevelIndex++;
+      this.app.localStorage.saveHighestLevel( this.levels['classic'][this.classicHighestLevelIndex].name, 'classic' );
     }
   }
 
@@ -124,8 +140,7 @@ export class Levels {
 
   fillLevelsContainer(){
     if (this.state === 'classic') {
-      this.numberOfLevelsSolved = this.app.localStorage.getNumberOfLevelsSolved( this.state );
-      for (let levelIndex = 0; levelIndex <= this.numberOfLevelsSolved; levelIndex++) {
+      for (let levelIndex = 0; levelIndex <= this.classicHighestLevelIndex; levelIndex++) {
         const level = this.levels[this.state][levelIndex];
         this.insertNewLevelInLevelContainer( level, levelIndex );
       }
