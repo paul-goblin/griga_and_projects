@@ -8,6 +8,7 @@ export class Editor {
         this.grid = griga.grids['editor'];
         this.hotbar_grid = griga.grids['selection-hotbar'];
         this.lower_bar = document.querySelector('.lower-bar');
+        this.new_button = document.getElementById('editor-new-button');
         this.save_button = document.getElementById('editor-save-button');
         this.test_button = document.getElementById('editor-test-button');
         this.level_name = document.getElementById('editor-level-name');
@@ -25,15 +26,20 @@ export class Editor {
         this.setupEventListeners();
     }
 
-    startGame(){
+    loadSelectionHotbar(){
         this.hotbar_grid.loadScene( this.hotbar_scene_data );
         Object.keys(this.griga.entities).filter( entityName => {
             return !['SelectionBackground', 'BackgroundTile'].includes( entityName );
         } ).filter( eName => {
-            return this.griga.entities[eName].includeInLevelEditor;
+            const unlockLevel = this.griga.entities[eName].getUnlockLevel( this.app.levels.levels['classic'] );
+            return unlockLevel < this.app.levels.classicHighestLevelIndex;
         } ).forEach( (entityName, i) => {
             this.hotbar_grid.newEntityInstance(entityName, {}, {c:i,r:0});
         } );
+    }
+
+    clearSelectionHotbar(){
+        this.hotbar_grid.clearScene();
     }
 
     start( level, category, levelIndex ){
@@ -41,6 +47,7 @@ export class Editor {
         this.app.editor_screen.classList.remove('hidden');
         this.state = 'editor';
         this.app.state = 'editor';
+        this.loadSelectionHotbar();
         this.selection.activateFirstSelectionBackground();
         this.griga.displayGrid('editor', 'editor', this.app.displaySettings);
         this.griga.displayGrid('selection', 'selection-hotbar', this.hotbarDisplaySettings);
@@ -75,6 +82,7 @@ export class Editor {
         this.griga.removeGridFromDisplay(this.state, 'editor');
         this.griga.removeGridFromDisplay('selection-hotbar', 'selection');
         this.clearLevel();
+        this.clearSelectionHotbar();
         this.app.editor_button.classList.remove('active');
         this.app.editor_screen.classList.add('hidden');
     }
@@ -159,13 +167,18 @@ export class Editor {
         this.app.play.start( this.level, this.category, this.levelIndex );
     }
 
+    handleNewButtonClick( e ){
+        this.end();
+        this.app.levels.start( 'presets' );
+    }
+
     handleRenameButtonClick( e ){
         if (this.popup) { this.closePopup() };
         if (this.category === 'presets') {
             this.showSaveAsNewLevelPopup();
             this.loadLevelAtPopupClose = true;
         } else if (this.category === 'yourLevels') {
-            this.popup = new Popup( 'editor-display', `<i class="fas fa-pen"></i> Rename level to:`,
+            this.popup = new Popup( 'editor-display', `<i class="fas fa-i-cursor"></i> Rename level to:`,
             [
                 {id: 'popup-back', text: 'Back', click: iV => this.closePopup( iV )},
                 {id: 'rename-popup-rename', text: 'Save', click: iV => this.handlePopupRenameClick( iV )}
@@ -179,6 +192,7 @@ export class Editor {
     }
 
     setupEventListeners(){
+        this.new_button.addEventListener('click', e => this.handleNewButtonClick( e ));
         this.save_button.addEventListener('click', e => this.handleSaveButtonClick( e ));
         this.test_button.addEventListener('click', e => this.handleTestButtonClick( e ));
         this.level_name.addEventListener('click', e => this.handleLevelNameClick( e ));
@@ -212,4 +226,34 @@ class Selection {
         }
         this.activeSelectionBackground = selectionBackground;
     }
+}
+
+export const editorHelp = {
+    english: 
+    [
+        {
+            h3: 'Place Entities:',
+            p: 'Select the entity in the selection bar, then click (or hold and drag) to place it'
+        },
+        {
+            h3: 'Delete Entities:',
+            p: 'Select the entity in the selection bar, then press ctrl and click (or hold and drag) to delete the entity'
+        },
+        {
+            h3: 'Save:',
+            p: 'All changes are automatically saved. Press the <i class="fas fa-clone"></i> icon to duplicate the current state of the Level'
+        },
+        {
+            h3: 'Rename:',
+            p: 'Press the <i class="fas fa-i-cursor"></i> icon to rename the level'
+        },
+        {
+            h3: 'New Level:',
+            p: 'To start creating a new level, press the <i class="fas fa-plus"></i> icon and choose a preset'
+        },
+        {
+            h3: 'Unlock new entities:',
+            p: 'Progress in the classic levels to unlock new entities in the editor'
+        },
+    ]
 }

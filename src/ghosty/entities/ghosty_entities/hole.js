@@ -1,5 +1,4 @@
-import { func } from '@hapi/joi';
-import { directionToSide, GhostyEntity, oppositeDirection, oppositeSide } from '../ghosty_entity';
+import { directionToSide, GhostyEntity, oppositeSide } from '../ghosty_entity';
 
 export class Hole extends GhostyEntity {
   constructor( params, args ){
@@ -30,6 +29,12 @@ export class Hole extends GhostyEntity {
 
   static get imgSources(){
     return { default: './tile_img/hole_background.jpg'};
+  }
+
+  static getUnlockLevel( classicLevels ){
+    const levelNames = classicLevels.map( l => l.name );
+    const levelIndex = levelNames.indexOf( 'Hole' );
+    return levelIndex;
   }
 
   setHole( hole, side ){

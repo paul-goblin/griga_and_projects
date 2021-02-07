@@ -1,9 +1,11 @@
 export class Popup {
-  constructor( displayId, message, buttons, inputFields) {
+  constructor( displayId, message, buttons, inputFields, h3Text, pText) {
     this.display = document.getElementById(displayId);
     this.message = message || 'Hello World!';
     this.buttonsData = buttons || [];
     this.inputFields = inputFields || [];
+    this.h3Text = h3Text;
+    this.pText = pText;
 
     this.popupHTMLString = '';
     this.generatePopupHTMLString();
@@ -12,6 +14,20 @@ export class Popup {
   }
 
   generatePopupHTMLString() {
+    let popupTextHTML = '';
+    if ( this.h3Text || this.pText ) {
+      let h3TextHTML = '';
+      let pTextHTML = '';
+      if (this.h3Text) {h3TextHTML = `<h3>${this.h3Text}</h3>`};
+      if (this.pText) {pTextHTML = `<p>${this.pText}</p>`};
+      popupTextHTML = `
+      <div class="popup-text">
+        ${h3TextHTML}
+        ${pTextHTML}
+      </div>
+      `;
+    }
+
     let inputsHTMLString = '';
     this.inputFields.forEach( iData => {
       inputsHTMLString += `
@@ -32,6 +48,7 @@ export class Popup {
     this.popupHTMLString = `
     <div class="popup" id="${this.display.id}-popup">
       <div class="popup-message">${this.message}</div>
+      ${popupTextHTML}
       ${inputsHTMLString}
       <div class="level-bar popup-buttons-bar">
         ${buttonsHTMLString}

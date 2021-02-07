@@ -80,11 +80,10 @@ export class Levels {
     const classicHighestLevelName = this.app.localStorage.getHighestLevel('classic') || 'Introduction';
     const classicHighestLevel = this.levels['classic'].find( l => l.name === classicHighestLevelName );
     this.classicHighestLevelIndex = this.levels['classic'].indexOf( classicHighestLevel );
-    console.log(this.classicHighestLevelIndex);
   }
 
   levelDone( levelIndex ){
-    this.app.localStorage.saveLevelSolved( this.levels['classic'][this.classicHighestLevelIndex].name, 'classic' );
+    this.app.localStorage.saveLevelSolved( this.levels['classic'][levelIndex].name, 'classic' );
     if ( levelIndex === this.classicHighestLevelIndex ) {
       this.classicHighestLevelIndex++;
       this.app.localStorage.saveHighestLevel( this.levels['classic'][this.classicHighestLevelIndex].name, 'classic' );
@@ -196,16 +195,20 @@ export class Levels {
     this.removeLevelFromLevelsContainer( levelIndex );
     this.clearLevelsContainer();
     this.fillLevelsContainer();
-    this.closePopup();
+    this.popup = null;
   }
 
   handleLevelNameClicked( target ){
     const levelDetailsBar = target.parentElement.nextElementSibling;
     if (levelDetailsBar.classList.contains('hidden')) {
-        this.hideLevelDetails();
-        this.showLevelDetails( parseInt(levelDetailsBar.getAttribute('data-index')) );
+      this.hideLevelDetails();
+      this.showLevelDetails( parseInt(levelDetailsBar.getAttribute('data-index')) );
     } else {
+      if (this.state === 'presets') {
+        this.handleLevelEditButtonClicked( target.nextElementSibling );
+      } else {
         this.handleLevelPlayButtonClicked( target.nextElementSibling );
+      }
     }
   }
 
@@ -278,4 +281,18 @@ class GhostyLevel {
     this.creator = creator;
     this.sceneData = sceneData;
   }
+}
+
+export const levelsHelp = {
+  english:
+  [
+      {
+          h3: 'Here are all levels:',
+          p: 'Switch between categories in the bar on top',
+      },
+      {
+          h3: 'The blue play button',
+          p: 'means you haven\'t solved the level yet'
+      }
+  ]
 }

@@ -14,8 +14,8 @@ export class WoodenBox extends GhostyEntity {
   }
 
   static getUnlockLevel( classicLevels ){
-    const level = classicLevels.find( l => l.name = 'Boxes' );
-    const levelIndex = classicLevels.indexOf( level );
+    const levelNames = classicLevels.map( l => l.name );
+    const levelIndex = levelNames.indexOf( 'Boxes' );
     return levelIndex;
   }
 

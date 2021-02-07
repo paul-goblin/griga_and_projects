@@ -45,10 +45,7 @@ export class Play {
     }
 
     end(){
-        if (this.popup) {
-            this.popup.close();
-            this.popup = null;
-          };
+        if (this.popup) {this.closePopup()};
         this.state = null;
         this.clearLevel();
         this.app.play_button.classList.remove('active');
@@ -63,6 +60,10 @@ export class Play {
         this.grid.loadScene( this.level.sceneData );
         this.undoHistory.push( this.level.sceneData );
         this.play_level_name.innerHTML = this.level.name;
+        this.updateNextPreviousLevelButtons();
+    }
+
+    updateNextPreviousLevelButtons(){
         if ( this.category === 'classic' ) {
             if ( this.levelIndex === this.app.levels.classicHighestLevelIndex ) {
                 this.next_level_button.classList.add('disabled');
@@ -85,6 +86,7 @@ export class Play {
     levelDone() {
         if (this.popup) {return};
         this.app.levels.levelDone( this.levelIndex );
+        this.updateNextPreviousLevelButtons();
         let nextButtonText = 'Next level';
         if (this.category === 'yourLevels') { nextButtonText = 'Edit' };
         this.popup = new Popup( 'play-display', 'Level Done!',
@@ -109,15 +111,14 @@ export class Play {
         } else if (this.category === 'yourLevels') {
             this.handlePlayEditButtonClick();
         }
-        this.closePopup();
     }
 
     handlePopupPlayAgainClick() {
         this.handlePlayRestartButtonClicked();
-        this.closePopup();
     }
 
     handlePreviousLevelButtonClick( e ){
+        if (this.popup) {this.closePopup()};
         if (this.previous_level_button.classList.contains('disabled')) {return};
         if (this.levelIndex !== 0) {
             this.level = this.app.levels.levels[this.category][--this.levelIndex];
@@ -127,6 +128,7 @@ export class Play {
     }
 
     handleNextLevelButtonClick(){
+        if (this.popup) {this.closePopup()};
         if (this.next_level_button.classList.contains('disabled')) {return};
         if (this.levelIndex !== this.app.levels.levels[this.category].length-1) {
             this.level = this.app.levels.levels[this.category][++this.levelIndex];
@@ -141,12 +143,14 @@ export class Play {
     }
 
     handlePlayRestartButtonClicked(){
+        if (this.popup) {this.closePopup()};
         this.clearLevel();
         this.loadLevel();
     }
 
     handlePlayUndoButtonClick( e ){
         if (this.undoHistory.length === 1){return};
+        if (this.popup) {this.closePopup()};
         this.undoHistory.pop();
         this.grid.clearScene();
         this.grid.loadScene( this.app.backgroundTileScene );
@@ -166,4 +170,22 @@ export class Play {
         this.play_undo_button.addEventListener('click', e => this.handlePlayUndoButtonClick( e ));
         this.play_edit_button.addEventListener('click', e => this.handlePlayEditButtonClick( e ));
     }
+}
+
+export const playHelp = {
+    english: 
+    [
+        {
+            h3: 'How to move:',
+            p: 'Use the arrow keys on your keyboard'
+        },
+        {
+            h3: 'Undo:',
+            p: 'Press the <i class="fas fa-undo"></i> icon to undo the last move'
+        },
+        {
+            h3: 'Restart:',
+            p: 'Press the <i class="fas fa-fast-backward"></i> icon to restart the level'
+        },
+    ]
 }

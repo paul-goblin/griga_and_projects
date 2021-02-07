@@ -1,22 +1,17 @@
 SOON:
 
   Bugs:
-    Popup + other buttons Interaction is wierd
     Browsersupport:
       Firefox
       Safari
 
   Game Mechanic bugs:
-    ghosties change image on Undo
     Corners of hole Borders are missing
     holes update bug (nothing, hole, hole+ghosty, hole+box+ghosty, hole+ghosty), then move to the left
 
   Feature:
-    "new" Button in Editor
-    unlock entities in classic to use in Editor
     download level
     upload level
-    edit level name in levels state
     key inputs to controll the site
 
   Game Mechanic Features:

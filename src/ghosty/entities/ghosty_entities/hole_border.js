@@ -13,9 +13,9 @@ export class HoleBorder extends GhostyEntity {
              bottom: './tile_img/hole_border_bottom.png',
              left: './tile_img/hole_border_left.png'};
   }
-
-  static get includeInLevelEditor() {
-    return false;
+  
+  static getUnlockLevel( classicLevels ){
+    return Infinity;
   }
 
   includeInSceneData(){

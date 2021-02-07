@@ -25,6 +25,7 @@
       width: 100%;
       max-width: 1300px;
       margin: auto;
+      position: relative;
     }
 
     .top-bar {
@@ -92,7 +93,7 @@
       position: relative;
     }
 
-    .display .popup {
+    .popup {
       z-index: 100;
       color: #f2f2f2;
       text-align: center;
@@ -101,11 +102,26 @@
       background-color: #333;
       margin: 0;
       position: absolute;
+    }
+
+    .wrapper .popup {
+      top: 130px;
+      left: 50%;
+      -ms-transform: translate(-50%, 0);
+      transform: translate(-50%, 0);
+    }
+
+    .display .popup {
       top: 50%;
       left: 50%;
       -ms-transform: translate(-50%, -50%);
       transform: translate(-50%, -50%);
     }
+
+    .popup .popup-text {
+      padding: 0 16px;
+    }
+
 
     .popup .popup-message, .popup .popup-input-line {
       line-height: 1.5em;
@@ -279,12 +295,13 @@
 
 <!-- body -->
 <body>
-  <div class="wrapper">
+  <div class="wrapper" id="wrapper">
     <div class="top-bar">
       <div class="home-button button active"><i class="fas fa-home"></i></div>
       <div class="play-button button">Play</div>
       <div class="levels-button button">Levels</div>
       <div class="editor-button button">Editor</div>
+      <div class="help-button button right"><i class="fas fa-question"></i></div>
     </div>
     <div class="content">
       <!-- home -->
@@ -329,15 +346,20 @@
       </div>
       <div class="screen editor-screen hidden">
         <div class="level-bar editor-top-bar">
+          <div class="button" id="editor-new-button"><i class="fas fa-plus"></i></div>
           <div class="level-name button" id="editor-level-name">Level Bar didn't load</div>
-          <div class="button" id="editor-rename-button"><i class="fas fa-i-cursor"></i></i></div>
+          <div class="button" id="editor-rename-button"><i class="fas fa-i-cursor"></i></div>
           <div class="button" id="editor-save-button"><i class="fas fa-clone"></i></div>
           <div class="button" id="editor-test-button"><i class="fas fa-play"></i></div>
         </div>
         <div class="display" id="editor-display">
           <!-- popup test -->
           <!-- <div class="popup" id="selection-display-popup">
-            <div class="popup-message">Save your Level:</div>
+            <div class="popup-message">Ghosty Help: Play:</div>
+            <div class="popup-text">
+              <h3>Move:</h3>
+              <p>Use the Arrow keys to move the Ghosty</p>
+            </div>
             <div class="popup-input-line">
               <label for="level-name">Name:</label>
               <input type="text" id="level-name-input" name="level-name" placeholder="untitled">
@@ -352,7 +374,7 @@
             </div>
             <div class="level-bar popup-buttons-bar">
               <div class="button popup-button">Back</div>
-              <div class="button popup-button">Save</div>
+              <div class="button popup-button">Next</div>
             </div>
           </div> -->
         </div>

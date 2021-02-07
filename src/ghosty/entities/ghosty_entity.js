@@ -44,10 +44,6 @@ export class GhostyEntity extends Entity {
     }
   }
 
-  static get includeInLevelEditor() {
-    return true;
-  }
-
   static getUnlockLevel( classicLevels ){
     return 0;
   }

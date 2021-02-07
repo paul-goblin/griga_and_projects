@@ -7,7 +7,7 @@ export class Ghosty extends GhostyEntity {
       ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].forEach( key => this.subscribeToKeyDown(key));
     }
     this.validatedEntities = [];
-    this.currentImage = 'right';
+    this.currentImage = params.facing || 'right';
   }
 
   static get imgSources(){
@@ -15,6 +15,12 @@ export class Ghosty extends GhostyEntity {
              left: './tile_img/ghosty_left.png',
              up: './tile_img/ghosty_mid_right.png',
              down: './tile_img/ghosty_mid_left.png'};
+  }
+
+  getCurrentParams(){
+    const params = GhostyEntity.prototype.getCurrentParams.call(this);
+    params.facing = this.currentImage;
+    return params;
   }
 
   keyDownHandler( key ){
