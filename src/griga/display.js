@@ -40,7 +40,12 @@ class GridLink {
     `);
     this.canvas.setAttribute( 'data--grid-name', this.gridInstance.name );
     this.display.wrapper.appendChild( this.canvas );
-    this.offCanvas = this.canvas.transferControlToOffscreen();
+    try {
+      this.offCanvas = this.canvas.transferControlToOffscreen();
+    } catch {
+      console.warn('Your Browser does not support canvas.transferControlToOffscreen(). Therefore the game might lag a bit');
+      this.offCanvas = this.canvas;
+    }
     this.ctx = this.offCanvas.getContext('2d');
   }
 
