@@ -14,6 +14,8 @@ import { Hole } from "./entities/ghosty_entities/hole";
 import { HoleBorder } from "./entities/ghosty_entities/hole_border";
 import { Home, homeHelp } from "./home";
 import { Popup } from "./popup";
+import { DiamondStone } from "./entities/ghosty_entities/diamond_stone";
+import { DiamondPressurePlate } from "./entities/ghosty_entities/diamond_pressure_plate";
 
 const CS = 16;
 const RS = 10;
@@ -58,7 +60,7 @@ const grigaConfig = {
       rows: RS
     }
   ],
-  entities:[BackgroundTile, SelectionBackground, Stone, Ghosty, Goal, WoodenBox, Hole, HoleBorder],
+  entities:[BackgroundTile, SelectionBackground, Stone, Ghosty, Goal, WoodenBox, Hole, HoleBorder, DiamondStone, DiamondPressurePlate],
 }
 
 class App {

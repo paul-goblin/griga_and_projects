@@ -24,12 +24,16 @@ export class Ghosty extends GhostyEntity {
   }
 
   keyDownHandler( key ){
-    const direction = key.slice(5).toLowerCase();
-    this.currentImage = direction;
-    if (this.requestMove( direction )) {
-      this.move( direction );
+    let moveDirection = key.slice(5).toLowerCase();
+    let imageDirection = moveDirection;
+    this.addAnimationFunction( 'move', () => {
+      this.currentImage = imageDirection;
+      this.removeAnimationFunction('move', 0);
+    } );
+    if (this.requestMove( moveDirection )) {
       this.griga.ghosty.play.keyTrackEntity.sceneChanged = true;
-    }
+    } else { moveDirection = 'stay' };
+    this.move( moveDirection );
   }
 
   validateMove( requestChain ){
@@ -43,5 +47,11 @@ export class Ghosty extends GhostyEntity {
     let success = this.requestMove( requestChain[requestChain.length-1][1] );
     this.validatedEntities = [];
     return success;
+  }
+
+  animationChainEmptied( category ){
+    if (category === 'move' && this.grid.name === 'play') {
+      this.griga.ghosty.play.keyTrackEntity.moveAnimationChainOfGhostyEmptied();
+    }
   }
 }

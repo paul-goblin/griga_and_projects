@@ -82,9 +82,9 @@ export class Levels {
     this.classicHighestLevelIndex = this.levels['classic'].indexOf( classicHighestLevel );
   }
 
-  levelDone( levelIndex ){
-    this.app.localStorage.saveLevelSolved( this.levels['classic'][levelIndex].name, 'classic' );
-    if ( levelIndex === this.classicHighestLevelIndex ) {
+  levelDone( levelIndex, category ){
+    this.app.localStorage.saveLevelSolved( this.levels[category][levelIndex].name, category );
+    if ( category === 'classic' && levelIndex === this.classicHighestLevelIndex ) {
       this.classicHighestLevelIndex++;
       this.app.localStorage.saveHighestLevel( this.levels['classic'][this.classicHighestLevelIndex].name, 'classic' );
     }

@@ -21,6 +21,10 @@ export const oppositeSide = {
   left: 'Right',
 }
 
+const MOVE_UP_SIZE_INCREASE_FACTOR = 16/14;
+const VERTICAL_MOVE_DURATION = 100;
+const MOVE_DURATION = 100;
+
 export class GhostyEntity extends Entity {
   constructor( params, args, layer = 1 ){
     //overwrite params if the entities are in editor or selection-hotbar grid
@@ -36,6 +40,10 @@ export class GhostyEntity extends Entity {
     this.basisROffset = this.rOffset;
     this.basisLayer = layer;
     this.movedVertically = 0;
+    this.moveAnimationDirections = [];
+    this.animationFunctions = {};
+    this.animationStartTimes = {};
+    this.currentAnimation = {};
     this.addWidthMultiplier( params.widthMultiplier || 1 );
     this.addHeightMultiplier( params.heightMultiplier || 1 );
     if (this.grid.name === 'selection-hotbar') {
@@ -49,37 +57,36 @@ export class GhostyEntity extends Entity {
   }
 
   getCurrentParams(){
-    return {
-      widthMultiplier: this.widthMultiplier,
-      heightMultiplier: this.heightMultiplier,
-      layerAddend: this.layerAddend
-    }
+    const params = {};
+    if (this.widthMultiplier !== 1){ params.widthMultiplier = this.widthMultiplier };
+    if (this.heightMultiplier !== 1){ params.heightMultiplier = this.heightMultiplier };
+    if (this.layerAddend !== 0){ params.layerAddend = this.layerAddend };
+    return params;
   }
 
-  moveUp(){
-    this.movedVertically++;
-    this.addHeightMultiplier( 16/14 );
-    this.addWidthMultiplier( 16/14 );
-    this.addLayerAddend( +10 );
-  }
-
-  moveDown(){
-    this.movedVertically--;
-    this.addHeightMultiplier( 14/16 );
-    this.addWidthMultiplier( 14/16 );
-    this.addLayerAddend( -10 );
+  moveVertically( amount, jump = true ){
+    this.addHeightMultiplier( Math.pow(MOVE_UP_SIZE_INCREASE_FACTOR, amount) );
+    this.addWidthMultiplier( Math.pow(MOVE_UP_SIZE_INCREASE_FACTOR, amount) );
+    this.addLayerAddend( amount*10 );
+    this.addAnimationFunction('move',
+      () => this.setVerticalMoveAnimationSize(),
+      {targetWidth: this.basisWidth, targetHeight: this.basisHeight, jump}
+    )
+    this.setWidth( this.basisWidth * Math.pow(MOVE_UP_SIZE_INCREASE_FACTOR, -amount) );
+    this.setHeight( this.basisHeight * Math.pow(MOVE_UP_SIZE_INCREASE_FACTOR, -amount) );
+    const animationObject = this.animationFunctions['move'][ this.animationFunctions['move'].length-1 ];
+    animationObject.startHeight = this.basisHeight;
+    animationObject.startWidth = this.basisWidth;
   }
 
   addWidthMultiplier( multiplier ){
     this.widthMultiplier *= multiplier;
     this.setWidth( this.basisWidth );
-    this.setCOffset( this.basisCOffset );
   }
 
   addHeightMultiplier( multiplier ){
     this.heightMultiplier *= multiplier;
     this.setHeight( this.basisHeight );
-    this.setROffset( this.basisROffset );
   }
 
   addLayerAddend( addend ){
@@ -90,21 +97,23 @@ export class GhostyEntity extends Entity {
   setWidth( width ){
     this.basisWidth = width;
     Entity.prototype.setWidth.call( this, width*this.widthMultiplier);
+    this.setCOffset( this.basisCOffset );
   }
 
   setHeight( height ){
     this.basisHeight = height;
     Entity.prototype.setHeight.call( this, height*this.heightMultiplier );
+    this.setROffset( this.basisROffset );
   }
 
   setCOffset( cOffset ){
     this.basisCOffset = cOffset;
-    Entity.prototype.setCOffset.call( this, cOffset + (1-this.widthMultiplier)/2 );
+    Entity.prototype.setCOffset.call( this, cOffset + (1-this.width)/2 );
   }
 
   setROffset( rOffset ){
     this.basisROffset = rOffset;
-    Entity.prototype.setROffset.call( this, rOffset + (1-this.heightMultiplier)/2 );
+    Entity.prototype.setROffset.call( this, rOffset + (1-this.height)/2 );
   }
 
   changeLayer( layer ){
@@ -112,8 +121,9 @@ export class GhostyEntity extends Entity {
     Entity.prototype.changeLayer.call( this, layer + this.layerAddend );
   }
 
-  move( direction, autoanimate = true ) {
+  move( direction) {
     const absPos = this.formatPositionAsAbsolutePosition(direction, 'modulo');
+    const relPos = this.formatPositionAsRelativePosition(direction, 'modulo');
     const entitiesOnNewTile = this.grid.getEntityInstances( {
       tile: absPos,
       notType: 'BackgroundTile'
@@ -125,6 +135,7 @@ export class GhostyEntity extends Entity {
     entitiesOnNewTile.forEach( entity => {
       entity.entityWillMoveToTile( this, direction );
     } );
+    this.griga.ghosty.play.keyTrackEntity.addTilesToUpdate( [absPos, {c:this.c, r:this.r}] );
     Entity.prototype.move.call( this, absPos );
     entitiesOnNewTile.forEach( entity => {
       entity.entityMovedToTile( this, direction );
@@ -135,19 +146,11 @@ export class GhostyEntity extends Entity {
     entitiesOnThisTile.forEach( entity => {
       entity.entityLeftTile( this, direction );
     } );
-    if (autoanimate) {
-      if ( !this.renderStartSubscription ){
-        this.subscribeToRenderStart();
-        this.cOffsetBeforeMove = this.basisCOffset;
-        this.rOffsetBeforeMove = this.basisROffset;
-        this.widthBeforeMove = this.basisWidth;
-        this.heightBeforeMove = this.basisHeight;
-      } else {
-        this.resetOffsetToBeforeMove();
-      }
-      this.lastMoveTime = performance.now();
-      this.lastMoveDirection = direction;
-    }
+    this.setCOffset( this.basisCOffset - relPos[0] );
+    this.setROffset( this.basisROffset - relPos[1] );
+    this.addAnimationFunction( 'move',
+      () => this.setMoveAnimationOffset(),
+      {relMoveDirection: relPos, targetTileAbsPos: absPos} );
   }
 
   requestMove( direction, requestChain = [] ) {
@@ -186,63 +189,91 @@ export class GhostyEntity extends Entity {
     return allowMove;
   }
 
-  resetOffsetToBeforeMove(){
-    this.setCOffset( this.cOffsetBeforeMove );
-    this.setROffset( this.rOffsetBeforeMove );
+  addAnimationFunction( category, fnc, valuesForAnimationObject = {} ){
+    if (this.animationFunctions[category]) {
+      this.animationFunctions[category].push(
+        Object.assign( {fnc}, valuesForAnimationObject )
+      );
+    } else {
+      this.animationFunctions[category] = [Object.assign(
+        {fnc,startTime: performance.now()},
+        valuesForAnimationObject
+      )];
+    }
+    if (!this.renderStartSubscription) {
+      this.subscribeToRenderStart();
+    }
   }
 
-  moveOffsetFunction( timeSinceLastMove, moveDuration ){
-    const offset = 1 - Math.sqrt( timeSinceLastMove/moveDuration );
+  removeAnimationFunction( category, durationOfLastAnimation ){
+    if (this.animationFunctions[category].length === 1) {
+      delete this.animationFunctions[category];
+    } else {
+      const oldStartTime = this.animationFunctions[category][0].startTime;
+      this.animationFunctions[category].splice(0,1);
+      const newAnimationObject = this.animationFunctions[category][0];
+      newAnimationObject.startTime = oldStartTime + durationOfLastAnimation;
+      newAnimationObject.fnc();
+    }
+    if (Object.keys(this.animationFunctions).length === 0) {
+      this.unsubscribeFromRenderStart();
+    }
+    if (!this.animationFunctions[category]) {
+      this.animationChainEmptied(category);
+    }
+  }
+
+  moveOffsetFunction( timeSinceAnimationStart ){
+    const offset = 1 - Math.sqrt( timeSinceAnimationStart/MOVE_DURATION );
+    // const offset = 1 - timeSinceAnimationStart/MOVE_DURATION
     return offset;
   }
 
-  setMoveAnimationOffset( timeSinceLastMove, duration ){
-    const absOffset = this.moveOffsetFunction( timeSinceLastMove, duration );
-    if (absOffset <= 0) {
-      this.resetOffsetToBeforeMove();
-      return true;
+  setMoveAnimationOffset(){
+    const animationObject = this.animationFunctions['move'][0];
+    const timeSinceAnimationStart = performance.now() - animationObject.startTime;
+    const relTargetPosition = this.formatPositionAsRelativePosition( animationObject.targetTileAbsPos );
+    let absOffset = this.moveOffsetFunction( timeSinceAnimationStart, MOVE_DURATION );
+    absOffset = Math.max(absOffset, 0);
+    this.setCOffset( relTargetPosition[0] - absOffset * animationObject.relMoveDirection[0] );
+    this.setROffset( relTargetPosition[1] - absOffset * animationObject.relMoveDirection[1] );
+    if (timeSinceAnimationStart > MOVE_DURATION) {
+      this.removeAnimationFunction('move', MOVE_DURATION);
     }
-    else if (this.lastMoveDirection === 'right'){ this.setCOffset( -absOffset+this.cOffsetBeforeMove ) }
-    else if (this.lastMoveDirection === 'left'){ this.setCOffset( absOffset+this.cOffsetBeforeMove ) }
-    else if (this.lastMoveDirection === 'up'){ this.setROffset( absOffset+this.rOffsetBeforeMove ) }
-    else if (this.lastMoveDirection === 'down'){ this.setROffset( -absOffset+this.rOffsetBeforeMove ) };
   }
 
-  resetSizeToBeforeMove(){
-    this.setHeight( this.heightBeforeMove );
-    this.setWidth( this.widthBeforeMove );
-    this.movedVertically = 0;
-  }
-
-  verticalMoveSizeFunction( timeSinceAnimationStart, duration ){
-    const startFactor = Math.pow(14/16, this.movedVertically);
-    const startWidth = this.widthBeforeMove * startFactor;
-    const startHeight = this.heightBeforeMove * startFactor;
-    const width = startWidth + (this.widthBeforeMove - startWidth)*Math.pow( timeSinceAnimationStart/duration, 2 );
-    const height = startHeight + (this.heightBeforeMove - startHeight)*Math.pow( timeSinceAnimationStart/duration, 2 );
+  verticalMoveSizeFunction( timeSinceAnimationStart ){
+    const animationObject = this.animationFunctions['move'][0];
+    const x = timeSinceAnimationStart/VERTICAL_MOVE_DURATION
+    let percentComplete = x*x;
+    if (animationObject.jump) {
+      percentComplete = 4*x*(x-0.75);
+    }
+    const width = animationObject.startWidth*(1-percentComplete)
+                + animationObject.targetWidth*(percentComplete);
+    const height = animationObject.startHeight*(1-percentComplete)
+                 + animationObject.targetHeight*(percentComplete);;
     return [ width, height ];
   }
 
-  setVerticalMoveAnimationSize( timeSinceAnimationStart, duration ) {
-    const [ width, height ] = this.verticalMoveSizeFunction( timeSinceAnimationStart, duration );
-    if ( timeSinceAnimationStart > duration ){
-      this.resetSizeToBeforeMove()
-      return true;
-    } else {
-      this.setWidth( width );
-      this.setHeight( height );
-      this.setCOffset( (1-width)/2 );
-      this.setROffset( (1-height)/2 );
+  setVerticalMoveAnimationSize() {
+    const animationObject = this.animationFunctions['move'][0];
+    const timeSinceAnimationStart = performance.now() - animationObject.startTime;
+    let [ width, height ] = this.verticalMoveSizeFunction( timeSinceAnimationStart );
+    if (timeSinceAnimationStart > VERTICAL_MOVE_DURATION) {
+      [ width, height ] = [ animationObject.targetWidth, animationObject.targetHeight ];
+    }
+    this.setWidth( width );
+    this.setHeight( height );
+    if (timeSinceAnimationStart > VERTICAL_MOVE_DURATION) {
+      this.removeAnimationFunction('move', VERTICAL_MOVE_DURATION);
     }
   }
 
   renderStartHandler(){
-    const timeSinceLastMove = performance.now() - this.lastMoveTime;
-    if (this.setMoveAnimationOffset(timeSinceLastMove, 100)) { //is called unnessecarily often
-      if (this.setVerticalMoveAnimationSize( timeSinceLastMove - 100, 100 )) {
-        this.unsubscribeFromRenderStart();
-      }
-    }
+    Object.values(this.animationFunctions).forEach(
+      fncArr => fncArr[0].fnc()
+    );
   }
 
   /**
@@ -300,4 +331,10 @@ export class GhostyEntity extends Entity {
   newEntityWasPlacedOnTile( entity ) {
     //doSomething
   }
+
+  animationChainEmptied( category ){
+    //doSomething
+  }
+
+  //updateState(){ //doSomething }; //commented out to save on performance since the function only gets called if it exists
 }

@@ -424,7 +424,7 @@ export class Grid {
         entityInstances = [];
       }
     } else if (selectorObject.hasOwnProperty('type')) {
-      entityInstances = this.entityData[ selectorObject.type ];
+      entityInstances = this.entityData[ selectorObject.type ] || [];
     }
     if (selectorObject.hasOwnProperty('notType')) {
       entityInstances = entityInstances.filter( entityInstance => {

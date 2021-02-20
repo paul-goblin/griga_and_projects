@@ -85,7 +85,7 @@ export class Play {
 
     levelDone() {
         if (this.popup) {return};
-        this.app.levels.levelDone( this.levelIndex );
+        this.app.levels.levelDone( this.levelIndex, this.category );
         this.updateNextPreviousLevelButtons();
         let nextButtonText = 'Next level';
         if (this.category === 'yourLevels') { nextButtonText = 'Edit' };

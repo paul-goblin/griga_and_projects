@@ -22,9 +22,6 @@ export class Hole extends GhostyEntity {
     else { this.borderTop = this.grid.newEntityInstance('HoleBorder', {side:'top', hole:this}, {c:this.c,r:this.r} ) };
     if (this.holeBottom) { this.holeBottom.setHole(this, 'Top') }
     else { this.borderBottom = this.grid.newEntityInstance('HoleBorder', {side:'bottom', hole:this}, {c:this.c,r:this.r} ) };
-  
-    this.newEntityWasPlacedOnTile();
-    this.subscribeToSceneLoaded();
   }
 
   static get imgSources(){
@@ -48,35 +45,6 @@ export class Hole extends GhostyEntity {
     this[`border${side}`] = this.grid.newEntityInstance('HoleBorder', {side, hole:this}, {c:this.c,r:this.r} );
   }
 
-  //should have the alias Update Which Entities are Down
-  newEntityWasPlacedOnTile(){
-    const entitiesOnTile = this.grid.getEntityInstances( {
-      tile: {c:this.c, r:this.r}
-    } ).filter( e => !['Hole', 'HoleBorder', 'BackgroundTile'].includes( e.constructor.name ) );
-    for (let layerDigit = 3; layerDigit < 10; layerDigit++) {
-      const downEntity = entitiesOnTile.find( e => e.layer === layerDigit );
-      const upEntities = entitiesOnTile.filter( e => e.layer === layerDigit + 10 );
-      const upEntity = upEntities[upEntities.length-1];
-      if ( !downEntity &&upEntity ){
-        upEntity.moveDown();
-      }
-    }
-  }
-
-  taskDone(){
-    this.newEntityWasPlacedOnTile();
-    return true;
-  }
-
-  sceneLoadedHandler(){
-    const entitiesOnTile = this.grid.getEntityInstances( {
-      tile: {c:this.c, r:this.r}
-    } ).filter( e => !['Hole', 'HoleBorder', 'BackgroundTile'].includes( e.constructor.name ) );
-    if ( entitiesOnTile[0] ){
-      this.newEntityWasPlacedOnTile( entitiesOnTile[0] );
-    }
-  }
-
   beforeDelete(){
     Object.values( directionToSide ).forEach( side => {
       if ( this[`border${side}`] ) {
@@ -85,23 +53,11 @@ export class Hole extends GhostyEntity {
         this[`hole${side}`].removeHole( oppositeSide[side.toLowerCase()] );
       }
     } );
-    const entitiesOnTile = this.grid.getEntityInstances( {
-      tile: {c:this.c, r:this.r}
-    } ).filter( e => !['Hole', 'HoleBorder', 'BackgroundTile'].includes( e.constructor.name ) );
-    for (let layerDigit = 3; layerDigit < 10; layerDigit++) {
-      const downEntityOnTile = entitiesOnTile.find( e => e.layer === layerDigit);
-      const upEntityOnTile = entitiesOnTile.find( e => e.layer === layerDigit + 10);
-      if (downEntityOnTile) {
-        if (upEntityOnTile) {
-          downEntityOnTile.delete();
-        } else {
-          downEntityOnTile.moveUp();
-        }
-      }
-    }
-  }
-
-  entityOnSameTileWasDeleted( deletedEntity ){
-    this.newEntityWasPlacedOnTile();
+    const backgroundTile = this.grid.getEntityInstances( {
+      tile: {c:this.c, r:this.r},
+      type: 'BackgroundTile'
+    } )[0];
+    backgroundTile.moveEntitiesUp( this );
+    
   }
 }

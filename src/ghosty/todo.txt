@@ -1,13 +1,20 @@
 SOON:
 
   Bugs:
+    If you delete a level it might still be open in the level editor!
+    People who played through all levels would unlock every new level automatically
+    -> Make Highest Level the Highest solved level, not the highest shown level.
     Browsersupport:
       Firefox
       Safari
 
   Game Mechanic bugs:
+    boxes move animation is too early when the ghosties move animation is still going
+    layer is changed istantly when jumping off sth. so displayed in wrong order
+    Sometimes Keys get stuck
     Corners of hole Borders are missing
-    holes update bug (nothing, hole, hole+ghosty, hole+box+ghosty, hole+ghosty), then move to the left
+    I'll let you take the win level has shortcut
+    Bridge level has shortcut
 
   Feature:
     download level

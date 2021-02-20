@@ -527,6 +527,33 @@ export class Entity {
   }
 
   /**
+   * Poorly testet at the moment!!
+   * @param {directionString|relativePosition|absolutePosition} position - position to convert
+   * @param {string} borderMode - does nothing at the moment
+   * @returns {relativePosition}
+   */
+  formatPositionAsRelativePosition( position, borderMode = 'ignore' ){
+    let relPos = null;
+    if (position.constructor === Array) { relPos = position }
+    else if (typeof position === 'string') {
+      if (['top','up','north'].includes( position.toLowerCase() )) {
+        relPos = [0, -1];
+      } else if (['right','east'].includes( position.toLowerCase() )) {
+        relPos = [1, 0];
+      } else if (['bottom','down','south'].includes( position.toLowerCase() )) {
+        relPos = [0, 1];
+      } else if (['left','west'].includes( position.toLowerCase() )) {
+        relPos = [-1, 0];
+      } else if (['here','stay'].includes( position.toLowerCase() )) {
+        relPos = [0, 0];
+      }
+    } else if (typeof position === 'object') {
+      relPos = [ position.c - this.c, position.r - this.r ];
+    }
+    return relPos;
+  }
+
+  /**
    * Moves entity to newPosition
    * @param {directionString|relativePosition|absolutePosition} newPosition - Where the entity should move to
    */

@@ -109,6 +109,13 @@ export class Griga {
       entity => [entity.name, entity]
     ) );
 
+    /**
+     * @description List of all Keys which are currently pressed on the keyboard
+     * @public
+     * @member {string[]}
+     */
+    this.keysPressed = [];
+
     this.setupEventListeners();
 
     //loadImages

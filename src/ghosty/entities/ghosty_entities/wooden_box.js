@@ -5,8 +5,6 @@ export class WoodenBox extends GhostyEntity {
     super( params, args, 17 );
     this.setWidth( 0.9 );
     this.setHeight( 0.9 );
-    this.setCOffset( 0.05 );
-    this.setROffset( 0.05 );
   }
 
   static get imgSources(){

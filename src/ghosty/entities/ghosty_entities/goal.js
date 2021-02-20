@@ -21,4 +21,11 @@ export class Goal extends GhostyEntity {
     if (ghosties[0]) {return Math.floor(ghosties[0].layer/10) === Math.floor( this.layer/10 )};
     return false;
   }
+
+  allowBeingPlaced(  tile, editorGrid  ){
+    const entitiesOnTile = editorGrid.getEntityInstances( {tile} );
+    const otherEntity = entitiesOnTile.find( e => !['Hole', 'HoleBorder', 'BackgroundTile'].includes(e.constructor.name) );
+    if (otherEntity) {return false}
+    else {return true}
+  }
 }

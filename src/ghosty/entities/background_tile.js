@@ -28,6 +28,50 @@ export class BackgroundTile extends Entity {
              p7: './tile_img/purple_flower.jpg',};
   }
 
+  letEntitiesFallDown(jump = true){ //lets all entities fall down (not just solid)
+    const entitiesOnTile = this.grid.getEntityInstances( {
+      tile: {c:this.c, r:this.r}
+    } );
+    let floorLayer = 10;
+    if ( entitiesOnTile.find( e => e.constructor.name === 'Hole' ) ){ floorLayer = 0 };
+    const highestLayer = Math.max(...entitiesOnTile.map( e => Math.floor(e.layer/10) ))*10;
+    const solidEntityOnBaseLayer = [];
+    for (let currentBaseLayer = floorLayer; currentBaseLayer <= highestLayer; currentBaseLayer+=10) {
+      solidEntityOnBaseLayer[ currentBaseLayer ] = entitiesOnTile.find( e => e.layer === currentBaseLayer+7 );
+    }
+    let emptyLayers = 0;
+    for (let currentBaseLayer = floorLayer; currentBaseLayer <= highestLayer; currentBaseLayer+=10) {
+      const entitiesOnBaseLayer = entitiesOnTile.filter( e => Math.floor(e.layer/10)*10 === currentBaseLayer )
+      entitiesOnBaseLayer.forEach( e => {
+        if (e.moveVertically && emptyLayers > 0) {e.moveVertically(-emptyLayers,jump)}
+      } );
+      if (!solidEntityOnBaseLayer[currentBaseLayer]) {
+        emptyLayers++;
+      }
+    }
+
+    entitiesOnTile.forEach( e => {
+      if (typeof e.updateState === 'function') {
+        e.updateState();
+      };
+    } );
+  }
+
+  moveEntitiesUp( stayEntity, jump = true ){
+    const entitiesOnTile = this.grid.getEntityInstances( {
+      tile: {c:this.c, r:this.r}
+    } ).filter( e => !['BackgroundTile', 'Hole', 'HoleBorder'].includes(e.constructor.name) );
+    const baseLayer = Math.floor(stayEntity.layer/10)*10
+    const entitiesToMoveUp = entitiesOnTile.filter( e => Math.floor(e.layer/10)*10 === baseLayer && e !== stayEntity );
+    entitiesToMoveUp.forEach( e => {
+      if (e.moveVertically) {e.moveVertically(1,jump)}
+    } );
+    const solidEntityMovedUp = entitiesToMoveUp.find( e => e.layer%10 === 7 );
+    if (solidEntityMovedUp) {
+      this.moveEntitiesUp(solidEntityMovedUp);
+    }
+  }
+
   mouseDownHandler( displayName, mouseC, mouseR, ctrlKey ){
     if (this.griga.ghosty.editor.popup) {return};
 
@@ -42,13 +86,15 @@ export class BackgroundTile extends Entity {
         if (!entitiesOnTile.map(e => e.allowPlacing( selectedEntity )).includes(false)) {
           if (selectedEntity.allowBeingPlaced( {c:this.c, r:this.r}, this.grid )) {
             const entity = this.grid.newEntityInstance(  selectedEntity.constructor.name, {}, {c:this.c,r:this.r});
-            this.griga.ghosty.editor.sceneChangedHandler();
+            this.letEntitiesFallDown();
             entitiesOnTile.forEach( e => e.newEntityWasPlacedOnTile(entity) );
+            this.griga.ghosty.editor.sceneChangedHandler();
           }
         }
       } else if (sameEntitiesOnTile.length === 1 && ctrlKey) {
         sameEntitiesOnTile[0].beforeDelete();
         sameEntitiesOnTile[0].delete();
+        this.letEntitiesFallDown();
         const entitiesOnTile = this.grid.getEntityInstances( {
           tile: {c:this.c, r:this.r},
           notType: 'BackgroundTile'
@@ -65,22 +111,42 @@ export class BackgroundTile extends Entity {
   }
 
   sceneLoadedHandler(){
-    if (this.grid.name !== 'play') {return};
-    this.sceneChanged = false;
-    if (this.c == 0 && this.r == 0) {//keyTrackTile
-      this.griga.ghosty.play.keyTrackEntity = this;
-      Object.keys(this.grid.keyDownSubscriptions).forEach( key => {
-        this.subscribeToKeyDown( key );
-      } );
+    if (this.backgroundSceneLoaded) {
+      this.letEntitiesFallDown();
+      if (this.grid.name !== 'play') {return};
+      this.sceneChanged = false;
+      if (this.c == 0 && this.r == 0) {//keyTrackTile
+        this.griga.ghosty.play.keyTrackEntity = this;
+        this.ghostyAnimationsEnded = 0;
+        this.fastMode = false;
+        this.xthTimeKeyIsDown = 0;
+        this.tilesToUpdate = [];
+        Object.keys(this.grid.keyDownSubscriptions).forEach( key => {
+          this.subscribeToKeyDown( key );
+          this.subscribeToKeyUp( key );
+        } );
+      }
+    } else {
+      this.backgroundSceneLoaded = true;
     }
   }
 
   keyDownHandler( key ){ //keyTrackTile
+    this.xthTimeKeyIsDown++;
     const allEntities = this.grid.getEntityInstances( {
       notType: 'BackgroundTile'
     } );
+    const goals = this.grid.getEntityInstances( {
+      type: 'Goal'
+    } );
+    this.tilesToUpdate.forEach( tile => {
+      this.grid.getEntityInstances( {
+        tile, type: 'BackgroundTile'
+      } )[0].letEntitiesFallDown();
+    } );
+    this.tilesToUpdate = [];
     const taskDoneArray = allEntities.map( e => e.taskDone() );
-    if (!taskDoneArray.includes( false )) {
+    if (!taskDoneArray.includes( false ) && goals.length > 0 ) {
       if (this.grid.getEntityInstances({type:'Goal'})) { //if there exists at least one goal
         this.griga.ghosty.play.levelDone();
       }
@@ -91,6 +157,47 @@ export class BackgroundTile extends Entity {
     }
 
     this.sceneChanged = false;
+  }
+
+  keyUpHandler( key ){
+    this.fastMode = false;
+  }
+
+  addTilesToUpdate( tiles ) {
+    tiles.forEach( t => {
+      if (!this.tilesToUpdate.find( uT => uT.c === t.c && uT.r === t.r )) {
+        this.tilesToUpdate.push(t);
+      }
+    } );
+  }
+
+  //used to implement the hold-and-move feature
+  moveAnimationChainOfGhostyEmptied() {
+    this.ghostyAnimationsEnded++;
+    const ghosties = this.grid.getEntityInstances({type:'Ghosty'});
+    if ( this.ghostyAnimationsEnded === ghosties.length ) {
+      this.handleKeyHold();
+    }
+  }
+
+  handleKeyHold() {
+    this.ghostyAnimationsEnded = 0;
+    if (!this.fastMode) {
+      const currentTimeKeyIsDown = this.xthTimeKeyIsDown;
+      setTimeout( (currentTimeKeyIsDown) => {
+        console.log(currentTimeKeyIsDown, this.xthTimeKeyIsDown);
+        if (this.xthTimeKeyIsDown === currentTimeKeyIsDown) {
+          this.fastMode = true;
+          this.handleKeyHold();
+        }
+      }, 100, currentTimeKeyIsDown );
+    } else {
+      Object.keys(this.grid.keyDownSubscriptions).forEach( key => {
+        if (this.griga.keysPressed.includes(key)) {
+          this.grid.keyDownHandler({key});
+        }
+      } );
+    }
   }
 
   includeInSceneData() {

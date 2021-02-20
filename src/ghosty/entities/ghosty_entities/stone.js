@@ -5,16 +5,15 @@ export class Stone extends GhostyEntity {
     super( params, args, 17 );
     this.setWidth( 0.9 );
     this.setHeight( 0.9 );
-    this.setCOffset( 0.05 );
-    this.setROffset( 0.05 );
   }
 
   static get imgSources(){
     return { default: './tile_img/stone.jpg'};
   }
 
-  allowPlacing(){
-    return false;
+  allowPlacing( entity ){
+    if (this.layer === 7) {return entity.constructor.name === 'Ghosty'}
+    else {return entity.constructor.name === 'Hole'}
   }
 
   allowBeingPlaced( tile, editorGrid ){
