@@ -195,7 +195,7 @@ export class Griga {
     Object.values(this.grids).forEach( grid => {
       grid.keyUpHandler( e );
     } );
-    this.keysPressed.pop( e.key );
+    this.keysPressed.splice( this.keysPressed.indexOf(e.key), 1 );
   }
 
 //PUBLIC xD
