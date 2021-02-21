@@ -9,8 +9,8 @@ SOON:
       Safari
 
   Game Mechanic bugs:
-    boxes move animation is too early when the ghosties move animation is still going
-    layer is changed istantly when jumping off sth. so displayed in wrong order
+    layer update of non solids not working
+    when pushing a chest into a hole the chest moves too late
     Sometimes Keys get stuck
     Corners of hole Borders are missing
     I'll let you take the win level has shortcut

@@ -57,7 +57,7 @@ export class Hole extends GhostyEntity {
       tile: {c:this.c, r:this.r},
       type: 'BackgroundTile'
     } )[0];
-    backgroundTile.moveEntitiesUp( this );
+    backgroundTile.moveEntitiesUp( {layerAddend: -10} );
     
   }
 }

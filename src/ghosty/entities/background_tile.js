@@ -29,19 +29,20 @@ export class BackgroundTile extends Entity {
   }
 
   letEntitiesFallDown(jump = true){ //lets all entities fall down (not just solid)
-    const entitiesOnTile = this.grid.getEntityInstances( {
+    let entitiesOnTile = this.grid.getEntityInstances( {
       tile: {c:this.c, r:this.r}
-    } );
+    } ).filter( e => e.constructor.name !== 'BackgroundTile' );
     let floorLayer = 10;
     if ( entitiesOnTile.find( e => e.constructor.name === 'Hole' ) ){ floorLayer = 0 };
-    const highestLayer = Math.max(...entitiesOnTile.map( e => Math.floor(e.layer/10) ))*10;
+    entitiesOnTile = entitiesOnTile.filter( e => !['Hole', 'HoleBorder'].includes(e.constructor.name) );
+    const highestLayer = Math.max(...entitiesOnTile.map( e => 10+e.layerAddend ));
     const solidEntityOnBaseLayer = [];
     for (let currentBaseLayer = floorLayer; currentBaseLayer <= highestLayer; currentBaseLayer+=10) {
-      solidEntityOnBaseLayer[ currentBaseLayer ] = entitiesOnTile.find( e => e.layer === currentBaseLayer+7 );
+      solidEntityOnBaseLayer[ currentBaseLayer ] = entitiesOnTile.find( e => 10+e.layerAddend === currentBaseLayer && e.layer%10 === 7);
     }
     let emptyLayers = 0;
     for (let currentBaseLayer = floorLayer; currentBaseLayer <= highestLayer; currentBaseLayer+=10) {
-      const entitiesOnBaseLayer = entitiesOnTile.filter( e => Math.floor(e.layer/10)*10 === currentBaseLayer )
+      const entitiesOnBaseLayer = entitiesOnTile.filter( e => 10+e.layerAddend === currentBaseLayer );
       entitiesOnBaseLayer.forEach( e => {
         if (e.moveVertically && emptyLayers > 0) {e.moveVertically(-emptyLayers,jump)}
       } );
@@ -61,8 +62,8 @@ export class BackgroundTile extends Entity {
     const entitiesOnTile = this.grid.getEntityInstances( {
       tile: {c:this.c, r:this.r}
     } ).filter( e => !['BackgroundTile', 'Hole', 'HoleBorder'].includes(e.constructor.name) );
-    const baseLayer = Math.floor(stayEntity.layer/10)*10
-    const entitiesToMoveUp = entitiesOnTile.filter( e => Math.floor(e.layer/10)*10 === baseLayer && e !== stayEntity );
+    const baseLayer = 10 + stayEntity.layerAddend;
+    const entitiesToMoveUp = entitiesOnTile.filter( e => 10+e.layerAddend === baseLayer && e !== stayEntity );
     entitiesToMoveUp.forEach( e => {
       if (e.moveVertically) {e.moveVertically(1,jump)}
     } );
@@ -118,12 +119,14 @@ export class BackgroundTile extends Entity {
       if (this.c == 0 && this.r == 0) {//keyTrackTile
         this.griga.ghosty.play.keyTrackEntity = this;
         this.ghostyAnimationsEnded = 0;
-        this.fastMode = false;
-        this.xthTimeKeyIsDown = 0;
+        this.fastMode = {};
+        this.timesKeyIsReleased = {};
         this.tilesToUpdate = [];
         Object.keys(this.grid.keyDownSubscriptions).forEach( key => {
           this.subscribeToKeyDown( key );
           this.subscribeToKeyUp( key );
+          this.timesKeyIsReleased[key] = 0;
+          this.fastMode[key] = false;
         } );
       }
     } else {
@@ -160,7 +163,8 @@ export class BackgroundTile extends Entity {
   }
 
   keyUpHandler( key ){
-    this.fastMode = false;
+    this.fastMode[key] = false;
+    this.timesKeyIsReleased[key]++;
   }
 
   addTilesToUpdate( tiles ) {
@@ -180,24 +184,24 @@ export class BackgroundTile extends Entity {
     }
   }
 
-  handleKeyHold() {
+  handleKeyHold() { //almost works, probably some issue cause of keys getting stuck (griga);
     this.ghostyAnimationsEnded = 0;
-    if (!this.fastMode) {
-      const currentTimeKeyIsDown = this.xthTimeKeyIsDown;
-      setTimeout( (currentTimeKeyIsDown) => {
-        console.log(currentTimeKeyIsDown, this.xthTimeKeyIsDown);
-        if (this.xthTimeKeyIsDown === currentTimeKeyIsDown) {
-          this.fastMode = true;
-          this.handleKeyHold();
-        }
-      }, 100, currentTimeKeyIsDown );
-    } else {
-      Object.keys(this.grid.keyDownSubscriptions).forEach( key => {
-        if (this.griga.keysPressed.includes(key)) {
+
+    Object.keys(this.grid.keyDownSubscriptions).forEach( key => {
+      if (this.griga.keysPressed.includes(key)) {
+        if (this.fastMode[key]) {
           this.grid.keyDownHandler({key});
+        } else {
+          const currentTimeKeyIsUp = this.timesKeyIsReleased[key];
+          setTimeout( (currentTimeKeyIsUp) => {
+            if (currentTimeKeyIsUp === this.timesKeyIsReleased[key]) {
+              this.fastMode[key] = true;
+              this.handleKeyHold();
+            }
+          }, 200, currentTimeKeyIsUp );
         }
-      } );
-    }
+      }
+    } );
   }
 
   includeInSceneData() {

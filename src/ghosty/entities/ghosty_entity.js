@@ -42,8 +42,6 @@ export class GhostyEntity extends Entity {
     this.movedVertically = 0;
     this.moveAnimationDirections = [];
     this.animationFunctions = {};
-    this.animationStartTimes = {};
-    this.currentAnimation = {};
     this.addWidthMultiplier( params.widthMultiplier || 1 );
     this.addHeightMultiplier( params.heightMultiplier || 1 );
     if (this.grid.name === 'selection-hotbar') {
@@ -64,16 +62,28 @@ export class GhostyEntity extends Entity {
     return params;
   }
 
-  moveVertically( amount, jump = true ){
+  moveVertically( amount, jump = true, autoanimate = true ){
     this.addHeightMultiplier( Math.pow(MOVE_UP_SIZE_INCREASE_FACTOR, amount) );
     this.addWidthMultiplier( Math.pow(MOVE_UP_SIZE_INCREASE_FACTOR, amount) );
     this.addLayerAddend( amount*10 );
-    this.addAnimationFunction('move',
-      () => this.setVerticalMoveAnimationSize(),
-      {targetWidth: this.basisWidth, targetHeight: this.basisHeight, jump}
-    )
+    const aO = {
+      targetWidth: this.basisWidth,
+      targetHeight: this.basisHeight,
+      targetLayer: this.basisLayer,
+      jump
+    };
     this.setWidth( this.basisWidth * Math.pow(MOVE_UP_SIZE_INCREASE_FACTOR, -amount) );
     this.setHeight( this.basisHeight * Math.pow(MOVE_UP_SIZE_INCREASE_FACTOR, -amount) );
+    this.changeLayer( this.basisLayer-amount*10 );
+    if (autoanimate) {
+      this.addVerticalMoveAnimation(aO);
+    }
+  }
+
+  addVerticalMoveAnimation(aO){
+    this.addAnimationFunction('move',
+      () => this.setVerticalMoveAnimationSize(), aO
+    );
     const animationObject = this.animationFunctions['move'][ this.animationFunctions['move'].length-1 ];
     animationObject.startHeight = this.basisHeight;
     animationObject.startWidth = this.basisWidth;
@@ -121,7 +131,7 @@ export class GhostyEntity extends Entity {
     Entity.prototype.changeLayer.call( this, layer + this.layerAddend );
   }
 
-  move( direction) {
+  move( direction, waitAnimation = false) {
     const absPos = this.formatPositionAsAbsolutePosition(direction, 'modulo');
     const relPos = this.formatPositionAsRelativePosition(direction, 'modulo');
     const entitiesOnNewTile = this.grid.getEntityInstances( {
@@ -148,9 +158,10 @@ export class GhostyEntity extends Entity {
     } );
     this.setCOffset( this.basisCOffset - relPos[0] );
     this.setROffset( this.basisROffset - relPos[1] );
-    this.addAnimationFunction( 'move',
-      () => this.setMoveAnimationOffset(),
-      {relMoveDirection: relPos, targetTileAbsPos: absPos} );
+    if (waitAnimation) {
+      this.addAnimationFunction('move', this.dummyAnimationFunction);
+    }
+    this.addMoveAnimation(relPos, absPos)
   }
 
   requestMove( direction, requestChain = [] ) {
@@ -170,6 +181,12 @@ export class GhostyEntity extends Entity {
     } else {
       return true;
     }
+  }
+
+  addMoveAnimation( relMoveDirection, targetTileAbsPos ){
+    this.addAnimationFunction( 'move',
+      () => this.setMoveAnimationOffset(),
+      {relMoveDirection, targetTileAbsPos} );
   }
 
   /**
@@ -205,15 +222,23 @@ export class GhostyEntity extends Entity {
     }
   }
 
-  removeAnimationFunction( category, durationOfLastAnimation ){
+  removeAnimationFunction( category, durationOfLastAnimation, functionName ){
     if (this.animationFunctions[category].length === 1) {
       delete this.animationFunctions[category];
     } else {
-      const oldStartTime = this.animationFunctions[category][0].startTime;
-      this.animationFunctions[category].splice(0,1);
-      const newAnimationObject = this.animationFunctions[category][0];
-      newAnimationObject.startTime = oldStartTime + durationOfLastAnimation;
-      newAnimationObject.fnc();
+      let index = 0;
+      if (functionName) {
+        index = this.animationFunctions[category].findIndex( aO => aO.fnc.name === functionName);
+      }
+      if (index === 0) {
+        const oldStartTime = this.animationFunctions[category][0].startTime;
+        this.animationFunctions[category].splice(0,1);
+        const newAnimationObject = this.animationFunctions[category][0];
+        newAnimationObject.startTime = oldStartTime + durationOfLastAnimation;
+        newAnimationObject.fnc();
+      } else {
+        this.animationFunctions[category].splice(index, 1);
+      }
     }
     if (Object.keys(this.animationFunctions).length === 0) {
       this.unsubscribeFromRenderStart();
@@ -222,6 +247,8 @@ export class GhostyEntity extends Entity {
       this.animationChainEmptied(category);
     }
   }
+
+  dummyAnimationFunction(){}
 
   moveOffsetFunction( timeSinceAnimationStart ){
     const offset = 1 - Math.sqrt( timeSinceAnimationStart/MOVE_DURATION );
@@ -266,6 +293,7 @@ export class GhostyEntity extends Entity {
     this.setWidth( width );
     this.setHeight( height );
     if (timeSinceAnimationStart > VERTICAL_MOVE_DURATION) {
+      this.changeLayer( animationObject.targetLayer );
       this.removeAnimationFunction('move', VERTICAL_MOVE_DURATION);
     }
   }

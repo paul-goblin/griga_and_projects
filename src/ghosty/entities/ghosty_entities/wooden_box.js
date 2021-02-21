@@ -28,8 +28,13 @@ export class WoodenBox extends GhostyEntity {
   }
 
   entityWillMoveToTile( entity, direction ) {
-    if ( this.layer === entity.layer ){
-      this.move( direction );
+    if ( this.layerAddend === entity.layerAddend ){
+      this.move( direction, true );
+      entity.addAnimationFunction( 'move', () => {
+        const timePassed = performance.now()-this.animationFunctions['move'][0].startTime;
+        this.removeAnimationFunction('move', timePassed, 'dummyAnimationFunction');
+        entity.removeAnimationFunction('move', 0);
+      } );
     }
   }
 }

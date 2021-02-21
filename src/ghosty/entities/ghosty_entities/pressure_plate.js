@@ -43,12 +43,14 @@ export class PressurePlate extends GhostyEntity {
   }
 
   updateState(){
-    const entityOnTop = this.grid.getEntityInstances( {
+    const entitiesOnTop = this.grid.getEntityInstances( {
       tile: {c:this.c, r:this.r},
-    } ).filter( e => e.layer === this.layer+4 )[0];
+    } ).filter( e => !['Hole', 'HoleBorder', 'BackgroundTile', this.constructor.name].includes(e.constructor.name) );
+    const entityOnTop = entitiesOnTop.find( e => e.layerAddend === this.layerAddend );
     if (!entityOnTop && this.state === 'down') {
       this.release();
     } else if (entityOnTop && this.state === 'up') {
+      console.log(entityOnTop);
       this.press();
     }
   }
