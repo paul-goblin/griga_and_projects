@@ -36,6 +36,7 @@ export class PressurePlate extends GhostyEntity {
   getCurrentParams(){
     const params = GhostyEntity.prototype.getCurrentParams.call(this);
     params.state = this.currentImage;
+    return params;
   }
 
   allowMove(){
@@ -50,7 +51,6 @@ export class PressurePlate extends GhostyEntity {
     if (!entityOnTop && this.state === 'down') {
       this.release();
     } else if (entityOnTop && this.state === 'up') {
-      console.log(entityOnTop);
       this.press();
     }
   }

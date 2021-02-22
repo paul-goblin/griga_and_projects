@@ -18,7 +18,7 @@ export class Goal extends GhostyEntity {
       tile: {c:this.c, r:this.r},
       type: 'Ghosty',
     } );
-    if (ghosties[0]) {return Math.floor(ghosties[0].layer/10) === Math.floor( this.layer/10 )};
+    if (ghosties[0]) {return ghosties[0].layerAddend === this.layerAddend};
     return false;
   }
 

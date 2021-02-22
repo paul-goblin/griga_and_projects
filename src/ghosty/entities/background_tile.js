@@ -151,7 +151,7 @@ export class BackgroundTile extends Entity {
     const taskDoneArray = allEntities.map( e => e.taskDone() );
     if (!taskDoneArray.includes( false ) && goals.length > 0 ) {
       if (this.grid.getEntityInstances({type:'Goal'})) { //if there exists at least one goal
-        this.griga.ghosty.play.levelDone();
+        setTimeout(() => this.griga.ghosty.play.levelDone(), 200);
       }
     }
 

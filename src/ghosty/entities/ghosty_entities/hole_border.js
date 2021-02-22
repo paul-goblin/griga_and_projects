@@ -24,7 +24,7 @@ export class HoleBorder extends GhostyEntity {
 
   allowLeave( requestChain ){
     const valid = directionToSide[requestChain[ requestChain.length-1 ][1]].toLowerCase() !== this.currentImage;
-    const down = requestChain[ requestChain.length-1 ][0].layer === 7; //fix
+    const down = requestChain[ requestChain.length-1 ][0].layerAddend === -10; //fix
     if (down && !valid) {
       return false;
     } else {

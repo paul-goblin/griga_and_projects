@@ -18,9 +18,7 @@ export class WoodenBox extends GhostyEntity {
   }
 
   allowMove(requestChain){
-    if ( this.layer === 7 && requestChain[requestChain.length-1][0].layer === 17 ){
-      return true;
-    } else if (requestChain.length === 1) {
+    if (requestChain.length === 1) {
       return this.requestMove(requestChain[0][1], requestChain);
     } else {
       return false;

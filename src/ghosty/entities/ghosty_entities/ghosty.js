@@ -40,7 +40,7 @@ export class Ghosty extends GhostyEntity {
     if (this.validatedEntities.includes( requestChain[requestChain.length-1][0] )){
       return true;
     }
-    if ( this.layer === 7 && requestChain[requestChain.length-1][0].layer === 17 ){
+    if ( this.layer%10 === 7 && requestChain[requestChain.length-1][0].layerAddend !== this.layerAddend ){
       return true;
     }
     this.validatedEntities.push(requestChain[requestChain.length-1][0]);

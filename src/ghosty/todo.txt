@@ -3,15 +3,10 @@ SOON:
   Bugs:
     If you delete a level it might still be open in the level editor!
     People who played through all levels would unlock every new level automatically
-    -> Make Highest Level the Highest solved level, not the highest shown level.
     Browsersupport:
-      Firefox
       Safari
 
   Game Mechanic bugs:
-    layer update of non solids not working
-    when pushing a chest into a hole the chest moves too late
-    Sometimes Keys get stuck
     Corners of hole Borders are missing
     I'll let you take the win level has shortcut
     Bridge level has shortcut
@@ -25,7 +20,8 @@ SOON:
     Inventory
     Items:
       Shovel
-    Springs (to get out of holes)
+    Canon
+    CoppOR Gates
 
 
 BIG:
