@@ -39,7 +39,6 @@ export class GhostyEntity extends Entity {
     this.basisCOffset = this.cOffset;
     this.basisROffset = this.rOffset;
     this.basisLayer = layer;
-    this.movedVertically = 0;
     this.moveAnimationDirections = [];
     this.animationFunctions = {};
     this.addWidthMultiplier( params.widthMultiplier || 1 );
@@ -67,13 +66,12 @@ export class GhostyEntity extends Entity {
     this.addWidthMultiplier( Math.pow(MOVE_UP_SIZE_INCREASE_FACTOR, amount) );
     this.addLayerAddend( amount*10 );
     const aO = {
-      targetWidth: this.basisWidth,
-      targetHeight: this.basisHeight,
-      targetLayer: this.basisLayer,
+      changeInBaseLayer: amount,
+      targetAbsBaseLayer: this.layerAddend/10,
       jump
     };
-    this.setWidth( this.basisWidth * Math.pow(MOVE_UP_SIZE_INCREASE_FACTOR, -amount) );
-    this.setHeight( this.basisHeight * Math.pow(MOVE_UP_SIZE_INCREASE_FACTOR, -amount) );
+    this.setWidth( this.basisWidth * Math.pow(MOVE_UP_SIZE_INCREASE_FACTOR, -this.layerAddend/10), false );
+    this.setHeight( this.basisHeight * Math.pow(MOVE_UP_SIZE_INCREASE_FACTOR, -this.layerAddend/10), false );
     this.changeLayer( this.basisLayer-amount*10 );
     if (autoanimate) {
       this.addVerticalMoveAnimation(aO);
@@ -84,9 +82,6 @@ export class GhostyEntity extends Entity {
     this.addAnimationFunction('move',
       () => this.setVerticalMoveAnimationSize(), aO
     );
-    const animationObject = this.animationFunctions['move'][ this.animationFunctions['move'].length-1 ];
-    animationObject.startHeight = this.basisHeight;
-    animationObject.startWidth = this.basisWidth;
   }
 
   addWidthMultiplier( multiplier ){
@@ -104,14 +99,14 @@ export class GhostyEntity extends Entity {
     this.changeLayer( this.basisLayer );
   }
 
-  setWidth( width ){
-    this.basisWidth = width;
+  setWidth( width, setBasis = true ){
+    if (setBasis) {this.basisWidth = width};
     Entity.prototype.setWidth.call( this, width*this.widthMultiplier);
     this.setCOffset( this.basisCOffset );
   }
 
-  setHeight( height ){
-    this.basisHeight = height;
+  setHeight( height, setBasis = true ){
+    if (setBasis) {this.basisHeight = height};
     Entity.prototype.setHeight.call( this, height*this.heightMultiplier );
     this.setROffset( this.basisROffset );
   }
@@ -199,7 +194,7 @@ export class GhostyEntity extends Entity {
       return true;
     }
     //add the stack-on-top-behavior for all layer 17 entities (exept ghosties maybe)
-    if ( this.layer === 7 && requestChain[requestChain.length-1][0].layer === 17 ){
+    if ( this.layer%10 === 7 && requestChain[requestChain.length-1][0].layerAddend !== this.layerAddend ){
       return true;
     }
     const allowMove = this.allowMove( requestChain );
@@ -260,7 +255,7 @@ export class GhostyEntity extends Entity {
     const animationObject = this.animationFunctions['move'][0];
     const timeSinceAnimationStart = performance.now() - animationObject.startTime;
     const relTargetPosition = this.formatPositionAsRelativePosition( animationObject.targetTileAbsPos );
-    let absOffset = this.moveOffsetFunction( timeSinceAnimationStart, MOVE_DURATION );
+    let absOffset = this.moveOffsetFunction( timeSinceAnimationStart );
     absOffset = Math.max(absOffset, 0);
     this.setCOffset( relTargetPosition[0] - absOffset * animationObject.relMoveDirection[0] );
     this.setROffset( relTargetPosition[1] - absOffset * animationObject.relMoveDirection[1] );
@@ -276,24 +271,32 @@ export class GhostyEntity extends Entity {
     if (animationObject.jump) {
       percentComplete = 4*x*(x-0.75);
     }
-    const width = animationObject.startWidth*(1-percentComplete)
-                + animationObject.targetWidth*(percentComplete);
-    const height = animationObject.startHeight*(1-percentComplete)
-                 + animationObject.targetHeight*(percentComplete);;
-    return [ width, height ];
+    const actualBaseLayer = this.layerAddend/10;
+    const targetSizeFactor = Math.pow(MOVE_UP_SIZE_INCREASE_FACTOR, animationObject.targetAbsBaseLayer - actualBaseLayer);
+    const changeFactor = Math.pow(MOVE_UP_SIZE_INCREASE_FACTOR, animationObject.changeInBaseLayer);
+    const startSizeFactor = targetSizeFactor /changeFactor;
+    const startWidth = this.basisWidth*startSizeFactor;
+    const startHeight = this.basisHeight*startSizeFactor;
+    const targetWidth = this.basisWidth*targetSizeFactor;
+    const targetHeight = this.basisHeight*targetSizeFactor;
+    const width = startWidth*(1-percentComplete)
+    + targetWidth*(percentComplete);
+    const height = startHeight*(1-percentComplete)
+    + targetHeight*(percentComplete);
+    return [ width, height, targetWidth, targetHeight ];
   }
 
   setVerticalMoveAnimationSize() {
     const animationObject = this.animationFunctions['move'][0];
     const timeSinceAnimationStart = performance.now() - animationObject.startTime;
-    let [ width, height ] = this.verticalMoveSizeFunction( timeSinceAnimationStart );
+    let [ width, height, targetWidth, targetHeight ] = this.verticalMoveSizeFunction( timeSinceAnimationStart );
     if (timeSinceAnimationStart > VERTICAL_MOVE_DURATION) {
-      [ width, height ] = [ animationObject.targetWidth, animationObject.targetHeight ];
+      [ width, height ] = [ targetWidth, targetHeight ];
     }
-    this.setWidth( width );
-    this.setHeight( height );
+    this.setWidth( width, false );
+    this.setHeight( height, false );
     if (timeSinceAnimationStart > VERTICAL_MOVE_DURATION) {
-      this.changeLayer( animationObject.targetLayer );
+      this.changeLayer( this.basisLayer + animationObject.changeInBaseLayer*10 );
       this.removeAnimationFunction('move', VERTICAL_MOVE_DURATION);
     }
   }
@@ -311,7 +314,7 @@ export class GhostyEntity extends Entity {
    * @returns {boolean}
    */
   allowMove( requestChain ){
-    return requestChain[ requestChain.length-1 ][0].layer !== this.layer;
+    return requestChain[ requestChain.length-1 ][0].layer%10 !== this.layer%10;
   }
 
   
@@ -320,7 +323,7 @@ export class GhostyEntity extends Entity {
   }
 
   allowPlacing( entity ){
-    return entity.layer !== this.layer;
+    return entity.layer%10 !== this.layer%10;
   }
 
   allowBeingPlaced( tile, editorGrid ){
