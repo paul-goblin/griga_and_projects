@@ -1,9 +1,14 @@
 import { GateStone } from './gate_stone';
-import { Stone } from './stone';
 
 export class DiamondStone extends GateStone {
   constructor( params, args ){
     super( params, args );
+  }
+
+  static getUnlockLevel( classicLevels ){
+    const levelNames = classicLevels.map( l => l.name );
+    const levelIndex = levelNames.indexOf( 'Parking Left' );
+    return levelIndex;
   }
 
   static get imgSources(){

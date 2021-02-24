@@ -7,6 +7,9 @@ export class LocalStorage {
     if (!localStorage.getItem(`ghosty-highest-levels:`)) {
       localStorage.setItem(`ghosty-highest-levels:`, '{}');
     }
+    if (!localStorage.getItem(`ghosty-last-shown-version:`)) {
+      localStorage.setItem(`ghosty-last-shown-version:`, '1.0.0');
+    }
   }
 
   setupLevelSolvedForCategory( category ){
@@ -119,5 +122,14 @@ export class LocalStorage {
   getHighestLevel( category ){
     const highestLevel = JSON.parse(localStorage.getItem('ghosty-highest-levels:'));
     return highestLevel[category];
+  }
+
+  getLastShownVersion(){
+    const lastShownVersion = localStorage.getItem('ghosty-last-shown-version');
+    return lastShownVersion;
+  }
+
+  setLastShownVersion( version ){
+    localStorage.setItem('ghosty-last-shown-version', version);
   }
 }

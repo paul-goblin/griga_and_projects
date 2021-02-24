@@ -59,7 +59,11 @@ export class Play {
         this.grid.loadScene( this.app.backgroundTileScene );
         this.grid.loadScene( this.level.sceneData );
         this.undoHistory.push( this.level.sceneData );
-        this.play_level_name.innerHTML = this.level.name;
+        let levelBarText = `${this.levelIndex+1}: ${this.level.name}`;
+        if (this.category === 'yourLevels') {
+            levelBarText = level.name;
+        }
+        this.play_level_name.innerHTML = levelBarText;
         this.updateNextPreviousLevelButtons();
     }
 

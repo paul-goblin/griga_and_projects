@@ -112,10 +112,14 @@ export class Levels {
       </div>
       `;
     }
+    let levelBarText = `${i+1}: ${level.name}`;
+    if (this.state === 'yourLevels') {
+      levelBarText = level.name;
+    }
 
     return `
     <div class="level-bar">
-        <div class="level-name button">${level.name}</div>
+        <div class="level-name button">${levelBarText}</div>
         ${levelBarButtonsString}
     </div>
     <div class="level-details level-bar hidden" id="level-details-${i}" data-index="${i}">

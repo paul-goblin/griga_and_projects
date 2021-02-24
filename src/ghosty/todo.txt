@@ -7,6 +7,7 @@ SOON:
       Safari
 
   Game Mechanic bugs:
+    Animation Layer of falling entity is changed too late (fast walk can cause upper entity to be displayed below the falling entity)
     Corners of hole Borders are missing
     I'll let you take the win level has shortcut
     Bridge level has shortcut

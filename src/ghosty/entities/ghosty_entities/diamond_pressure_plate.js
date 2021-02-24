@@ -1,11 +1,15 @@
-import { GhostyEntity } from '../ghosty_entity';
-import { DiamondStone } from './diamond_stone';
 import { PressurePlate } from './pressure_plate';
 
 export class DiamondPressurePlate extends PressurePlate {
   constructor( params, args ){
     params.gates = 'DiamondStone';
     super( params, args );
+  }
+
+  static getUnlockLevel( classicLevels ){
+    const levelNames = classicLevels.map( l => l.name );
+    const levelIndex = levelNames.indexOf( 'Parking Left' );
+    return levelIndex;
   }
 
   static get imgSources(){

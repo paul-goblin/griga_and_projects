@@ -78,6 +78,7 @@ class App {
     this.editor_screen = document.querySelector('.editor-screen');
     this.levels_screen = document.querySelector('.levels-screen');
     this.state = 'home';
+    this.version = '1.0.1';
     this.helpBook = {
       home: homeHelp,
       play: playHelp,
@@ -98,6 +99,7 @@ class App {
   startGame( griga ){
     griga.ghosty = this;
     this.play.startGame();
+    this.home.start();
   }
 
   endActiveState(){
