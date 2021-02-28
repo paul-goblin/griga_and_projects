@@ -130,6 +130,10 @@ export class Grid {
     } );
   }
 
+  touchSwipeHandler( direction, movementX, movementY ){
+    this.touchSwipeSubscriptions.forEach( e => e.touchSwipeHandler( direction, movementX, movementY ) );
+  }
+
   //listenerStuff
   
   subscribeEntityInstanceToRenderStart( entityInstance ){
@@ -138,6 +142,14 @@ export class Grid {
   unsubscribeEntityInstanceFromRenderStart( entityInstance ){
     const i = this.renderStartSubscriptions.indexOf( entityInstance );
     this.renderStartSubscriptions.splice( i, 1 );
+  }
+
+  subscribeEntityInstanceToTouchSwipe( entityInstance ){
+    this.touchSwipeSubscriptions.push( entityInstance );
+  }
+  unsubscribeEntityInstanceFromTouchSwipe( entityInstance ){
+    const i = this.touchSwipeSubscriptions.indexOf( entityInstance );
+    this.touchSwipeSubscriptions.splice( i, 1 );
   }
   
   subscribeEntityInstanceToSceneLoaded( entityInstance ){
@@ -511,6 +523,7 @@ export class Grid {
     this.layerData = new Map();
 
     this.renderStartSubscriptions = [];
+    this.touchSwipeSubscriptions = [];
     this.sceneLoadedSubscriptions = [];
     this.keyDownSubscriptions = {};
     this.keyUpSubscriptions = {};

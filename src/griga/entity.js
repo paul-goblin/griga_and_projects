@@ -64,6 +64,7 @@ export class Entity {
       rOffset: Joi.number().default(0),
       layer: Joi.number().integer().default(0),
       renderStartSubscription: Joi.bool().default(false),
+      touchStartSubscription: Joi.bool().default(false),
       sceneLoadedSubscription: Joi.bool().default(false),
       keyDownSubscriptions: Joi.array().items(Joi.string()).default([]),
       keyUpSubscriptions: Joi.array().items(Joi.string()).default([]),
@@ -84,6 +85,7 @@ export class Entity {
    * @param {number} [params.rOffset = 0] - Displayed rOffset of the entity in rows.
    * @param {number} [params.layer = 0] - Layer at which the the entity is displayed.
    * @param {boolean} [params.renderStartSubscription = false] - True to subscribe the entity to the renderStart Event
+   * @param {boolean} [params.touchSwipeSubscription = false] - True to subscribe the entity to the touchStart Event
    * @param {boolean} [params.sceneLoadedSubscription = false] - True to subscribe the entity to the sceneLoaded Event
    * @param {string[]} [params.keyDownSubscriptions = []] - Array of keys for which the entity subscribes to the keyDown Event
    * @param {string[]} [params.keyUpSubscriptions = []] - Array of keys for which the entity subscribes to the keyUp Event
@@ -162,6 +164,12 @@ export class Entity {
      */
     this.renderStartSubscription = validParams.renderStartSubscription;
     /**
+     * @description True if the entity is subscribed to the touchStart Event
+     * @readonly
+     * @type {boolean}
+     */
+    this.touchStartSubscription = validParams.touchStartSubscription;
+    /**
      * @description True if the entity is subscribed to the sceneLoaded Event
      * @readonly
      * @type {boolean}
@@ -238,6 +246,9 @@ export class Entity {
     if (this.renderStartSubscription) {
       this.grid.subscribeEntityInstanceToRenderStart( this );
     }
+    if (this.touchStartSubscription) {
+      this.grid.subscribeEntityInstanceToTouchSwipe( this );
+    }
     if (this.sceneLoadedSubscription) {
       this.grid.subscribeEntityInstanceToSceneLoaded( this );
     }
@@ -309,6 +320,15 @@ export class Entity {
   renderStartHandler( timePassed ){
     console.log( 'performance.now(): ' + performance.now() );
     console.log( 'timePassed: ' + timePassed );
+  }
+
+  /**
+   * Gets called at every touchEnd of a Touch event occuring on one of the displays the grid is displayed on
+   * @param {number} direction - Either right, left, down or up
+   * @event
+   */
+  touchSwipeHandler( direction, movementX, movementY ){
+    console.log( direction );
   }
   
   /**
@@ -638,6 +658,21 @@ export class Entity {
   unsubscribeFromRenderStart(){
     this.renderStartSubscription = false;
     this.grid.unsubscribeEntityInstanceFromRenderStart( this );
+  }
+
+  /**
+   * Subscribes the entity to the touchSwipe event
+   */
+  subscribeToTouchSwipe(){
+    this.touchSwipeSubscription = true;
+    this.grid.subscribeEntityInstanceToTouchSwipe( this );
+  }
+  /**
+   * Unsubscribes the entity from the touchSwipe event
+   */
+  unsubscribeFromTouchSwipe(){
+    this.touchSwipeSubscription = false;
+    this.grid.unsubscribeEntityInstanceFromTouchSwipe( this );
   }
 
   /**

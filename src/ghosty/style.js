@@ -1,3 +1,7 @@
+function copyTouch({ identifier, pageX, pageY }) {
+  return { identifier, pageX, pageY };
+}
+
 export class Style {
   constructor( app ){
     this.app = app;
@@ -6,10 +10,15 @@ export class Style {
     this.levels_container = document.querySelector('.levels-container');
     this.wrapper = document.querySelector('.wrapper');
     this.scrollPos = 0;
+    this.ongoingTouch = [];
 
     this.scrollbar.addEventListener('mousemove', e => this.handleMouseMoveOnScrollbar(e));
     this.scrollbar.addEventListener('wheel', e => this.handleMouseScroll(e));
     this.levels_container.addEventListener('wheel', e => this.handleMouseScroll(e));
+    this.levels_container.addEventListener('touchmove', e => this.handleTouchMove(e));
+    this.levels_container.addEventListener('touchend', e => this.handleTouchEnd(e));
+    this.levels_container.addEventListener('touchstart', e => this.handleTouchStart(e));
+
     window.addEventListener('resize', e => {
       this.setScrollbarHeight();
       this.resizeWrapper();
@@ -101,5 +110,28 @@ export class Style {
       this.locked = false;
       document.exitPointerLock();
     }
+  }
+
+  handleTouchMove(e){
+    Object.values(e.changedTouches).forEach( touch => {
+      const index = this.ongoingTouch.findIndex( sT => sT.identifier === touch.identifier );
+      const savedTouch = this.ongoingTouch[index];
+      const movementY = touch.pageY - savedTouch.pageY;
+      this.setScrollPos(this.scrollPos - movementY*5);
+      this.ongoingTouch[index] = copyTouch(touch);
+    } );
+  }
+
+  handleTouchStart( e ){
+    Object.values(e.changedTouches).forEach( touch => {
+      this.ongoingTouch.push( copyTouch(touch) );
+    } );
+  }
+
+  handleTouchEnd( e ){
+    Object.values(e.changedTouches).forEach( touch => {
+      const index = this.ongoingTouch.findIndex( sT => sT.identifier === touch.identifier );
+      this.ongoingTouch.splice(index, 1);
+    } );
   }
 }

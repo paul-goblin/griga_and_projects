@@ -93,6 +93,7 @@ export class Display {
     this.mouseX = 0;
     this.mouseY = 0;
     this.gridsInHover = [];
+    this.ongoingTouchStarts = [];
   }
 
   //resize
@@ -119,6 +120,11 @@ export class Display {
     this.wrapper.addEventListener( 'mouseleave', (e) => this.mouseLeaveHandler(e) );
     this.wrapper.addEventListener('mousedown', (e) => this.mouseDownHandler(e) );
     this.wrapper.addEventListener('mouseup', (e) => this.mouseUpHandler(e) );
+
+    this.wrapper.addEventListener('touchstart', (e) => this.touchStartHandler(e));
+    this.wrapper.addEventListener('touchcancel', (e) => this.touchCancelHandler(e));
+    this.wrapper.addEventListener('touchmove', (e) => this.touchMoveHandler(e));
+    this.wrapper.addEventListener('touchend', (e) => this.touchEndHandler(e));
   }
 
   linkGrid( grid, displaySettings ){
@@ -238,5 +244,43 @@ export class Display {
         grid.gridInstance.mouseUpHandler( this.name, e.ctrlKey );
       }
     } );
+  }
+
+  touchStartHandler( e ){
+    function copyTouch({ identifier, pageX, pageY }) {
+      return { identifier, pageX, pageY };
+    }
+    Object.values(e.changedTouches).forEach( touch => {
+      this.ongoingTouchStarts.push( copyTouch(touch) );
+    } );
+  }
+
+  touchEndHandler( e ){
+    Object.values(e.changedTouches).forEach( touch => {
+      const index = this.ongoingTouchStarts.findIndex( sT => sT.identifier === touch.identifier );
+      const savedTouchStart = this.ongoingTouchStarts[index];
+      const movementX = touch.pageX - savedTouchStart.pageX;
+      const movementY = touch.pageY - savedTouchStart.pageY;
+      let direction = null;
+      if (Math.abs(movementX) > Math.abs(movementY)) {
+        if (movementX > 0) { direction = 'right' }
+        else { direction = 'left' };
+      } else {
+        if (movementY > 0) { direction = 'down' }
+        else { direction = 'up' };
+      }
+      this.ongoingTouchStarts.splice(index, 1);
+      Object.values(this.linkedGrids).forEach( grid => {
+        grid.gridInstance.touchSwipeHandler( direction, movementX, movementY );
+      } );
+    } );
+  }
+
+  touchCancelHandler( e ){
+    console.log('touchcancel');
+  }
+
+  touchMoveHandler( e ){
+    // console.log('touchmove');
   }
 }

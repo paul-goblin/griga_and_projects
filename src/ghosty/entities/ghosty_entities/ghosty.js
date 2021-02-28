@@ -5,6 +5,7 @@ export class Ghosty extends GhostyEntity {
     super( params, args, 17, 'ghosty' );
     if (this.grid.name === 'play') {
       ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].forEach( key => this.subscribeToKeyDown(key));
+      this.subscribeToTouchSwipe();
     }
     this.validatedEntities = [];
     this.currentImage = params.facing || 'right';
@@ -34,6 +35,10 @@ export class Ghosty extends GhostyEntity {
       this.griga.ghosty.play.keyTrackEntity.sceneChanged = true;
     } else { moveDirection = 'stay' };
     this.move( moveDirection, false, hold);
+  }
+
+  touchSwipeHandler( direction ){
+    this.keyDownHandler( `Arrow${direction}` );
   }
 
   validateMove( requestChain ){

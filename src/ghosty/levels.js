@@ -106,7 +106,7 @@ export class Levels {
     let editorButtonContainer = '';
     if (this.state === 'yourLevels') {
       editorButtonContainer = `
-      <div class="editor-buttons-container">
+      <div class="editor-buttons-container hide-on-touch-devices">
           <div class="button level-edit-button" data-index="${i}"><i class="fas fa-pen"></i></div>
           <div class="button level-delete-button" data-index="${i}"><i class="fas fa-trash"></i></div>
       </div>
@@ -125,8 +125,8 @@ export class Levels {
     <div class="level-details level-bar hidden" id="level-details-${i}" data-index="${i}">
         <div class="display preview-display" id="preview-display-${i}"></div>
         <div class="item preview-details-container">
-            <div class="preview-difficulty-line preview-line">difficulty: <span class="difficulty-${i}">${level.difficulty}</span></div>
-            <div class="preview-creator-line preview-line">creator: <span class="creator-${i}">${level.creator}</span></div>
+            <div class="preview-difficulty-line preview-line"><span class="hide-on-width-below-500">difficulty:</span> <span class="difficulty-${i}">${level.difficulty}</span></div>
+            <div class="preview-creator-line preview-line"><span class="hide-on-width-below-500">creator:</span> <span class="creator-${i}">${level.creator}</span></div>
         </div>
         ${editorButtonContainer}
         </div>

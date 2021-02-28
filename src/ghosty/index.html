@@ -58,6 +58,18 @@
       user-select: none;
     }
 
+    @media (hover: none) and (pointer: coarse) {
+      .hide-on-touch-devices {
+        display: none;
+      }
+    }
+
+    @media only screen and (max-width: 576px) {
+      .hide-on-width-below-500 {
+        display: none;
+      }
+    }
+
     .level-bar {
       margin: 20px;
     }
@@ -198,6 +210,8 @@
 
     .level-bar .level-name {
       flex-grow: 10;
+      white-space: nowrap;
+      overflow: hidden;
     }
 
     /* 
@@ -329,7 +343,7 @@
       <div class="home-button button active"><i class="fas fa-home"></i></div>
       <div class="play-button button">Play</div>
       <div class="levels-button button">Levels</div>
-      <div class="editor-button button">Editor</div>
+      <div class="editor-button button hide-on-touch-devices">Editor</div>
       <div class="help-button button right"><i class="fas fa-question"></i></div>
     </div>
     <div class="content">
@@ -353,10 +367,10 @@
           <div class="level-bar category-bar">
             <div class="button" id="classic-button">Classic</div>
             <div class="button" id="your-levels-button">Your Levels</div>
-            <div class="button" id="presets-button">Presets</div>
+            <div class="button hide-on-touch-devices" id="presets-button">Presets</div>
           </div>
         </div>
-        <div class="scrollbar-box">
+        <div class="scrollbar-box hide-on-touch-devices">
           <div class="scrollbar"></div>
         </div>
         <div class="levels-container-container">

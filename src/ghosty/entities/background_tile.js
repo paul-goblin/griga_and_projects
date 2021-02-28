@@ -135,6 +135,7 @@ export class BackgroundTile extends Entity {
           this.timesKeyIsReleased[key] = 0;
           this.fastMode[key] = false;
         } );
+        this.subscribeToTouchSwipe();
       }
     } else {
       this.backgroundSceneLoaded = true;
@@ -142,7 +143,6 @@ export class BackgroundTile extends Entity {
   }
 
   keyDownHandler( key ){ //keyTrackTile
-    this.xthTimeKeyIsDown++;
     const allEntities = this.grid.getEntityInstances( {
       notType: 'BackgroundTile'
     } );
@@ -167,6 +167,11 @@ export class BackgroundTile extends Entity {
     }
 
     this.sceneChanged = false;
+  }
+
+  touchSwipeHandler( direction ){
+    if (this.griga.ghosty.play.popup) { return };
+    this.keyDownHandler( `Arrow${direction}` );
   }
 
   keyUpHandler( key ){
