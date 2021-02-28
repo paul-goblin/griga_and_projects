@@ -3,10 +3,12 @@ import { Popup } from "./popup";
 export class Editor {
     constructor( app, griga ){
         this.hotbar_scene_data = {"detached":[],"tiles":[[[["SelectionBackground",{}]]],[[["SelectionBackground",{}]]],[[["SelectionBackground",{}]]],[[["SelectionBackground",{}]]],[[["SelectionBackground",{}]]],[[["SelectionBackground",{}]]],[[["SelectionBackground",{}]]],[[["SelectionBackground",{}]]],[[["SelectionBackground",{}]]],[[["SelectionBackground",{}]]]]}
+        this.all_entities_scene_data = {"detached":[],"tiles":[[[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]]],[[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]]],[[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]]],[[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]]],[[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]]],[[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]]],[[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]]],[[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]]],[[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]]],[[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]]],[[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]]],[[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]]],[[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]]],[[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]]],[[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]]],[[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]],[["AllEntitiesBackground",{}]]]]};
         this.app = app;
         this.griga = griga;
         this.grid = griga.grids['editor'];
         this.hotbar_grid = griga.grids['selection-hotbar'];
+        this.all_entities_grid = griga.grids['all-entities-selection'];
         this.lower_bar = document.querySelector('.lower-bar');
         this.new_button = document.getElementById('editor-new-button');
         this.save_button = document.getElementById('editor-save-button');
@@ -26,15 +28,25 @@ export class Editor {
         this.setupEventListeners();
     }
 
-    loadSelectionHotbar(){
+    loadSelection(){
         this.hotbar_grid.loadScene( this.hotbar_scene_data );
+        this.all_entities_grid.loadScene( this.all_entities_scene_data );
+        // for (let c = 0; c < 16; c++) {
+        //     for (let r = 0; r < 10; r++) {
+        //         this.all_entities_grid.newEntityInstance( 'AllEntitiesBackground', {}, {c,r} );
+        //     }
+        // }
+        // console.log( JSON.stringify(this.all_entities_grid.getCurrentSceneData()) );
         Object.keys(this.griga.entities).filter( entityName => {
-            return !['SelectionBackground', 'BackgroundTile'].includes( entityName );
+            return !['SelectionBackground', 'BackgroundTile', 'AllEntitiesBackground'].includes( entityName );
         } ).filter( eName => {
             const unlockLevel = this.griga.entities[eName].getUnlockLevel( this.app.levels.levels['classic'] );
             return unlockLevel < this.app.levels.classicHighestLevelIndex;
         } ).forEach( (entityName, i) => {
-            this.hotbar_grid.newEntityInstance(entityName, {}, {c:i,r:0});
+            this.all_entities_grid.newEntityInstance(entityName, {}, {c:i,r:0});
+            if (i < this.hotbar_grid.columns) {
+                this.hotbar_grid.newEntityInstance(entityName, {}, {c:i,r:0});
+            }
         } );
     }
 
@@ -47,7 +59,7 @@ export class Editor {
         this.app.editor_screen.classList.remove('hidden');
         this.state = 'editor';
         this.app.state = 'editor';
-        this.loadSelectionHotbar();
+        this.loadSelection();
         this.selection.activateFirstSelectionBackground();
         this.griga.displayGrid('editor', 'editor', this.app.displaySettings);
         this.griga.displayGrid('selection', 'selection-hotbar', this.hotbarDisplaySettings);
@@ -85,6 +97,12 @@ export class Editor {
         this.clearSelectionHotbar();
         this.app.editor_button.classList.remove('active');
         this.app.editor_screen.classList.add('hidden');
+    }
+
+    changeState( newState ){
+        this.griga.removeGridFromDisplay(this.state, 'editor');
+        this.state = newState;
+        this.griga.displayGrid( 'editor', this.state, this.app.displaySettings );
     }
 
     sceneChangedHandler(){
@@ -205,6 +223,8 @@ class Selection {
         this.editor = editor;
         this.hotbar = hotbar;
         this.activeSelectionBackground = null;
+        this.activeAllEntitiesBackground = null;
+        this.selectionBackgroundToChangeEntity = null;
         this.selectedEntity = null;
     }
 
@@ -225,6 +245,31 @@ class Selection {
             this.selectedEntity = selectionBackground.otherEntity;
         }
         this.activeSelectionBackground = selectionBackground;
+    }
+
+    showAllEntitiesSelection( selectionBackground ) {
+        this.editor.changeState( 'all-entities-selection' );
+        this.selectionBackgroundToChangeEntity = selectionBackground;
+        const entity = this.editor.all_entities_grid.getEntityInstances( {type: selectionBackground.otherEntity.constructor.name } )[0];
+        const allEntitiesBackground = this.editor.all_entities_grid.getEntityInstances( {
+            tile: {c: entity.c, r:entity.r}, type: 'AllEntitiesBackground'
+        } )[0];
+        if (this.activeAllEntitiesBackground) {
+            this.activeAllEntitiesBackground.deactivate();
+        }
+        allEntitiesBackground.activate();
+        this.activeAllEntitiesBackground = allEntitiesBackground;
+    }
+
+    selectEntityFromAll( entity ) {
+        this.editor.changeState( 'editor' );
+        this.selectionBackgroundToChangeEntity.otherEntity.delete();
+        this.editor.hotbar_grid.newEntityInstance(
+            entity.constructor.name,
+            {},
+            {c: this.selectionBackgroundToChangeEntity.c, r: 0}
+        );
+        this.setActiveSelectionBackground(this.selectionBackgroundToChangeEntity);
     }
 }
 

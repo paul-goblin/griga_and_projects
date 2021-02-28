@@ -16,6 +16,11 @@ import { Home, homeHelp } from "./home";
 import { Popup } from "./popup";
 import { DiamondStone } from "./entities/ghosty_entities/diamond_stone";
 import { DiamondPressurePlate } from "./entities/ghosty_entities/diamond_pressure_plate";
+import { CopperStone } from "./entities/ghosty_entities/copper_stone";
+import { CopperPressurePlate } from "./entities/ghosty_entities/copper_pressure_plate";
+import { WoodenBoxCircle } from "./entities/ghosty_entities/wooden_box_octagon";
+import { HoleCircle } from "./entities/ghosty_entities/hole_circle";
+import { AllEntitiesBackground } from "./entities/all_entities_background";
 
 const CS = 16;
 const RS = 10;
@@ -50,6 +55,11 @@ const grigaConfig = {
       rows: RS,
     },
     {
+      name: 'all-entities-selection',
+      columns: CS,
+      rows: RS,
+    },
+    {
       name: 'selection-hotbar',
       columns: 10,
       rows: 1,
@@ -60,7 +70,7 @@ const grigaConfig = {
       rows: RS
     }
   ],
-  entities:[BackgroundTile, SelectionBackground, Stone, Ghosty, Goal, WoodenBox, Hole, HoleBorder, DiamondStone, DiamondPressurePlate],
+  entities:[BackgroundTile, SelectionBackground, AllEntitiesBackground, Stone, Ghosty, Goal, WoodenBox, Hole, HoleBorder, DiamondStone, DiamondPressurePlate, CopperStone, CopperPressurePlate, WoodenBoxCircle, HoleCircle],
 }
 
 class App {

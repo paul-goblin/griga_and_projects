@@ -3,7 +3,10 @@ import { directionToSide, GhostyEntity, oppositeSide } from '../ghosty_entity';
 export class Hole extends GhostyEntity {
   constructor( params, args ){
     super( params, args, 1 );
-    if (this.grid.name === 'selection-hotbar') {return}
+    if (['selection-hotbar', 'all-entities-selection'].includes(this.grid.name)) {
+      this.currentImage = 'selection';
+      return this;
+    };
 
     this.holeLeft = this.grid.getEntityInstances(
       {tile: this.formatPositionAsAbsolutePosition('left', 'modulo'), type:'Hole'})[0];
@@ -25,7 +28,8 @@ export class Hole extends GhostyEntity {
   }
 
   static get imgSources(){
-    return { default: './tile_img/hole_background.jpg'};
+    return { default: './tile_img/hole_background.jpg',
+             selection: './tile_img/hole.jpg'};
   }
 
   static getUnlockLevel( classicLevels ){

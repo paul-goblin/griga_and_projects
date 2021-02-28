@@ -128,6 +128,10 @@ export class Display {
   }
   unlinkGrid( gridName ){
     this.linkedGrids[ gridName ].canvas.remove();
+    const index = this.gridsInHover.indexOf(gridName);
+    if (index !== -1) {
+      this.gridsInHover.splice(index, 1);
+    }
     delete this.linkedGrids[ gridName ];
   }
 

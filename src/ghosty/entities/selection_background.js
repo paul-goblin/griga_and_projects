@@ -3,9 +3,10 @@ import { Entity } from '../../griga/entity';
 export class SelectionBackground extends Entity {
   constructor( params, args ){
     super( {
-      mouseDownSubscriptions: ['selection'],
+      mouseDownSubscriptions: ['editor', 'selection'],
     }, args );
     this.otherEntity = null;
+    this.lastClickTime = 0;
     this.currentImage = 'deactive';
   }
 
@@ -30,6 +31,10 @@ export class SelectionBackground extends Entity {
   }
 
   mouseDownHandler(){
+    if (performance.now()-this.lastClickTime < 300) {
+      this.griga.ghosty.editor.selection.showAllEntitiesSelection( this );
+    }
+    this.lastClickTime = performance.now();
     if (this.otherEntity) {
       if (this.currentImage === 'deactive') {
         this.griga.ghosty.editor.selection.setActiveSelectionBackground( this );

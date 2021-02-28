@@ -1,8 +1,8 @@
 import { GhostyEntity } from '../ghosty_entity';
 
 export class WoodenBox extends GhostyEntity {
-  constructor( params, args ){
-    super( params, args, 17 );
+  constructor( params, args, shape ){
+    super( params, args, 17, shape );
     this.setWidth( 0.9 );
     this.setHeight( 0.9 );
   }

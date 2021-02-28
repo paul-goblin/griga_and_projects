@@ -4,6 +4,7 @@ SOON:
     If you delete a level it might still be open in the level editor!
     People who played through all levels would unlock every new level automatically
     Browsersupport:
+      Firefox Simons Bug
       Safari
 
   Game Mechanic bugs:
@@ -29,6 +30,7 @@ BIG:
 
   Online:
     Accounts
+    Save Latest Level
     Level:
       Rating
       Difficulty Voting

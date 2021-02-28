@@ -2,7 +2,7 @@ import { GhostyEntity } from '../ghosty_entity';
 
 export class Ghosty extends GhostyEntity {
   constructor( params, args ){
-    super( params, args, 17 );
+    super( params, args, 17, 'ghosty' );
     if (this.grid.name === 'play') {
       ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].forEach( key => this.subscribeToKeyDown(key));
     }
@@ -23,7 +23,7 @@ export class Ghosty extends GhostyEntity {
     return params;
   }
 
-  keyDownHandler( key ){
+  keyDownHandler( key, hold = false ){
     let moveDirection = key.slice(5).toLowerCase();
     let imageDirection = moveDirection;
     this.addAnimationFunction( 'move', () => {
@@ -33,7 +33,7 @@ export class Ghosty extends GhostyEntity {
     if (this.requestMove( moveDirection )) {
       this.griga.ghosty.play.keyTrackEntity.sceneChanged = true;
     } else { moveDirection = 'stay' };
-    this.move( moveDirection );
+    this.move( moveDirection, false, hold);
   }
 
   validateMove( requestChain ){

@@ -33,8 +33,10 @@ export class BackgroundTile extends Entity {
       tile: {c:this.c, r:this.r}
     } ).filter( e => e.constructor.name !== 'BackgroundTile' );
     let floorLayer = 10;
-    if ( entitiesOnTile.find( e => e.constructor.name === 'Hole' ) ){ floorLayer = 0 };
-    entitiesOnTile = entitiesOnTile.filter( e => !['Hole', 'HoleBorder'].includes(e.constructor.name) );
+    let emptyLayersForStoneShape = 0;
+    if ( entitiesOnTile.find( e => ['Hole', 'HoleCircle'].includes(e.constructor.name) ) ){ floorLayer = 0 };
+    if ( entitiesOnTile.find( e => e.constructor.name === 'HoleCircle' )){ emptyLayersForStoneShape = -1 };
+    entitiesOnTile = entitiesOnTile.filter( e => !['Hole', 'HoleBorder', 'HoleCircle'].includes(e.constructor.name) );
     const highestLayer = Math.max(...entitiesOnTile.map( e => 10+e.layerAddend ));
     const solidEntityOnBaseLayer = [];
     for (let currentBaseLayer = floorLayer; currentBaseLayer <= highestLayer; currentBaseLayer+=10) {
@@ -44,10 +46,15 @@ export class BackgroundTile extends Entity {
     for (let currentBaseLayer = floorLayer; currentBaseLayer <= highestLayer; currentBaseLayer+=10) {
       const entitiesOnBaseLayer = entitiesOnTile.filter( e => 10+e.layerAddend === currentBaseLayer );
       entitiesOnBaseLayer.forEach( e => {
-        if (e.moveVertically && emptyLayers > 0) {e.moveVertically(-emptyLayers,jump)}
+        if (e.moveVertically && emptyLayers > 0) {
+          if (!(e.shape === 'stone' && emptyLayersForStoneShape <= 0)){
+            e.moveVertically(-emptyLayers,jump);
+          }
+        }
       } );
       if (!solidEntityOnBaseLayer[currentBaseLayer]) {
         emptyLayers++;
+        emptyLayersForStoneShape++;
       }
     }
 
@@ -190,7 +197,9 @@ export class BackgroundTile extends Entity {
     Object.keys(this.grid.keyDownSubscriptions).forEach( key => {
       if (this.griga.keysPressed.includes(key)) {
         if (this.fastMode[key]) {
-          this.grid.keyDownHandler({key});
+          this.grid.keyDownSubscriptions[key].forEach( entity => {
+            entity.keyDownHandler( key, true );
+          } );;
         } else {
           const currentTimeKeyIsUp = this.timesKeyIsReleased[key];
           setTimeout( (currentTimeKeyIsUp) => {

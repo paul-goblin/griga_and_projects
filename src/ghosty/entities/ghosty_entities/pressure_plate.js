@@ -2,23 +2,24 @@ import { GhostyEntity } from '../ghosty_entity';
 
 export class PressurePlate extends GhostyEntity {
   constructor( params, args ){
-    super( params, args, 13 );
+    super( params, args, 13, 'pressure_plate' );
     this.gatesName = params.gates;
     this.state = params.state || 'up';
+    this.logicGate = params.logicGate || 'AND';
     this.currentImage = this.state;
   }
 
   release(){
+    this.state = this.currentImage = 'up';
     const downs = this.grid.getEntityInstances( {
       type: this.constructor.name
     } ).map( p => p.state === 'down' );
-    if (!downs.includes(false)) {
+    if (this.logicGate === 'AND'
+      ||this.logicGate === 'OR' && !downs.includes(true)) {
       this.grid.getEntityInstances( {
         type: this.gatesName
       } ).forEach( g => g.close() );
     }
-    this.state = this.currentImage = 'up';
-
   }
 
   press(){
@@ -26,7 +27,8 @@ export class PressurePlate extends GhostyEntity {
     const downs = this.grid.getEntityInstances( {
       type: this.constructor.name
     } ).map( p => p.state === 'down' );
-    if (!downs.includes(false)) {
+    if (this.logicGate === 'AND' && !downs.includes(false)
+      ||this.logicGate === 'OR') {
       this.grid.getEntityInstances( {
         type: this.gatesName
       } ).forEach( g => g.open() );
@@ -53,6 +55,10 @@ export class PressurePlate extends GhostyEntity {
     } else if (entityOnTop && this.state === 'up') {
       this.press();
     }
+  }
+
+  allowPlacing( entity ){
+    return ![3, 4, 7].includes(entity.layer%10);
   }
 
   beforeDelete(){
