@@ -82,6 +82,10 @@ export class Levels {
       classicHighestLevelName = 'Parking Left';
       console.log('End Level Version 1.0.0 was replaced by level "Parking Left"');
     }
+    if (classicHighestLevelName === 'End Version 1.0.1') {
+      classicHighestLevelName = 'Where are my corners?';
+      console.log('End Level Version 1.0.1 was replaced by level "Where are my corners?"');
+    }
     const classicHighestLevel = this.levels['classic'].find( l => l.name === classicHighestLevelName );
     this.classicHighestLevelIndex = this.levels['classic'].indexOf( classicHighestLevel );
   }

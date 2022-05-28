@@ -17,12 +17,12 @@ export class Home {
       console.log('new Version Popup!');
       this.popup = new Popup(
         'wrapper',
-        `Ghosty Version 1.0.1 released!`,
+        `Ghosty Version 1.0.2 released!`,
         [
           {id: 'popup-close', text: 'Play', click: () => this.app.handlePlayButtonClick()},
         ], [],
         'What\'s new:',
-        '-DiamAND Gates-<br>-New Levels-<br>-Hold keys to move fast-<br>-Level index is shown-<br>-Animations wait for each other-'
+        '-Round Boxes and Holes-<br>-CoppOR Gates-<br>-New Levels-<br>-Handy Support-<br>-Cutomize Editor-<br>-Smooth holding animation-'
       ) ;
     }
   }
@@ -44,7 +44,15 @@ export const homeHelp = {
   [
     {
       h3: null,
-      p: 'Ghosty was developed by Tom Kopolt. \n Current Version: 1.0.0'
+      p: 'Ghosty was developed by Tom Kopolt. \n Current Version: 1.0.2'
+    },
+    {
+      h3: null,
+      p: 'Im currently reworking ghosty completely. Stay tuned for story, online levels and more'
+    },
+    {
+      h3: null,
+      p: 'Note that the Level Editor is only available on a PC or Laptop'
     }
   ]
 }

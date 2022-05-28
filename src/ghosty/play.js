@@ -181,7 +181,7 @@ export const playHelp = {
     [
         {
             h3: 'How to move:',
-            p: 'Use the arrow keys on your keyboard'
+            p: 'Use the arrow keys on your keyboard or swipe on a touchscreen'
         },
         {
             h3: 'Undo:',

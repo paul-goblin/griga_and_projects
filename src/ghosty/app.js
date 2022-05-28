@@ -88,7 +88,7 @@ class App {
     this.editor_screen = document.querySelector('.editor-screen');
     this.levels_screen = document.querySelector('.levels-screen');
     this.state = 'home';
-    this.version = '1.0.1';
+    this.version = '1.0.2';
     this.helpBook = {
       home: homeHelp,
       play: playHelp,

@@ -285,6 +285,10 @@ export const editorHelp = {
             p: 'Select the entity in the selection bar, then press ctrl and click (or hold and drag) to delete the entity'
         },
         {
+            h3: 'Customize Selection Bar:',
+            p: 'Doubleclick a slot in the selection bar, then select the new entity you want in that slot'
+        },
+        {
             h3: 'Save:',
             p: 'All changes are automatically saved. Press the <i class="fas fa-clone"></i> icon to duplicate the current state of the Level'
         },
@@ -297,7 +301,7 @@ export const editorHelp = {
             p: 'To start creating a new level, press the <i class="fas fa-plus"></i> icon and choose a preset'
         },
         {
-            h3: 'Unlock new entities:',
+            h3: 'Unlock New Entities:',
             p: 'Progress in the classic levels to unlock new entities in the editor'
         },
     ]
