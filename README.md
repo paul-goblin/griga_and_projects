@@ -1,9 +1,9 @@
 # griga_and_projects
 
-Use griga to build Grid based Games in Javascript. Some example Games are included in this repo
+Use griga to build Grid based Games in Javascript. Some example Games and Ghosty are included in this repo
 
 ### Version
-1.0.0
+1.0.2
 
 ## Usage
 
